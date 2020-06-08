@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html style="height: 100%; width: 100%">
+    <head>
+        <title>レべつぐ</title>
+        <!-- スマホ用アイコン -->
+        <link rel="apple-touch-icon" sizes="180x180" href="images/rogo_20200602.jpg">
+        <!-- ファビコン -->
+        <link rel="icon" href="images/favicon_rebetuku.ico">
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <!--すまほで表示を整える-->
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <!--material cdn-->
+        <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+        <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+        <!--material icons-->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <!--fonts-->
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+        <!--css-->
+        <link href="main.css" rel="stylesheet">
+        <link href="loading.css" rel="stylesheet">
+    </head>
+    <body>
+        <header id="top_header" class="mdc-top-app-bar">
+            <div class="mdc-top-app-bar__row">
+                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <button style="display: none" class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" aria-label="Open navigation menu">menu</button>
+                <span class="mdc-top-app-bar__title">Page title</span>
+                </section>
+                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+                <button id="login_icon" style="display:none; background-color:#75a7ff; height:32px; width:32px; padding:0px; overflow: hidden; border:none; border-radius: 50%; right: 10px; position:relative;" onclick="login_card_display()"><img id="usericon" width="32" height="32"></button>
+                <button id="login_button" class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="login" onclick="login_card_display()">account_circle</button>
+                <button style="display: none" class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Search">search</button>
+                <button style="display: none" class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Options">more_vert</button>
+                </section>
+            </div>
+        </header>
+        <div id="login_card_div" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; text-align: center;z-index: 5;top: 0px;background-color: #ffffff;">
+            <!--戻るボタン-->
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" style="position: absolute; top: 0px;left: 0px" onclick="login_card_display_back()">clear</button>
+            <!--google login button-->
+            <!--<img id="google_login" src="images/google_login_button/btn_google_signin_light_normal_web@2x.png" style="margin-top: 50px; width: 60%;" onclick="google_click()">-->
+            <div id="google_div" style="background-size: contain;background-repeat: no-repeat;background-position: center center;display: inline-block; width: 60%; max-width: 300px; margin-top: 100px;" onclick="google_click()"></div>
+            <!--ログアウトボタン-->
+            <br>
+            <button id="logout_button" class="mdc-button mdc-button--outlined" onclick="log_out()">
+                <div class="mdc-button__ripple"></div>
+                <span class="mdc-button__label">ログアウト</span>
+            </button>
+        </div>
+        <!--task を作るカード-->
+        <div id="task_card_div" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; text-align: center;z-index: 5;top: 0px;background-color: #ffffff;">
+            <!--戻るボタン-->
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" style="position: absolute; top: 0px;left: 0px" onclick="fab_task_back()">clear</button>
+            
+            <p style="font-size: 0.8em; color: #111111; margin-top: 20%; margin-left: 10%; text-align: left;">続けたいこと</p>
+            <input id="task_text_input" style="width: 80%;
+                font-size: 18px;
+                border: solid 1px;
+                border-radius: 5px;
+                box-sizing: border-box;
+                padding: 10px;" placeholder="例）腕立て1回する"
+            >
+            <p style="font-size: 0.8em; color: #111111; margin-left: 10%; text-align: left;">メモ</p>
+            <textarea id="task_memo_area" style="width: 80%; height: 20%; border: solid 1px; border-radius: 5px;box-sizing: border-box; padding: 10px; font-size: 18px;" placeholder="例）気分が乗ってきたら腕立て10回する。筋肉ムキムキを目指して。"></textarea>
+            <br>
+            <button id="task_create_button" class="mdc-button mdc-button--outlined" style="position: absolute; left: 10%; margin-top: 20px;" disabled onclick="task_create()">
+                <div class="mdc-button__ripple"></div>
+                <span class="mdc-button__label">作成</span>
+            </button>
+        </div>
+        <!--talk を作るカード-->
+        <div id="talk_card_div" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; text-align: center;z-index: 5;top: 0px;background-color: #ffffff;">
+            <!--戻るボタン-->
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" style="position: absolute; top: 0px;left: 0px" onclick="fab_talk_back()">clear</button>
+            
+            <p style="font-size: 0.8em; color: #111111; margin-top: 20%; margin-left: 10%; text-align: left;">掲示板名<span style="color: #777777; font-size: 0.4em">　※掲示板がない場合、作成されます</span></p>
+            <input id="talk_board_input" style="width: 80%;
+                font-size: 18px;
+                border: solid 1px;
+                border-radius: 5px;
+                box-sizing: border-box;
+                padding: 10px;" placeholder="例）筋トレ"
+            >
+            <p style="font-size: 0.8em; color: #111111; margin-left: 10%; text-align: left;">タイトル</p>
+            <input id="talk_title_input" style="width: 80%;
+                font-size: 18px;
+                border: solid 1px;
+                border-radius: 5px;
+                box-sizing: border-box;
+                padding: 10px;" placeholder="例）食事の重要性ありすぎ"
+            >
+            <p style="font-size: 0.8em; color: #111111; margin-left: 10%; text-align: left;">コメント<span style="color: #777777; font-size: 0.4em">　※未入力でも可能です</span></p>
+            <textarea id="talk_comment_input" style="width: 80%; height: 20%; border: solid 1px; border-radius: 5px;box-sizing: border-box; padding: 10px; font-size: 18px;" placeholder="例）プロテインに限らないけど、いかに食べるかは必須項目に感じてきた"></textarea>
+            <br>
+            <button id="talk_create_button" class="mdc-button mdc-button--outlined" style="position: absolute; left: 10%; margin-top: 20px;" disabled onclick="talk_create()">
+                <div class="mdc-button__ripple"></div>
+                <span class="mdc-button__label">作成</span>
+            </button>
+        </div>
+        <div id="comment_card_div" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff;">
+            <!--戻るボタン-->
+            <div style="position: relative; top: 0px;left: 0px; height: 48px;" >
+                <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" onclick="comment_card_display_back()">clear</button>
+                <p id="comment_card_board_name" style="display: inline-block; margin: 0px; position: relative; top: -5px;"></p>
+            </div>
+            <div id="comment_card_mimic" style="margin: 10px 0px 5px 0px">
+                <p id="comment_card_mimic_title" style="margin: 0px; padding-left: 13px; "></p>
+                <p id="comment_card_mimic_detail" style="margin: 0px; padding-left: 13px; font-size: 0.8em; color: #777777;"></p>
+            </div>
+            <div id="comment_card_input" style="margin: 0px 0px 40px 0px">
+                <input id="comment_card_input_input" type="text" style="position: relative;left: 12px ; bottom:7px ; font-size: 18px; border: none; border-bottom: solid 1px #777777; width: calc(100% - 70px)" placeholder="コメントを入力、、、">
+                <button id="comment_card_input_button" class="mdc-icon-button material-icons" style="color: #595959; position: relative; left: 12px" onclick="send_comment()" disabled = "true">send</button>
+            </div>
+            <div id="comment_card_messages">
+
+            </div>
+        </div>
+        <div id="list_page" class="top_level_page" style="display: flex; flex-direction: column">
+            <div id="list_page_placeholder" style="display:block; height: 100%; width: 100%; left: 0px;">
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 20px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 0px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 44px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; right: 0px; height: 24px; width: 24px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 44px; left: 0px; height: 20px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 20px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 0px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 44px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; right: 0px; height: 24px; width: 24px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 44px; left: 0px; height: 20px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 20px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 0px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 44px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; right: 0px; height: 24px; width: 24px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 44px; left: 0px; height: 20px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 20px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 0px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 44px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; right: 0px; height: 24px; width: 24px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 44px; left: 0px; height: 20px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 20px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 0px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 44px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; right: 0px; height: 24px; width: 24px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 44px; left: 0px; height: 20px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 20px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 0px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 44px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; right: 0px; height: 24px; width: 24px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 44px; left: 0px; height: 20px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 20px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 0px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 44px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; right: 0px; height: 24px; width: 24px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 44px; left: 0px; height: 20px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 20px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 0px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; left: 44px; height: 24px; width: 20px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 20px; right: 0px; height: 24px; width: 24px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 44px; left: 0px; height: 20px; width: 100%;"></div>
+                </div>
+            </div>
+            <div id="list_page_anonymous" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center;">
+                <div id="anonymous_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
+                <div>
+                    <p class="text_up">匿名ユーザ</p>
+                    <p class="text_down">ログインすると作成したタスクが<br>表示されます。</p>
+                </div>
+            </div>
+            <div id="task_complate" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center;">
+                <div id="task_complete_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
+                <div>
+                    <p class="text_up">すべて完了しました。</p>
+                    <p class="text_down">すべてのタスクを完了しました。</p>
+                </div>
+            </div>
+            <div id="to_do_items" style="width: 100%; display: none;">
+                <!--<div style="width: 100%; display: flex">
+                    <div style="padding: 8px; width: 64px; box-sizing: border-box;">
+                        <button class="mdc-icon-button material-icons" onclick="task_check(this)">radio_button_unchecked</button>
+                    </div>
+                    <div style="width: calc(100% - 54px)">
+                        <p>30分ランニング</p>
+                    </div>
+                </div>-->
+            </div>
+            <div id="finished_container" style="display: none">
+                <hr>
+                <div style="width: 100%; display: flex" onclick="display_finished_tasks()">
+                    <div style="width: calc(100% - 64px)">
+                        <p style="margin-left: 24px; color: #777777">完了済み（<span id="task_finished_count">n</span>件）</p>
+                    </div>
+                    <div style="padding: 8px; width: 64px; box-sizing: border-box;">
+                        <button id="expand_button" class="mdc-icon-button material-icons">expand_less</button>
+                    </div>
+                </div>
+                <div id="to_do_items_finished" style="position: relative; bottom: 0px; width: 100%; display: none">
+                    <!--<div style="width: 100%; display: flex">
+                        <div style="padding: 8px; width: 64px; box-sizing: border-box;">
+                            <button class="mdc-icon-button material-icons" onclick="task_check_back(this)">check</button>
+                        </div>
+                        <div style="width: calc(100% - 64px)">
+                            <p>読書</p>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+            <button id="list_page_fab" class="mdc-fab" style="display: none" aria-label="create_task" onclick="fab_task()">
+                <div class="mdc-fab__ripple"></div>
+                <span class="mdc-fab__icon material-icons">add</span>
+            </button>
+        </div>
+        <div id="count_page" class="top_level_page" style="display: none; flex-direction: column; position: relative;">
+            <div id="count_container" style="display: none; width: 100%; height: 100%; position: relative; flex-direction: column;">
+                <p id="count_day"></p>
+                <p id="center_count"></p>
+            </div>
+            <div id="loading_container" class="loader-wrap">
+                <div class="loader">Loading...</div>
+            </div>
+            <div id="count_page_noresult" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center;">
+                <div id="nocount_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
+                <div>
+                    <p class="text_up">問題により取得できませんでした</p>
+                    <p class="text_down">その日のカウントが<br>表示されます。</p>
+                </div>
+            </div>
+            <button id="count_page_fab" class="mdc-fab" aria-label="add count" style="display: none" disabled onclick="fab_count()">
+                <div class="mdc-fab__ripple"></div>
+                <span class="mdc-fab__icon material-icons">exposure_plus_1</span>
+            </button>
+        </div>
+        <div id="talk_page" class="top_level_page" style="display: none">
+            <ul id="thread_container" class="mdc-list mdc-list--two-line" style="width: 100%; display: none">
+                <!--<li class="mdc-list-item" tabindex="0">
+                    <span class="mdc-list-item__text">
+                        <span class="mdc-list-item__primary-text">英語の先生って几帳面だよね (15)</span>
+                        <span class="mdc-list-item__secondary-text">あるあるくん 2020年5月17日 13:48</span>
+                    </span>
+                </li>
+                <li class="mdc-list-item">
+                    <span class="mdc-list-item__text">
+                        <span class="mdc-list-item__primary-text">有名ブラック企業の実態 (47)</span>
+                        <span class="mdc-list-item__secondary-text">人生つらリーマン 2020年5月14日 18:51</span>
+                    </span>
+                </li>
+                <li class="mdc-list-item">
+                    <span class="mdc-list-item__text">
+                        <span class="mdc-list-item__primary-text">最近暑い件について (4)</span>
+                        <span class="mdc-list-item__secondary-text">赤メダカ 2020年4月23日 09:26</span>
+                    </span>
+                </li>-->
+            </ul>
+            <div id="talk_page_placeholder" style="display:block; height: 100%; width: 100%; left: 0px;">
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 14px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; left: 0px; height: 19px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; right: 0px; height: 19px; width: 132px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 33px; left: 0px; height: 8px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; left: 0px; height: 17px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; right: 0px; height: 17px; width: 100px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 58px; left: 0px; height: 14px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 14px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; left: 0px; height: 19px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; right: 0px; height: 19px; width: 132px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 33px; left: 0px; height: 8px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; left: 0px; height: 17px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; right: 0px; height: 17px; width: 100px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 58px; left: 0px; height: 14px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 14px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; left: 0px; height: 19px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; right: 0px; height: 19px; width: 132px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 33px; left: 0px; height: 8px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; left: 0px; height: 17px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; right: 0px; height: 17px; width: 100px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 58px; left: 0px; height: 14px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 14px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; left: 0px; height: 19px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; right: 0px; height: 19px; width: 132px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 33px; left: 0px; height: 8px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; left: 0px; height: 17px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; right: 0px; height: 17px; width: 100px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 58px; left: 0px; height: 14px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 14px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; left: 0px; height: 19px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; right: 0px; height: 19px; width: 132px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 33px; left: 0px; height: 8px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; left: 0px; height: 17px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; right: 0px; height: 17px; width: 100px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 58px; left: 0px; height: 14px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 14px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; left: 0px; height: 19px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; right: 0px; height: 19px; width: 132px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 33px; left: 0px; height: 8px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; left: 0px; height: 17px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; right: 0px; height: 17px; width: 100px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 58px; left: 0px; height: 14px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 14px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; left: 0px; height: 19px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; right: 0px; height: 19px; width: 132px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 33px; left: 0px; height: 8px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; left: 0px; height: 17px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; right: 0px; height: 17px; width: 100px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 58px; left: 0px; height: 14px; width: 100%;"></div>
+                </div>
+                <div class="moving_holder" style="height: 64px; width: 100%;">
+                    <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 14px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; left: 0px; height: 19px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 14px; right: 0px; height: 19px; width: 132px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 33px; left: 0px; height: 8px; width: 100%;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; left: 0px; height: 17px; width: 16px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 41px; right: 0px; height: 17px; width: 100px;"></div>
+                    <div style="position: absolute; background-color: #ffffff; top: 58px; left: 0px; height: 14px; width: 100%;"></div>
+                </div>
+                
+                
+                
+            </div>
+            <div id="talk_page_noresult" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center;">
+                <div id="noresult_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
+                <div>
+                    <p class="text_up">結果が取得できませんでした。</p>
+                    <p class="text_down">取得したスレッドが<br>表示されます。</p>
+                </div>
+            </div>
+            <button id="talk_page_fab" class="mdc-fab" aria-label="create thread" style="display: none" onclick="fab_talk()">
+                <div class="mdc-fab__ripple"></div>
+                <span class="mdc-fab__icon material-icons">chat</span>
+            </button>
+        </div>
+        <div id="data_page" class="top_level_page" style="display: none; background-color: #eeeeee; flex-direction: column; padding-bottom: 16px; box-sizing: border-box;">
+            <div id="chart_one" class="mdc-card log-chart">
+                <img src="images/sample_graph_1.png" style="height: auto; width: 100%">
+            </div>
+            <div id="chart_two" class="mdc-card log-chart">
+                <img src="images/sample_graph_2.png" style="height: auto; width: 100%">
+            </div>
+            <!--
+            <button class="mdc-fab" aria-label="Favorite">
+                <div class="mdc-fab__ripple"></div>
+                <span class="mdc-fab__icon material-icons">favorite</span>
+            </button>
+            -->
+        </div>
+        <div id="bottom_app_bar" class="mdc-tab-bar" role="tablist">
+            <div class="mdc-tab-scroller">
+                <div class="mdc-tab-scroller__scroll-area">
+                    <div class="mdc-tab-scroller__scroll-content">
+                        <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0">
+                            <span class="mdc-tab__content">
+                                <span id="bab_icon_home" class="mdc-tab__icon material-icons bab_icon using" aria-hidden="true">view_list</span>
+                                <span id="bab_icon_home_text" class="footer_parts mdc-tab__text-label bab_icon using">リストー</span>
+                            </span>
+                            <span class="mdc-tab-indicator mdc-tab-indicator--active onfooter">
+                                <span
+                                    class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple" hidden></span>
+                        </button>
+                        <button class="mdc-tab" role="tab" aria-selected="false" tabindex="0">
+                            <span class="mdc-tab__content">
+                                <span class="mdc-tab__icon material-icons bab_icon" aria-hidden="true">emoji_people</span>
+                                <span class="footer_parts mdc-tab__text-label bab_icon">カウント</span>
+                            </span>
+                            <span class="mdc-tab-indicator mdc-tab-indicator--active onfooter">
+                                <span
+                                    class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple" hidden></span>
+                        </button>
+                        <button class="mdc-tab" role="tab" aria-selected="false" tabindex="0">
+                            <span class="mdc-tab__content">
+                                <span id="bab_icon_sirase" class="mdc-tab__icon material-icons bab_icon" aria-hidden="true">forum</span>
+                                <span id="bab_icon_sirase_text" class="footer_parts mdc-tab__text-label bab_icon">トーーク</span>
+                            </span>
+                            <span class="mdc-tab__ripple" hidden></span>
+                            <span class="mdc-tab-indicator onfooter">
+                                <span
+                                    class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                        </button>
+                        <button class="mdc-tab" role="tab" aria-selected="false" tabindex="0">
+                            <span class="mdc-tab__content">
+                                <span id="bab_icon_wadai" class="mdc-tab__icon material-icons bab_icon" aria-hidden="true">poll</span>
+                                <span id="bab_icon_wadai_text" class="footer_parts mdc-tab__text-label bab_icon">デーータ</span>
+                            </span>
+                            <span class="mdc-tab__ripple" hidden></span>
+                            <span class="mdc-tab-indicator onfooter">
+                                <span
+                                    class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <!--<script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-app.js"></script>-->
+    <!--<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js"></script>-->
+
+    <!--
+    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js"></script>
+    -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+    <!-- Add Firebase products that you want to use -->
+    <script src="/__/firebase/7.2.3/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-functions.js"></script>
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyAh8ECDXJr3M3PIWtLYSIwKAJll4jFNO3c",
+            authDomain: "levup-5017a.firebaseapp.com",
+            databaseURL: "https://levup-5017a.firebaseio.com",
+            projectId: "levup-5017a",
+            storageBucket: "levup-5017a.appspot.com",
+            messagingSenderId: "280494366709",
+            appId: "1:280494366709:web:2de4a430ad2e81bc7e4abc"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    <!--<script src="/__/firebase/init.js"></script>-->
+        
+    <!--javascript 読み込み-->
+    <script src="main.js"></script>
+    
+</html>

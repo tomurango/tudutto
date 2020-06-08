@@ -1,0 +1,206 @@
+﻿#bottom_app_bar{
+    z-index: 3;
+    background-color: #ffffff;
+    width: 100vw;
+    position: fixed;
+    bottom: 0px;
+    padding: 0px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.26);
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) 0s;
+}.mdc-tab__content{
+    flex-direction: column;
+}.mdc-tab:not(.mdc-tab--stacked) .mdc-tab__icon+.mdc-tab__text-label{
+    padding: 0px;
+}.mdc-tab{
+    height: 50px;
+}.mdc-tab-indicator.onfooter{
+    display: none !important;
+}.mdc-tab--active{
+    color: #2979ff !important;
+}.mdc-tab__text-label{
+    font-size: 0.5em
+}
+
+html{
+    height: 100%;
+    width: 100%;
+}body{
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+    font-family: 'Noto Sans JP', sans-serif;
+    background-color: #eeeeee;
+    overflow: hidden;
+}:root{
+    --mdc-theme-primary: #2979ff;
+    --mdc-theme-secondary: #ffab40;
+    --mdc-theme-on-primary: #000000;
+}
+
+#top_header{
+    position: relative;
+}
+
+
+@media screen and (min-width:600px){
+    .top_level_page{
+        height: calc(100% - 114px);
+    }
+}@media screen and (max-width:599px){
+    .top_level_page{
+        height: calc(100% - 106px);
+    }
+}.top_level_page{
+    width: 100%;
+    background-color: #ffffff;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    /* スクロールを滑らかにする */
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;    /* IE, Edge 対応 */
+    scrollbar-width: none;       /* Firefox 対応 */
+}.top_level_page::-webkit-scrollbar {  /* Chrome, Safari 対応 */
+    display:none;
+}
+
+.mdc-fab{
+    position: fixed;
+    bottom: 100px;
+    left: calc(50% - 24px);
+}
+
+#center_count{
+    font-size: 3em;
+    position: relative;
+    margin: 0px;
+    height: 85%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    box-sizing: border-box;
+}
+#count_day{
+    font-size: 2em;
+    position: absolute;
+    margin: 0px;
+    height: 35%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.log-chart{
+    padding: 24px;
+    box-sizing: border-box;
+    width: calc(100% - 32px);
+    height: fit-content;
+    padding: 16px ;
+    position: relative;
+    margin: 16px 16px 0px 16px;
+}
+
+#google_div{
+    background-image: url("images/google_login_button/btn_google_signin_light_normal_web@2x.png");
+}#google_div:hover{
+    background-image: url("images/google_login_button/btn_google_signin_light_focus_web@2x.png");
+}#google_div:active{
+    background-image: url("images/google_login_button/btn_google_signin_light_pressed_web@2x.png");
+}#google_div::before {
+    display: block;
+    content: " ";
+    margin-top: 24.0837696335079%;
+}
+
+#anonymous_image{
+    background-image: url("images/tokumeinotoki.jpg");
+}#anonymous_image::before {
+    display: block;
+    content: " ";
+    margin-top: 100%;
+}
+#task_complete_image{
+    background-image: url("images/taskiwattara.jpg");
+}#task_complete_image::before {
+    display: block;
+    content: " ";
+    margin-top: 100%;
+}
+.text_up{
+    font-size: 1.2em;
+}.text_down{
+    color: #777777;
+}
+
+/* icon 震えを与える */
+#login_button{
+    animation: hurueru 8s infinite;
+}
+
+@keyframes hurueru {
+    0% {
+        transform: translate(0px, 0px) rotateZ(0deg);
+        color: #ffab40;
+    }
+    0.625% {
+        transform: translate(4px, 4px) rotateZ(1deg);
+        color: #ffab40;
+    }
+    1.25% {
+        transform: translate(0px, 4px) rotateZ(0deg);
+        color: #ffab40;
+    }
+    1.875% {
+        transform: translate(4px, 0px) rotateZ(-1deg);
+        color: #ffab40;
+    }
+    2.5% {
+        transform: translate(0px, 0px) rotateZ(0deg);
+        color: #ffab40;
+    }
+    100% {
+        transform: translate(0px, 0px) rotateZ(0deg);
+        color: #ffffff;
+    }
+}
+
+.moving_holder{
+    overflow: hidden;
+    /* animation */
+    animation-duration: 3s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderAnimation;
+    animation-timing-function: linear;
+    background: linear-gradient(to right, #eee 8%, #ddd 18%, #eee 33%);
+    background-size: 100% 100% ;
+    position: relative;
+}
+@keyframes placeHolderAnimation{
+    0% {
+       background-position: 0px 0
+    }
+    100% {
+       background-position: 100vw 0
+    }
+}
+
+
+#noresult_image{
+    background-image: url("images/sureddonaitoki_new.jpg");
+}#noresult_image::before {
+    display: block;
+    content: " ";
+    margin-top: 100%;
+}
+#nocount_image{
+    background-image: url("images/nanikaerror.jpg");
+}#nocount_image::before {
+    display: block;
+    content: " ";
+    margin-top: 100%;
+}

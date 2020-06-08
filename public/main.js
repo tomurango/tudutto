@@ -1,0 +1,864 @@
+﻿var global_user;
+var global_tasks = {};
+var global_threads = {};
+const db = firebase.firestore()
+var global_timestamps = {};
+var global_comments = {};
+//var comment_listeners_global = {};
+var global_now_board;
+var global_now_thread;
+
+/* tab navigation */
+var tabBar = new mdc.tabBar.MDCTabBar(document.querySelector('#bottom_app_bar'));
+//tab ページ切り替え
+tabBar.listen('MDCTabBar:activated',function(event){
+    var index = event["detail"]["index"];
+    console.log("index => ", index);
+    //一回全部を非表示にする
+    var top_level_pages = document.getElementsByClassName('top_level_page');
+    for (var i=0, len=top_level_pages.length|0; i<len; i=i+1|0) {
+        top_level_pages[i].style.display = "none";
+    }
+    //indexによって処理を分岐して記述する
+    if(index==0){
+        document.getElementById("list_page").style.display = "flex";
+        //list_page_check は繰り返し発生することを想定していません
+    }else if(index==1){
+        document.getElementById("count_page").style.display = "flex";
+        count_page_check();
+    }else if(index==2){
+        document.getElementById("talk_page").style.display = "flex";
+        talk_page_check();
+    }else if(index==3){
+        document.getElementById("data_page").style.display = "flex";
+    }
+});
+
+function login_card_display(){
+    //ログインのためのカードを出してくる
+    document.getElementById("login_card_div").style.display = "block";
+}
+function login_card_display_back(){
+    //ログインのためのカードを消す
+    document.getElementById("login_card_div").style.display = "none";
+}
+
+//google
+function google_click(){
+    //ログインの動き
+    console.log("google ログインします");
+    //セッションの永続性を指定から、ログインしてる感じ
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function() {
+        var provider = new firebase.auth.GoogleAuthProvider();
+        // Existing and future Auth states are now persisted in the current
+        // session only. Closing the window would clear any existing state even
+        // if a user forgets to sign out.
+        // ...
+        // New sign-in will be persisted with session persistence.
+        return firebase.auth().signInWithRedirect(provider).then(user =>{
+            // Get the user's ID token as it is needed to exchange for a session cookie.
+            return user.getIdToken();/*.then(idToken => {
+                // Session login endpoint is queried and the session cookie is set.
+                // CSRF protection should be taken into account.
+                // ...
+                const csrfToken = getCookie('csrfToken')
+                return postIdTokenToSessionLogin('/sessionLogin', idToken, csrfToken);
+            });*/
+        });
+    }).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode);
+        console.log(errorMessage);
+    });
+}
+//ログアウト
+function log_out(){
+    firebase.auth().signOut().then(()=>{
+        console.log("ログアウトしました");
+        //ログアウトしよーぜ
+        //リダイレクトしてんね
+        location.reload();
+    })
+    .catch( (error)=>{
+        console.log(`ログアウト時にエラーが発生しました (${error})`);
+    });
+}
+
+$(document).ready(function(){
+    //chart js のグラフが表示されない問題の解決のための検証
+    //document.getElementById("chart_contain").textContent = window.devicePixelRatio;
+    firebase.auth().getRedirectResult().then(function(result) {
+        console.log(result);
+        if (result.credential) {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        var token = result.credential.accessToken;
+        // ...
+        //console.log(token);
+        }
+        // The signed-in user info.
+        global_user = result.user;
+        //user 登録をする関数を書く 初めてのログインのみ登録を行う
+        //user_register(result.user);
+        //list page の表示を切り替える関数
+        list_page_check(result.user);
+    }).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+        // ...
+        console.log(errorCode);
+        console.log(errorMessage);
+        console.log(email);
+        console.log(credential);
+    });
+});
+
+
+function fab_task(){
+    //表示を出す
+    document.getElementById("task_card_div").style.display = "block";
+    //textarea に対してイベントを指定する
+    var $input = $('#task_text_input');
+    //このイベント投稿欄を閉じたときに停止させたりしたほうがいいとかあるかね？
+    $input.on('input', function(event) {
+        var value = $input.val();
+        //console.log(value, event);
+        if(value == ""){
+            document.getElementById("task_create_button").disabled = true;
+        }else{
+            //入力あったらいけ
+            document.getElementById("task_create_button").disabled = false;
+        }
+    });
+}
+
+function fab_task_back(){
+    //表示を消す
+    document.getElementById("task_card_div").style.display = "none";
+    //このイベント投稿欄を閉じたときに停止させる
+    var $input = $('#task_text_input');
+    $input.off('input');
+    //作成ボタンを機能停止に切り替える
+    document.getElementById("talk_create_button").disabled = true;
+    //入力を消す
+    document.getElementById("task_text_input").value = "";
+    document.getElementById("task_memo_area").value ="";
+}
+
+//userの種類によってページの表示を切り替えるための関数
+function list_page_check(user){
+    if (user) {
+        // User is signed in.
+        console.log("user => ", user);
+        //ログインしてたらボタンの表示を差し替える
+        document.getElementById("usericon").src = user.photoURL;
+        document.getElementById("login_icon").style.display = "flex";
+        document.getElementById("login_button").style.display = "none";
+        //fab を表示する
+        document.getElementById("list_page_fab").style.display = "flex";
+        //データベースを探ってみる
+        get_all_tasks(user);
+        //login_and_check(user);
+
+
+        /*db.collection("users").doc(user.uid).get().then(function(doc){
+            if(false){
+                //本日初のログインなら、taskを書き換える
+                login_and_check(user);
+            }else{
+                //本日二度目以降なら取得して表示するのみ
+                get_all_tasks(user);
+            }
+        })*/
+
+
+    } else {
+        console.log("ログインしてない");
+        //ログインしてないならログアウトボタンは消す
+        document.getElementById("logout_button").style.display = "none";
+        //ここで本来は匿名ユーザでログインさせたい
+        //今はログインをさせる表示的誘導のみ行う
+        document.getElementById("list_page_placeholder").style.display = "none";
+        document.getElementById("task_complate").style.display = "none";
+        document.getElementById("to_do_items").style.display = "none";
+        document.getElementById("finished_container").style.display = "none";
+        document.getElementById("list_page_anonymous").style.display = "block";
+    }
+}
+
+function get_all_tasks(user){
+    db.collection("users").doc(user.uid).collection("tasks").get().then(function(tasks){
+        //console.log(tasks);
+        if (tasks.size > 0) {
+            //console.log("tasks =>", tasks);
+            var task_remain = 0;
+            tasks.forEach(function(task){
+                //完了タスクとそうじゃないタスクに振り分ける
+                insert_task(task.data(), task.id);
+                if(task.data().finish == false){
+                    task_remain += 1;
+                }
+            });
+            if(task_remain == 0){
+                //タスク完了してますよー(taskは存在している)
+                document.getElementById("list_page_placeholder").style.display = "none";
+                document.getElementById("to_do_items").style.display = "none";
+                document.getElementById("list_page_anonymous").style.display = "none";
+                document.getElementById("task_complate").style.display = "block";
+            }else{
+                //タスク残ってますよー
+                document.getElementById("list_page_placeholder").style.display = "none";
+                document.getElementById("list_page_anonymous").style.display = "none";
+                document.getElementById("task_complate").style.display = "none";
+                document.getElementById("to_do_items").style.display = "block";
+            }
+            finish_task_check();
+        }else{
+            //タスク完了してますよー(taskは存在していない)
+            document.getElementById("list_page_placeholder").style.display = "none";
+            document.getElementById("to_do_items").style.display = "none";
+            document.getElementById("list_page_anonymous").style.display = "none";
+            document.getElementById("finished_container").style.display = "none";
+            document.getElementById("task_complate").style.display = "block";
+        }
+    }).catch(function(error) {
+        console.log("Error getting document:", error);
+    });
+}
+
+function insert_task(task_data, task_id){
+    global_tasks[task_id] = task_data;
+    //console.log("task =>", task_data);
+    if(task_data.finish){
+        //check
+        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p>' + task_data.text + '</p></div></div>';
+        var tasks_container = document.getElementById("to_do_items_finished");
+        tasks_container.insertAdjacentHTML("afterbegin", task_div);
+    }else{
+        //radio_button_unchecked
+        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="task_check(this)">radio_button_unchecked</button></div><div style="width: calc(100% - 54px)"><p>' + task_data.text + '</p></div></div>';
+        var tasks_container = document.getElementById("to_do_items");
+        tasks_container.insertAdjacentHTML("afterbegin", task_div);
+        //タスク残ってますよー
+        document.getElementById("list_page_placeholder").style.display = "none";
+        document.getElementById("list_page_anonymous").style.display = "none";
+        document.getElementById("task_complate").style.display = "none";
+        document.getElementById("to_do_items").style.display = "block";
+    }
+    finish_task_check();
+}
+
+//taskを完了させる
+function task_check(radio_button){
+    radio_button.textContent = "check";
+    var task_id = radio_button.parentNode.parentNode.id;
+    //データベースを書き換える
+    db.collection("users").doc(global_user.uid).collection("tasks").doc(task_id).update({
+        finish: true
+    }).then(function(){
+        //console.log("書き換え完了");
+        //要素を消す
+        radio_button.parentNode.parentNode.remove();
+        global_tasks[task_id]["finish"] = true;
+        //挿入する
+        insert_task(global_tasks[task_id], task_id);
+    }).catch(function(error){
+        console.log("error =>", error);
+    });
+}
+//taskを復活させる
+function task_check_back(radio_button){
+    radio_button.textContent = "radio_button_unchecked";
+    var task_id = radio_button.parentNode.parentNode.id;
+    //データベースを書き換える
+    db.collection("users").doc(global_user.uid).collection("tasks").doc(task_id).update({
+        finish: false
+    }).then(function(){
+        //console.log("書き換え完了");//要素を消す
+        radio_button.parentNode.parentNode.remove();
+        global_tasks[task_id]["finish"] = false;
+        //挿入する
+        insert_task(global_tasks[task_id], task_id);
+    }).catch(function(error){
+        console.log("error =>", error);
+    });
+}
+
+function display_finished_tasks(){
+    //console.log("expand 発動");
+    var expand_state = document.getElementById("expand_button").textContent;
+    if(expand_state == "expand_less"){
+        //開く
+        document.getElementById("to_do_items_finished").style.display = "block";
+        document.getElementById("expand_button").textContent = "expand_more";
+        //console.log("開く");
+        return
+    }else{
+        //閉じる
+        document.getElementById("to_do_items_finished").style.display = "none";
+        document.getElementById("expand_button").textContent = "expand_less";
+        //console.log("閉じる");
+        return
+    }
+}
+
+function task_create(){
+    //作成内容を取得
+    var task_text = document.getElementById("task_text_input").value;
+    var task_memo = document.getElementById("task_memo_area").value;
+    if(task_text == ""){
+        //入力しないと送信できないようにしたい
+        return
+    }
+    //作成
+    var new_task = {
+        finish: false,
+        text: task_text,
+        memo: task_memo
+    };
+    db.collection("users").doc(global_user.uid).collection("tasks").add(new_task)
+    .then(function(docRef) {
+        console.log("Document written with ID: ", docRef.id);
+        //閉じる
+        fab_task_back();
+        //送信を反映させる
+        insert_task(new_task, docRef.id);
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+    });
+}
+
+//完了タスク表示欄を表示するか否かを決める関数
+function finish_task_check(){
+    var task_remain = 0;
+    var task_finish = 0;
+    var task_total = 0;
+    /*global_tasks.forEach(function(task){
+        if(task.finish == false){
+            task_remain += 1;
+        }else{
+            task_finish += 1;
+        }
+    });*/
+    for (let key in global_tasks) {
+        //console.log('key:' + key + ' value:' + global_tasks[key]);
+        task_total += 1;
+        if(global_tasks[key].finish == false){
+            task_remain += 1;
+        }else{
+            task_finish += 1;
+        }
+    }
+    if(task_total > 0){
+        //何かしらタスクを保有している
+        if(task_finish > 0){
+            //終わっているタスクがある
+            document.getElementById("finished_container").style.display = "block";
+        }else{
+            //終わっているタスクはない
+            document.getElementById("finished_container").style.display = "none";
+            //消えると同時に閉じておく
+            document.getElementById("to_do_items_finished").style.display = "none";
+            document.getElementById("expand_button").textContent = "expand_less";
+        }
+        if(task_remain > 0){
+            //まだタスクはある
+            document.getElementById("task_complate").style.display = "none";
+            document.getElementById("to_do_items").style.display = "block";
+        }else{
+            //もうタスクはない
+            document.getElementById("to_do_items").style.display = "none";
+            document.getElementById("task_complate").style.display = "block";
+        }
+        document.getElementById("list_page_placeholder").style.display = "none";
+        document.getElementById("list_page_anonymous").style.display = "none";
+    }else{
+        //そもそもタスクがない
+        document.getElementById("list_page_placeholder").style.display = "none";
+        document.getElementById("to_do_items").style.display = "none";
+        document.getElementById("list_page_anonymous").style.display = "none";
+        document.getElementById("finished_container").style.display = "none";
+        document.getElementById("task_complate").style.display = "block";
+    }
+    document.getElementById("task_finished_count").textContent = task_finish;
+}
+
+
+//dateオブジェクトから日付文字列を返します
+function getDate(date) {
+    var year  = date.getFullYear();
+    var month = date.getMonth() + 1;
+    if(month<10){
+        month = "0" + String(month);
+    }else{
+        month = String(month);
+    }
+    var day   = date.getDate();
+    if(day<10){
+        day = "0" + String(day);
+    }else{
+        day = String(month);
+    }
+    return String(year) + month + day;
+}
+
+//count を増やす関数
+function fab_count(){
+    var server_time =  new firebase.firestore.Timestamp.now();
+    var date_text = getDate(server_time.toDate());
+    db.collection('counts').doc(date_text).update({
+        count: firebase.firestore.FieldValue.increment(1)
+    }).then(function(){
+        console.log("count しました");
+        //数字増やす
+        var pre_count = document.getElementById("center_count").textContent;
+        document.getElementById("center_count").textContent = Number(pre_count) + 1;
+        //ボタン消す
+        document.getElementById("count_page_fab").style.display = "none";
+        document.getElementById("count_page_fab").disabled = true;
+        //ここで一日一回だけの記述をしましょうか
+        
+    }).catch(function(error){
+        console.log("error =>", error);
+    })
+}
+
+//データベースの日付を書き換えると同時にログインして記録を確認する
+/*はずだったのだが、エラーで固まった（悲）
+function login_and_check(user){
+    db.collection("users").doc(user.id).get().then(function(doc){
+        if (doc.data().date == undefined){
+            console.log("すべてで初めてのログイン");
+            //すべてを通して初めてのログインのみ動く
+            db.collection("users").doc(user.id).update({
+                date: new firebase.firestore.Timestamp.now()
+            }).then(function(){
+                //特にtrue→falseなど書き換えないからそのままどうぞ
+                get_all_tasks(user);
+            });
+        }else{
+            console.log("すべてで初めてのログインではない");
+            //ログイン経験あり
+            if(getDate(doc.data().date.toDate()) == getDate(new firebase.firestore.Timestamp.now().toDate())){
+                console.log("今日二回目以降のログイン");
+                //日付が同じ タイムスタンプ押してもいいと思うけど、押してない
+
+                //本日二回目以降のログインなら気にせずこれで
+                get_all_tasks(user);
+            }else{
+                console.log("今日は初めてのログイン");
+                //日付が違う
+                //本日初のログイン
+                db.collection("users").doc(user).collection("tasks").where('finish', '==', true).get().then(function (querySnapshot) {
+                    querySnapshot.forEach(function(doc) {
+                        doc.ref.update({
+                            finish: false
+                        });
+                    });
+                }).then(function(){
+                    //この書き換え後の取得が上手くいかないなら cloud function 側で対応する
+                    console.log("書き換え終わったよ");
+                    get_all_tasks(user);
+                }).catch(function(error){
+                    console.log("Error =>", error);
+                });
+            }
+        }
+    })
+
+}*/
+
+//countを取得する関数
+function count_page_check(){
+    //user がログインしてたらボタンを表示する
+    if(global_user == null){
+        console.log("null なのでボタンを使えません");
+    }else{
+        document.getElementById("count_page_fab").style.display = "flex";
+        document.getElementById("count_page_fab").disabled = false;
+    }
+    //今の処理だとタブ切り替えで毎回やってるから、見直しが必要かもしれない
+    var server_time =  new firebase.firestore.Timestamp.now();
+    var date_text = getDate(server_time.toDate());
+    db.collection("counts").doc(date_text).get().then(function(doc){
+        var today_count = doc.data().count;
+        document.getElementById("center_count").textContent = today_count;
+        document.getElementById("count_day").textContent = date_text;
+        //表示を切り替える
+        document.getElementById("count_page_noresult").style.display = "none";
+        document.getElementById("loading_container").style.display = "none";
+        document.getElementById("count_container").style.display = "flex";
+    }).catch(function(error){
+        console.log("error =>", error);
+        //firestoreの作成し忘れなどでもエラーは発生するその時の表示切替はここで行う感じかな
+        document.getElementById("count_container").style.display = "none";
+        document.getElementById("loading_container").style.display = "none";
+        document.getElementById("count_page_noresult").style.display = "block";
+    });
+}
+
+
+function fab_talk(){
+    //表示を出す
+    document.getElementById("talk_card_div").style.display = "block";
+    //title に対してイベントを指定する
+    var $input = $('#talk_title_input');
+    var $input_b = $('#talk_board_input');
+    //このイベント投稿欄を閉じたときに停止させたりしたほうがいいとかあるかね？
+    $input.on('input', function(event) {
+        var value = $input.val();
+        var value_b = $input_b.val();
+        //console.log(value, event);
+        if(value == ""){
+            document.getElementById("talk_create_button").disabled = true;
+        }else{
+            if(value_b == ""){
+                document.getElementById("talk_create_button").disabled = true;
+            }else{
+                //入力あったらいけ
+                document.getElementById("talk_create_button").disabled = false;
+            }
+        }
+    });
+    $input_b.on('input', function(event) {
+        var value = $input.val();
+        var value_b = $input_b.val();
+        //console.log(value, event);
+        if(value == ""){
+            document.getElementById("talk_create_button").disabled = true;
+        }else{
+            if(value_b == ""){
+                document.getElementById("talk_create_button").disabled = true;
+            }else{
+                //入力あったらいけ
+                document.getElementById("talk_create_button").disabled = false;
+            }
+        }
+    });
+}
+
+function fab_talk_back(){
+    //表示を出す
+    document.getElementById("talk_card_div").style.display = "none";
+    //このイベント投稿欄を閉じたときに停止させる
+    var $input = $('#talk_title_input');
+    $input.off('input');
+    var $input_b = $('#talk_board_input');
+    $input_b.off('input');
+    //作成ボタンを機能停止に切り替える
+    document.getElementById("talk_create_button").disabled = true;
+    //入力を消す
+    document.getElementById("talk_board_input").value ="";
+    document.getElementById("talk_title_input").value = "";
+    document.getElementById("talk_comment_input").value = "";
+}
+
+function talk_page_check(){
+    //user がログインしてたらボタンを表示する
+    if(global_user == null){
+        console.log("null なのでボタンを使えません");
+    }else{
+        document.getElementById("talk_page_fab").style.display = "flex";
+        document.getElementById("talk_page_fab").disabled = false;
+    }
+    //取得のタイムスタンプの流れとかあった気がする→重複取得に関して制限を考える感じで
+    //それに関する対応を考えてから実装しようか
+    get_threads();
+}
+
+function talk_create(){
+    //作成内容を取得
+    var talk_board_pre = document.getElementById("talk_board_input").value;
+    //後にidに含むため _ は使用をできなくする
+    var talk_board = underbar_check(talk_board_pre);
+    var talk_title = document.getElementById("talk_title_input").value;
+    var talk_comment = document.getElementById("talk_comment_input").value;
+    if(talk_board == ""){
+        //入力しないと送信できないようにしたい
+        return
+    }else if(talk_title == ""){
+        //入力必須
+        return
+    }
+    //コメントは別にあってもなくてもいい
+    if(talk_comment == ""){
+        var comment_count = 0;
+    }else{
+        var comment_count = 1;
+    }
+    var new_thread = {
+        createUser: global_user.uid,
+        userName: global_user.displayName,
+        createDate: new firebase.firestore.Timestamp.now(),
+        commentCount: comment_count,
+        talkTitle: talk_title,
+        boardName: talk_board
+    }
+    db.collection("boards").doc(talk_board).collection("threads").add(new_thread).then(function(docRef){
+        if(comment_count == 1){
+            //コメントを入力する
+            db.collection("boards").doc(talk_board).collection("threads").doc(docRef.id).collection("comments").add({
+                createDate: new firebase.firestore.Timestamp.now(),
+                commentText : talk_comment,
+                displayName: global_user.displayName
+            }).then(function(){
+                //作成したら閉じる
+                fab_talk_back();
+                //反映を表示させる
+                insert_thread(new_thread);
+                //表示する
+                document.getElementById("talk_page_noresult").style.display = "none";
+                document.getElementById("thread_container").style.display = "block";
+            })
+        }else{
+            //作成したら閉じる
+            fab_talk_back();
+            //反映を表示させる
+            insert_thread(new_thread);
+            //表示する
+            document.getElementById("talk_page_noresult").style.display = "none";
+            document.getElementById("thread_container").style.display = "block";
+        }
+    }).catch(function(error) {
+        console.error("Error adding document: ", error);
+    });
+}
+
+function insert_thread(thread_doc_data, thread_id){
+    //console.log("insert_thread", thread_doc_data);
+    //global_threadsに代入
+    insert_global_thread(thread_doc_data.boardName, thread_id, thread_doc_data);
+    //表示を切り替える
+    var li_id = thread_doc_data.boardName + "_" + thread_id;
+    var firedate = thread_doc_data.createDate;
+    var date_text = date_nor_display(firedate);
+    var thread_li = '<li id=' + li_id + ' class="mdc-list-item" tabindex="0" onclick="comment_card_display(this)"><span class="mdc-list-item__text"><span class="mdc-list-item__primary-text">' + thread_doc_data.talkTitle + ' (' + thread_doc_data.commentCount + ')</span><span class="mdc-list-item__secondary-text">' + thread_doc_data.userName + ' ' + date_text + '</span></span></li>';
+    var threads_container = document.getElementById("thread_container");
+    threads_container.insertAdjacentHTML("afterbegin", thread_li);
+}
+
+//firebaseのタイムスタンプをthreadに表示できる形で返す関数
+function date_nor_display(fire_date){
+    var date = fire_date.toDate();
+    var year  = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day   = date.getDate();
+    var hours  = date.getHours();
+    var minutes  = date.getMinutes();
+    return String(year) + "年" + String(month) + "月" + String(day) + "日 " + String(hours) + ":" + String(minutes);
+}
+
+var threads_get_flag = true;
+//とってきて挿入までするよ
+function get_threads(){
+    if(threads_get_flag){
+        //とる
+        //今はいってる分をすべて消す
+        document.getElementById("thread_container").innerHTML = "";
+        //id重複の恐れがあるので、そこを一つ警戒及び把握をしておく
+        db.collectionGroup("threads").orderBy("createDate", "desc").limit(10).get().then(function(threads){
+            if(threads.size == 0){
+                document.getElementById("talk_page_placeholder").style.display = "none";
+                document.getElementById("talk_page_noresult").style.display = "block";
+            }else{
+                threads.forEach(function(thread){
+                    insert_thread(thread.data(), thread.id);
+                });
+                document.getElementById("talk_page_placeholder").style.display = "none";
+                document.getElementById("thread_container").style.display = "block";
+            }
+        })
+    }else{
+        //とらない
+        return
+    }
+} 
+
+//underbar を使用不可にするための関数
+function underbar_check(sourceStr){
+    var result = sourceStr.replace( /_/g , "" ) ;
+    return result
+}
+
+function comment_card_display(li_element){
+    //したは表示を変えるためにいろいろしてます
+    var board_threadId = li_element.id;
+    board_threadId = board_threadId.split("_");
+    document.getElementById("comment_card_div").style.display = "block";
+    document.getElementById("comment_card_board_name").textContent = board_threadId[0];
+    var the_time = date_nor_display(global_threads[board_threadId[0]][board_threadId[1]].createDate);
+    var indetail = global_threads[board_threadId[0]][board_threadId[1]].userName + '　' + the_time;
+    //comment用のglobal変数に代入する
+    global_now_board = board_threadId[0];
+    global_now_thread = board_threadId[1];
+    //threadの中身をとって入れ込む
+    document.getElementById("comment_card_mimic_title").textContent = global_threads[board_threadId[0]][board_threadId[1]].talkTitle;
+    document.getElementById("comment_card_mimic_detail").textContent = indetail;
+    //document.getElementById("comment_card_mimic").innerHTML = li_element.innerHTML;なんか表示崩れた
+    clear_get_insert_listen_comment(board_threadId[0], board_threadId[1], li_element.id);
+    //inputのリスナーですね
+    if(global_user == null){
+        console.log("null なのでコメントできません");
+        document.getElementById("comment_card_input_input").placeholder = "コメントするにはログインが必要です";
+    }else{
+        var $input = $('#comment_card_input_input');
+        //このイベント投稿欄を閉じたときに停止させたりしたほうがいいとかあるかね？
+        $input.on('input', function(event) {
+            var value = $input.val();
+            //console.log(value, event);
+            if(value == ""){
+                document.getElementById("comment_card_input_button").disabled = true;
+                //色変え
+                document.getElementById("comment_card_input_button").style.color = "#595959";
+            }else{
+                //入力あったらいけ
+                document.getElementById("comment_card_input_button").disabled = false;
+                //色変え
+                document.getElementById("comment_card_input_button").style.color = "#2979ff";
+            }
+        });
+    }
+}
+
+function comment_card_display_back(){
+    document.getElementById("comment_card_div").style.display = "none";
+    //中身を空にする
+    document.getElementById("comment_card_board_name").textContent = "";
+    //このイベント投稿欄を閉じたときに停止させる
+    if(global_user == null){
+        console.log("null なのでなんもしません");
+    }else{
+        var $input = $('#comment_card_input_input');
+        $input.off('input');
+        //送信ボタンを機能停止に切り替える
+        document.getElementById("comment_card_input_button").disabled = true;
+        //色変え
+        document.getElementById("comment_card_input_button").style.color = "#595959";
+        //入力を消す
+        document.getElementById("comment_card_input_input").value ="";
+    }
+}
+
+//commentを取得して挿入する動きを取り入れたい関数、いつかリアルタイムの取得に関しても取り組んでいこうと思案している
+function clear_get_insert_listen_comment(boardname, threadid, board_threadid){
+    //とりあえず重複取得に関しての対策を組み込んでいく必要がある
+    insert_global_timestamp(boardname, threadid, board_threadid, true);
+    db.collection("boards").doc(boardname).collection("threads").doc(threadid).collection("comments").where('createDate', '>' , global_timestamps[board_threadid]).get().then(function(commentdocs){
+        //timestamp この関数の中でlistenerも配置している
+        insert_global_timestamp(boardname, threadid, board_threadid, false);
+        commentdocs.forEach(function(commentdoc){
+            insert_global_comment(commentdoc.data(), board_threadid);
+        });
+        //コメントの中身を空にする
+        document.getElementById("comment_card_messages").innerHTML = "";
+        for(var i= 0; i< global_comments[board_threadid].length; i++){
+            insert_comment(board_threadid, i);
+        }
+    }).catch(function(error){
+        console.log("error =>", error);
+    })
+}
+
+function insert_comment( board_threadid, number ){
+    //console.log("insert して", board_threadid, number);
+    var commentdoc = global_comments[board_threadid][number];
+    console.log(board_threadid, number, commentdoc);
+    //global変数に入れる
+    //insert_global_comment(commentid, commentdoc, board_threadId);
+    /*console.log("insert_thread", thread_doc_data);
+    var li_id = thread_doc_data.boardName + "_" + thread_id;
+    var firedate = thread_doc_data.createDate;
+    var date_text = date_nor_display(firedate);*/
+    var maintext_style = "margin: 0px; padding-left: 13px;";
+    var subtext_style = "margin: 0px; padding-left: 13px; font-size: 0.8em; color: #777777;";
+    var the_time = date_nor_display(commentdoc.createDate);
+    var comment_div = '<div style="margin: 12px 0px"><p style="' + subtext_style + '">' + commentdoc.displayName + ' ' + the_time + '</p><p style="' + maintext_style + '">' + commentdoc.commentText + '</p></div>';
+    var comments_container = document.getElementById("comment_card_messages");
+    comments_container.insertAdjacentHTML("afterbegin", comment_div);
+}
+
+function insert_global_thread(boardName, threadId, threadDoc){
+    //板がそもそも入っているか
+    if(global_threads[boardName] == undefined){
+        global_threads[boardName] = {};
+    }
+    //ぶち込め
+    global_threads[boardName][threadId] = threadDoc;
+}
+
+function insert_global_timestamp(boardName, threadId, board_threadid, first_true){
+    //初めての定義かそれ以外で分岐
+    if(global_timestamps[board_threadid] == undefined){
+        //までタイムスタンプ定義してないとき
+        global_timestamps[board_threadid] = firebase.firestore.Timestamp.fromDate(new Date("December 10, 1815"));
+    }else{
+        //今
+        if(first_true){
+            return
+        }else{
+            //取得の上側で実行されるのは初回のみにする。そうじゃないと、取得タイミングが重なってよくないことになるからね
+            var the_time = new firebase.firestore.Timestamp.now();
+            global_timestamps[board_threadid] = the_time;
+            //set_comments_listener(boardName, threadId , board_threadid);
+        }
+    }
+}
+
+function insert_global_comment( commentdoc, board_threadid){
+    //未定義なときとそうでないときで分ける
+    if(global_comments[board_threadid] == undefined){
+        //未定義なら、リストを作成する
+        global_comments[board_threadid] = [];
+    }
+    //配列の末尾に入れる
+    global_comments[board_threadid].push(commentdoc);
+}
+
+/*onSnapshot() と get()を分ける必要がないのでは疑惑
+function set_comments_listener(boardName, threadId , board_threadid ){
+    comment_listeners_global[board_threadid] = db.collection("boards").doc(boardName).collection("threads").doc(threadId).collection("comments")
+    .where('createDate', '<' , global_timestamps[board_threadid]).orderBy("createDate", "desc").onSnapshot(function(docs){
+        console.log("listener 動いてる");
+        var source = docs.metadata.hasPendingWrites ? "Local" : "Server";
+        console.log(source, " data: ", docs);
+        //timestamp
+        global_timestamps[board_threadid] = new firebase.firestore.Timestamp.now();
+        //それぞれに対してglobal代入処理
+        docs.forEach(function(commentdoc){    
+            //globalに入れる;
+            insert_global_comment(commentdoc.data(), board_threadid);
+            //コメントの中身を空にする必要はリスナではない
+            //document.getElementById("comment_card_messages").innerHTML = "";
+            //上記forEachないでglobal変数に入れているのでリスナではその最後尾に入っているものを指定すればよいはずである
+        });
+        insert_comment(board_threadid, global_comments[board_threadid].length - 1);
+    });
+}
+*/
+
+function send_comment(){
+    var the_comment = document.getElementById("comment_card_input_input").value;
+    db.collection("boards").doc(global_now_board).collection("threads").doc(global_now_thread).collection("comments").add({
+        createDate: new firebase.firestore.Timestamp.now(),
+        commentText : the_comment,
+        displayName: global_user.displayName
+    }).then(function(){
+        //コメントの数を増やす記述をするかも
+
+        //リスナーの実装をうまく組めたらでいいかな
+
+        //中身をとりあえず消す
+        document.getElementById("comment_card_input_input").value = "";
+        //作成したら今は再取得にするが、いつかリスナにしたほうがスタイリッシュだと思うなー
+        clear_get_insert_listen_comment(global_now_board, global_now_thread, global_now_board + "_" + global_now_thread);
+    }).catch(function(error){
+        console.log("error", error);
+    });
+}
