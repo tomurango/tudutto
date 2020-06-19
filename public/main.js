@@ -1,19 +1,20 @@
 ﻿var global_user;
+var global_user_database;
 var global_tasks = {};
 var global_threads = {};
 const db = firebase.firestore()
-var global_timestamps = {};
-var global_comments = {};
+var global_timestamps = {};//要削除？
+var global_comments = {};//要削除？
 //var comment_listeners_global = {};
-var global_now_board;
-var global_now_thread;
+var global_now_board;//要削除？
+var global_now_thread;//要削除？
 
 /* tab navigation */
 var tabBar = new mdc.tabBar.MDCTabBar(document.querySelector('#bottom_app_bar'));
 //tab ページ切り替え
 tabBar.listen('MDCTabBar:activated',function(event){
     var index = event["detail"]["index"];
-    console.log("index => ", index);
+    //console.log("index => ", index);
     //一回全部を非表示にする
     var top_level_pages = document.getElementsByClassName('top_level_page');
     for (var i=0, len=top_level_pages.length|0; i<len; i=i+1|0) {
@@ -27,10 +28,12 @@ tabBar.listen('MDCTabBar:activated',function(event){
         document.getElementById("count_page").style.display = "flex";
         count_page_check();
     }else if(index==2){
-        document.getElementById("talk_page").style.display = "flex";
-        talk_page_check();
-    }else if(index==3){
+        //document.getElementById("talk_page").style.display = "flex";
+        //talk_page_check();
         document.getElementById("data_page").style.display = "flex";
+    }else if(index==3){
+        //あとでデータのページを表示するための場所に切り替わるかな？
+        console.log("data_page_?");
     }
 });
 
@@ -101,6 +104,11 @@ $(document).ready(function(){
         global_user = result.user;
         //user 登録をする関数を書く 初めてのログインのみ登録を行う
         //user_register(result.user);
+        if(global_user != null){
+            //ログインしてる場合のみ行う。匿名ユーザである場合は問題が発生しそうではある
+            //firestoreのユーザデータを取得
+            fire_userdata_get(global_user.uid);
+        }
         //list page の表示を切り替える関数
         list_page_check(result.user);
     }).catch(function(error) {
@@ -179,7 +187,7 @@ function list_page_check(user){
 
 
     } else {
-        console.log("ログインしてない");
+        //console.log("ログインしてない");
         //ログインしてないならログアウトボタンは消す
         document.getElementById("logout_button").style.display = "none";
         //ここで本来は匿名ユーザでログインさせたい
@@ -404,7 +412,7 @@ function getDate(date) {
     if(day<10){
         day = "0" + String(day);
     }else{
-        day = String(month);
+        day = String(day);
     }
     return String(year) + month + day;
 }
@@ -416,15 +424,20 @@ function fab_count(){
     db.collection('counts').doc(date_text).update({
         count: firebase.firestore.FieldValue.increment(1)
     }).then(function(){
-        console.log("count しました");
+        //console.log("count しました");
         //数字増やす
         var pre_count = document.getElementById("center_count").textContent;
         document.getElementById("center_count").textContent = Number(pre_count) + 1;
         //ボタン消す
         document.getElementById("count_page_fab").style.display = "none";
         document.getElementById("count_page_fab").disabled = true;
-        //ここで一日一回だけの記述をしましょうか
-        
+        //ここで一日一回だけの記述をしましょうか → データべースを書き換える
+        db.collection("users").doc(global_user.uid).update({
+            AlreadyPushed: true
+        }).then(function(){
+            //globalを変数を書き換える
+            global_user_database.AlreadyPushed = true;
+        });
     }).catch(function(error){
         console.log("error =>", error);
     })
@@ -479,14 +492,17 @@ function login_and_check(user){
 function count_page_check(){
     //user がログインしてたらボタンを表示する
     if(global_user == null){
-        console.log("null なのでボタンを使えません");
+        //console.log("null なのでボタンを使えません");
     }else{
-        document.getElementById("count_page_fab").style.display = "flex";
-        document.getElementById("count_page_fab").disabled = false;
+        if(can_user_count()){
+            document.getElementById("count_page_fab").style.display = "flex";
+            document.getElementById("count_page_fab").disabled = false;
+        }
     }
     //今の処理だとタブ切り替えで毎回やってるから、見直しが必要かもしれない
     var server_time =  new firebase.firestore.Timestamp.now();
     var date_text = getDate(server_time.toDate());
+    //console.log(date_text);
     db.collection("counts").doc(date_text).get().then(function(doc){
         var today_count = doc.data().count;
         document.getElementById("center_count").textContent = today_count;
@@ -560,10 +576,12 @@ function fab_talk_back(){
     document.getElementById("talk_comment_input").value = "";
 }
 
+
+//この関数でthreadの同線になるけど、それを取り除いていかないとワールドチャット形式では対応できないよね
 function talk_page_check(){
     //user がログインしてたらボタンを表示する
     if(global_user == null){
-        console.log("null なのでボタンを使えません");
+        //console.log("null なのでボタンを使えません");
     }else{
         document.getElementById("talk_page_fab").style.display = "flex";
         document.getElementById("talk_page_fab").disabled = false;
@@ -705,7 +723,7 @@ function comment_card_display(li_element){
     clear_get_insert_listen_comment(board_threadId[0], board_threadId[1], li_element.id);
     //inputのリスナーですね
     if(global_user == null){
-        console.log("null なのでコメントできません");
+        //console.log("null なのでコメントできません");
         document.getElementById("comment_card_input_input").placeholder = "コメントするにはログインが必要です";
     }else{
         var $input = $('#comment_card_input_input');
@@ -733,7 +751,7 @@ function comment_card_display_back(){
     document.getElementById("comment_card_board_name").textContent = "";
     //このイベント投稿欄を閉じたときに停止させる
     if(global_user == null){
-        console.log("null なのでなんもしません");
+        //console.log("null なのでなんもしません");
     }else{
         var $input = $('#comment_card_input_input');
         $input.off('input');
@@ -769,7 +787,7 @@ function clear_get_insert_listen_comment(boardname, threadid, board_threadid){
 function insert_comment( board_threadid, number ){
     //console.log("insert して", board_threadid, number);
     var commentdoc = global_comments[board_threadid][number];
-    console.log(board_threadid, number, commentdoc);
+    //console.log(board_threadid, number, commentdoc);
     //global変数に入れる
     //insert_global_comment(commentid, commentdoc, board_threadId);
     /*console.log("insert_thread", thread_doc_data);
@@ -821,27 +839,6 @@ function insert_global_comment( commentdoc, board_threadid){
     global_comments[board_threadid].push(commentdoc);
 }
 
-/*onSnapshot() と get()を分ける必要がないのでは疑惑
-function set_comments_listener(boardName, threadId , board_threadid ){
-    comment_listeners_global[board_threadid] = db.collection("boards").doc(boardName).collection("threads").doc(threadId).collection("comments")
-    .where('createDate', '<' , global_timestamps[board_threadid]).orderBy("createDate", "desc").onSnapshot(function(docs){
-        console.log("listener 動いてる");
-        var source = docs.metadata.hasPendingWrites ? "Local" : "Server";
-        console.log(source, " data: ", docs);
-        //timestamp
-        global_timestamps[board_threadid] = new firebase.firestore.Timestamp.now();
-        //それぞれに対してglobal代入処理
-        docs.forEach(function(commentdoc){    
-            //globalに入れる;
-            insert_global_comment(commentdoc.data(), board_threadid);
-            //コメントの中身を空にする必要はリスナではない
-            //document.getElementById("comment_card_messages").innerHTML = "";
-            //上記forEachないでglobal変数に入れているのでリスナではその最後尾に入っているものを指定すればよいはずである
-        });
-        insert_comment(board_threadid, global_comments[board_threadid].length - 1);
-    });
-}
-*/
 
 function send_comment(){
     var the_comment = document.getElementById("comment_card_input_input").value;
@@ -850,15 +847,77 @@ function send_comment(){
         commentText : the_comment,
         displayName: global_user.displayName
     }).then(function(){
-        //コメントの数を増やす記述をするかも
-
-        //リスナーの実装をうまく組めたらでいいかな
-
         //中身をとりあえず消す
         document.getElementById("comment_card_input_input").value = "";
         //作成したら今は再取得にするが、いつかリスナにしたほうがスタイリッシュだと思うなー
         clear_get_insert_listen_comment(global_now_board, global_now_thread, global_now_board + "_" + global_now_thread);
+        //コメントの数を増やす記述をするかも
+        db.collection("boards").doc(global_now_board).collection("threads").doc(global_now_thread).update({
+            commentCount: firebase.firestore.FieldValue.increment(1)
+        }).then(function(){
+            //console.log("カウント");
+        });
     }).catch(function(error){
         console.log("error", error);
     });
 }
+
+//この関数でボタンを押せるかどうか判別する条件としてタスクを一個以上完了し、残りタスクが０、今日はカウントしてないなどの条件が必要になる
+function can_user_count(){
+    //global_task と global_user_databaseを用いて、正負判定を行う
+    if(global_user_database == undefined){
+        //データベースが未定義、匿名ユーザで発生。（ログインしたら基本的にデータベースにデータを作る処理になっているので）
+        return false
+    }else{
+        //タスクの数についてカウントしましょうか
+        var task_remain = 0;
+        var task_finish = 0;
+        var task_total = 0;
+        for (let key in global_tasks) {
+            //console.log('key:' + key + ' value:' + global_tasks[key]);
+            task_total += 1;
+            if(global_tasks[key].finish == false){
+                task_remain += 1;
+            }else{
+                task_finish += 1;
+            }
+        }
+        if(task_total == 0){
+            //タスクがそもそもないので
+            return false
+        }else if(task_finish == 0){
+            //タスクが一つも完了していないので
+            return false
+        }else if(task_finish > 0 && task_remain == 0){
+            //タスクの数の条件に関してはオッケー
+            if(global_user_database.AlreadyPushed == false){
+                //まだクリックしてないのでカウントしてどうぞ
+                return true
+            }else{
+                //もう今日はクリックしたと思われるのでカウントできません
+                return false
+            }
+        }
+    }
+}
+
+//firestoreのユーザデータをとってきてglobal変数に入れるための記述
+function fire_userdata_get(uid){
+    db.collection("users").doc(uid).get().then(function(doc){
+        //データが未定義の時（初めての取得の時）
+        if(doc.data() == undefined){
+            var regist_doc = {   
+                AlreadyPushed:false
+            }
+            db.collection("users").doc(uid).set(regist_doc).then(function(){
+                global_user_database = regist_doc;
+            });
+        }else{
+            global_user_database = doc.data();
+
+        }
+    }).catch(function(error){
+        console.log("error", error);
+    });
+}
+

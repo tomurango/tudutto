@@ -12,7 +12,8 @@ service cloud.firestore {
     }
 
     match /counts/{countId} {
-      allow read, update: if request.auth.uid != null;
+      allow read: if true;
+      allow update: if request.auth.uid != null;
       allow create, delete: if false;
     }
 
@@ -22,9 +23,9 @@ service cloud.firestore {
       allow update, delete: if false;
 
       match /threads/{threadId} {
-        allow create: if request.auth.uid != null;
+        allow update, create: if request.auth.uid != null;
         allow read: if true;
-        allow update, delete: if false;
+        allow delete: if false;
 
         match /comments/{commentId} {
           allow create: if request.auth.uid != null;

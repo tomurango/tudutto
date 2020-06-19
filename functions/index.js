@@ -30,6 +30,16 @@ exports.scheduledtaskFunction = functions.pubsub.schedule('0 0 * * *').timeZone(
     }).catch(function(error){
         console.log("Error =>", error);
     });
+    //これは一日一回ボタンを押すことができるように書き換えるための記述
+    db.collection('users').where('AlreadyPushed', '==', true).get().then(function (querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+            doc.ref.update({
+                AlreadyPushed: false
+            });
+        });
+    }).catch(function(error){
+        console.log("Error =>", error);
+    });
     
    /*Parsing error: Can not use keyword 'await' outside an async function
     const querySnapshot = await db.collectionGroup('tasks').where('finish', '==', true).get();
@@ -81,7 +91,7 @@ function getDatethirty(date) {
     if(day<10){
         day = "0" + String(day);
     }else{
-        day = String(month);
+        day = String(day);
     }
     return String(year) + month + day;
 }
