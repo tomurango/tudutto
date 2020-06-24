@@ -5,7 +5,7 @@
         <!-- スマホ用アイコン -->
         <link rel="apple-touch-icon" sizes="180x180" href="images/rogo_20200602.jpg">
         <!-- ファビコン -->
-        <link rel="icon" href="images/favicon_rebetuku.ico">
+        <link rel="icon" href="images/favicon_second.ico">
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <!--すまほで表示を整える-->
         <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -25,10 +25,11 @@
             <div class="mdc-top-app-bar__row">
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
                 <button style="display: none" class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" aria-label="Open navigation menu">menu</button>
-                <span class="mdc-top-app-bar__title">Page title</span>
+                <!--<span class="mdc-top-app-bar__title">Page title</span>-->
+                <img id="header_logo" src="images/headerimg.png" style="width:auto; max-height: 64px; margin-left: 16px" onclick="reload()">
                 </section>
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
-                <button id="login_icon" style="display:none; background-color:#75a7ff; height:32px; width:32px; padding:0px; overflow: hidden; border:none; border-radius: 50%; right: 10px; position:relative;" onclick="login_card_display()"><img id="usericon" width="32" height="32"></button>
+                <button id="login_icon" style="display:none; background-color:#ffffff; height:32px; width:32px; padding:0px; overflow: hidden; border:none; border-radius: 50%; right: 10px; position:relative;" onclick="login_card_display()"><img id="usericon" width="32" height="32"></button>
                 <button id="login_button" class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="login" onclick="login_card_display()">account_circle</button>
                 <button style="display: none" class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Search">search</button>
                 <button style="display: none" class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Options">more_vert</button>
@@ -356,12 +357,33 @@
                 <span class="mdc-fab__icon material-icons">chat</span>
             </button>
         </div>
-        <div id="data_page" class="top_level_page" style="display: none; background-color: #eeeeee; flex-direction: column; padding-bottom: 16px; box-sizing: border-box;">
+        <div id="data_page" class="top_level_page" style="display: none; background-color: #eeeeee; padding-bottom: 16px; box-sizing: border-box;">
             <div id="chart_one" class="mdc-card log-chart">
-                <img src="images/sample_graph_1.png" style="height: auto; width: 100%">
+                <p style="position: absolute; margin: 0px; top: 32px; left: 32px;">カウント数</p>
+                <p style="position: absolute; color: #777777; font-size: 0.8em; margin: 0px; top: 52px; left: 32px;">目指せ100人</p>
+                <div id="count_chart_space" style="position: absolute; height: calc(100% - 128px); width: calc(100% - 64px); bottom: 48px;">
+                    <div id="threedaysago_count" style="height: 0%; width: 10%; position: absolute; bottom: 0px; left: 10%; border-radius: 4px 4px 0px 0px; background-color: #336600;z-index: 1;"></div>
+                    <div id="daybeforeyesterday_count" style="height: 0%; width: 10%; position: absolute; bottom: 0px; left: 30%; border-radius: 4px 4px 0px 0px; background-color: #336600;z-index: 1;"></div>
+                    <div id="yesterday_count" style="height: 0%; width: 10%; position: absolute; bottom: 0px; left: 50%; border-radius: 4px 4px 0px 0px; background-color: #336600;z-index: 1;"></div>
+                    <div id="today_count" style="height: 0%; width: 10%; position: absolute; bottom: 0px; left: 70%; border-radius: 4px 4px 0px 0px; background-color: #99cc00;z-index: 1;"></div>
+                    <p class="graph_text" style="bottom: -16px; left: 10%">３日前</p>
+                    <p class="graph_text" style="bottom: -16px; left: 30%">２日前</p>
+                    <p class="graph_text" style="bottom: -16px; left: 50%">１日前</p>
+                    <p class="graph_text" style="bottom: -16px; left: 70%">今日</p>
+                    <p class="graph_text" style="bottom: calc(100% - 6px); left: 90%">100人</p>
+                    <p class="graph_text" style="bottom: calc(75% - 6px); left: 90%">75人</p>
+                    <p class="graph_text" style="bottom: calc(50% - 6px); left: 90%">50人</p>
+                    <p class="graph_text" style="bottom: calc(25% - 6px); left: 90%">25人</p>
+                    <p class="graph_text" style="bottom: calc(0% - 6px); left: 90%">0人</p>
+                    <hr class="graph_holvar" style="bottom: calc(100% - 0px);">
+                    <hr class="graph_holvar" style="bottom: calc(75% - 0px);">
+                    <hr class="graph_holvar" style="bottom: calc(50% - 0px);">
+                    <hr class="graph_holvar" style="bottom: calc(25% - 0px);">
+                    <hr class="graph_holvar" style="bottom: calc(0% - 0px);">
+                </div>
             </div>
             <div id="chart_two" class="mdc-card log-chart">
-                <img src="images/sample_graph_2.png" style="height: auto; width: 100%">
+                開発予定地
             </div>
             <!--
             <button class="mdc-fab" aria-label="Favorite">
@@ -377,7 +399,7 @@
                         <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0">
                             <span class="mdc-tab__content">
                                 <span id="bab_icon_home" class="mdc-tab__icon material-icons bab_icon using" aria-hidden="true">view_list</span>
-                                <span id="bab_icon_home_text" class="footer_parts mdc-tab__text-label bab_icon using">リストー</span>
+                                <span id="bab_icon_home_text" class="footer_parts mdc-tab__text-label bab_icon using">リスト</span>
                             </span>
                             <span class="mdc-tab-indicator mdc-tab-indicator--active onfooter">
                                 <span
@@ -412,7 +434,7 @@
                         <button class="mdc-tab" role="tab" aria-selected="false" tabindex="0">
                             <span class="mdc-tab__content">
                                 <span id="bab_icon_wadai" class="mdc-tab__icon material-icons bab_icon" aria-hidden="true">poll</span>
-                                <span id="bab_icon_wadai_text" class="footer_parts mdc-tab__text-label bab_icon">デーータ</span>
+                                <span id="bab_icon_wadai_text" class="footer_parts mdc-tab__text-label bab_icon">データ</span>
                             </span>
                             <span class="mdc-tab__ripple" hidden></span>
                             <span class="mdc-tab-indicator onfooter">
@@ -457,7 +479,7 @@
     <!--<script src="/__/firebase/init.js"></script>-->
         
     <!--javascript 読み込み-->
-    <script src="main.js"></script>
-    <script src="realtime.js"></script>
-    
+    <script src="js/main.js"></script>
+    <script src="js/realtime.js"></script>
+    <script src="js/graph.js"></script>
 </html>

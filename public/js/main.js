@@ -31,6 +31,7 @@ tabBar.listen('MDCTabBar:activated',function(event){
         //document.getElementById("talk_page").style.display = "flex";
         //talk_page_check();
         document.getElementById("data_page").style.display = "flex";
+        data_page_check();
     }else if(index==3){
         //あとでデータのページを表示するための場所に切り替わるかな？
         console.log("data_page_?");
@@ -921,3 +922,11 @@ function fire_userdata_get(uid){
     });
 }
 
+function reload(){
+    location.reload();
+}
+
+function data_page_check(){
+    //とりあえずグラフを表示するのがやるべきやね
+    graph_check();
+};

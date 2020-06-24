@@ -15,8 +15,8 @@
     height: 50px;
 }.mdc-tab-indicator.onfooter{
     display: none !important;
-}.mdc-tab--active{
-    color: #2979ff !important;
+}.mdc-tab--active .mdc-tab__icon{
+    color: #336600 !important;
 }.mdc-tab__text-label{
     font-size: 0.5em
 }
@@ -32,8 +32,8 @@ html{
     background-color: #eeeeee;
     overflow: hidden;
 }:root{
-    --mdc-theme-primary: #2979ff;
-    --mdc-theme-secondary: #ffab40;
+    --mdc-theme-primary: #99cc00;
+    --mdc-theme-secondary: #ffcc66;
     --mdc-theme-on-primary: #000000;
 }
 
@@ -45,10 +45,14 @@ html{
 @media screen and (min-width:600px){
     .top_level_page{
         height: calc(100% - 114px);
+    }#header_logo{
+        height: 64px;
     }
 }@media screen and (max-width:599px){
     .top_level_page{
         height: calc(100% - 106px);
+    }#header_logo{
+        height: 56px;
     }
 }.top_level_page{
     width: 100%;
@@ -97,11 +101,25 @@ html{
 .log-chart{
     padding: 24px;
     box-sizing: border-box;
-    width: calc(100% - 32px);
     height: fit-content;
     padding: 16px ;
     position: relative;
-    margin: 16px 16px 0px 16px;
+}@media screen and (min-width:376px){
+    /*スマホ以外の時*/
+    .log-chart{
+        width: calc(50% - 24px);
+        margin: 16px 0px 0px 16px;
+    }#data_page{
+        flex-direction: row;
+    }
+}@media screen and (max-width:375px){
+    /*スマホの時*/
+    .log-chart{
+        width: calc(100% - 32px);
+        margin: 16px 16px 0px 16px;
+    }#data_page{
+        flex-direction: column;
+    }
 }
 
 #google_div{
@@ -144,27 +162,27 @@ html{
 @keyframes hurueru {
     0% {
         transform: translate(0px, 0px) rotateZ(0deg);
-        color: #ffab40;
+        color: #003300;
     }
     0.625% {
         transform: translate(4px, 4px) rotateZ(1deg);
-        color: #ffab40;
+        color: #003300;
     }
     1.25% {
         transform: translate(0px, 4px) rotateZ(0deg);
-        color: #ffab40;
+        color: #003300;
     }
     1.875% {
         transform: translate(4px, 0px) rotateZ(-1deg);
-        color: #ffab40;
+        color: #003300;
     }
     2.5% {
         transform: translate(0px, 0px) rotateZ(0deg);
-        color: #ffab40;
+        color: #003300;
     }
     100% {
         transform: translate(0px, 0px) rotateZ(0deg);
-        color: #ffffff;
+        color: #669900;
     }
 }
 
@@ -203,4 +221,28 @@ html{
     display: block;
     content: " ";
     margin-top: 100%;
+}
+
+
+#chart_one::before {
+    display: block;
+    content: " ";
+    margin-top: 100%;
+}
+.graph_text{
+    position: absolute;
+    font-size: 0.5em;
+    color: #777777;
+    margin: 0px;
+    white-space: nowrap;
+}
+.graph_holvar{
+    position: absolute;
+    width: 77%;
+    left: 10%;
+    margin: 0px;
+    height: 1px;
+    background-color: #eeeeee;
+    border: none;
+    color: #eeeeee;
 }
