@@ -54,21 +54,31 @@
             <!--戻るボタン-->
             <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" style="position: absolute; top: 0px;left: 0px" onclick="fab_task_back()">clear</button>
             
-            <p style="font-size: 0.8em; color: #111111; margin-top: 20%; margin-left: 10%; text-align: left;">続けたいこと</p>
+            <p style="font-size: 0.8em; color: #111111; margin-top: 20%; margin-left: 10%; text-align: left;">続けること</p>
             <input id="task_text_input" style="width: 80%;
-                font-size: 18px;
-                border: solid 1px;
-                border-radius: 5px;
-                box-sizing: border-box;
-                padding: 10px;" placeholder="例）腕立て1回する"
+                font-size: 20px; border: none" placeholder="例）腕立て1回する"
             >
             <p style="font-size: 0.8em; color: #111111; margin-left: 10%; text-align: left;">メモ</p>
-            <textarea id="task_memo_area" style="width: 80%; height: 20%; border: solid 1px; border-radius: 5px;box-sizing: border-box; padding: 10px; font-size: 18px;" placeholder="例）気分が乗ってきたら腕立て10回する。筋肉ムキムキを目指して。"></textarea>
+            <textarea id="task_memo_area" style="width: 80%; height: 20%; border: none; font-size: 18px;" placeholder="例）気分が乗ってきたら腕立て10回する。筋肉ムキムキを目指して。"></textarea>
             <br>
             <button id="task_create_button" class="mdc-button mdc-button--outlined" style="position: absolute; left: 10%; margin-top: 20px;" disabled onclick="task_create()">
                 <div class="mdc-button__ripple"></div>
                 <span class="mdc-button__label">作成</span>
             </button>
+        </div>
+        <!--task を編集するカード 作るやつに似てるかな-->
+        <div id="task_edit_div" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; text-align: center ;z-index: 5;top: 0px;background-color: #ffffff;">
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" style="position: absolute; top: 0px;left: 0px" onclick="task_onclick_back()">clear</button>
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" style="position: absolute; top: 0px;right: 0px" onclick="">delete</button>
+            
+
+            <p style="font-size: 0.8em; color: #111111; margin-top: 20%; margin-left: 10%; text-align: left;">続けること</p>
+            <input id="task_textedit_input" style="width: 80%;
+                font-size: 20px; border: none" placeholder="タスクを入力"
+            >
+            <p style="font-size: 0.8em; color: #111111; margin-left: 10%; text-align: left;">メモ</p>
+            <textarea id="task_memoedit_area" style="width: 80%; height: 20%; border: none; font-size: 18px;" placeholder="メモを追加"></textarea>
+            <br>
         </div>
         <!--talk を作るカード-->
         <div id="talk_card_div" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; text-align: center;z-index: 5;top: 0px;background-color: #ffffff;">
@@ -482,4 +492,5 @@
     <script src="js/main.js"></script>
     <script src="js/realtime.js"></script>
     <script src="js/graph.js"></script>
+    <script src="js/task.js"></script>
 </html>

@@ -246,12 +246,13 @@ function insert_task(task_data, task_id){
     //console.log("task =>", task_data);
     if(task_data.finish){
         //check
-        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p>' + task_data.text + '</p></div></div>';
+        //buttonを押したときに詳細のダイアログを開かないようにするために、window.event.cancelBubble = true;をボタンのonclickに指定しましたよー
+        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p>' + task_data.text + '</p></div></div>';
         var tasks_container = document.getElementById("to_do_items_finished");
         tasks_container.insertAdjacentHTML("afterbegin", task_div);
     }else{
         //radio_button_unchecked
-        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="task_check(this)">radio_button_unchecked</button></div><div style="width: calc(100% - 54px)"><p>' + task_data.text + '</p></div></div>';
+        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check(this)">radio_button_unchecked</button></div><div style="width: calc(100% - 54px)"><p>' + task_data.text + '</p></div></div>';
         var tasks_container = document.getElementById("to_do_items");
         tasks_container.insertAdjacentHTML("afterbegin", task_div);
         //タスク残ってますよー
