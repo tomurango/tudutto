@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html style="height: 100%; width: 100%">
     <head>
-        <title>つづっと</title>
+        <title>つづッと</title>
         <!-- スマホ用アイコン -->
-        <link rel="apple-touch-icon" sizes="180x180" href="images/rogo_20200602.jpg">
+        <link rel="apple-touch-icon" sizes="180x180" href="images/rogo20200808.jpg">
         <!-- ファビコン -->
-        <link rel="icon" href="images/favicon_second.ico">
+        <link rel="icon" href="images/favicon_force.ico">
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <!--すまほで表示を整える-->
         <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -27,10 +27,10 @@
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
                 <button style="display: none" class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" aria-label="Open navigation menu">menu</button>
                 <!--<span class="mdc-top-app-bar__title">Page title</span>-->
-                <img id="header_logo" src="images/headerimg.png" style="width:auto; max-height: 64px; margin-left: 16px" onclick="reload()">
+                <img id="header_logo" src="images/logo_row.png" style="width:auto; max-height: 64px; margin-left: 16px" onclick="reload()">
                 </section>
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
-                <button id="login_icon" style="display:none; background-color:#ffffff; height:32px; width:32px; padding:0px; overflow: hidden; border:none; border-radius: 50%; right: 10px; position:relative;" onclick="login_card_display()"><img id="usericon" width="32" height="32"></button>
+                <button id="login_icon" style="display:none; background-color:#ffffff; height:32px; width:32px; padding:0px; overflow: hidden; border:none; border-radius: 50%; right: 10px; position:relative;" onclick="login_card_display()"><img id="usericon" width="32" height="32" alt="Your Icon" onerror="this.src='/images/nanikaerror.jpg' "/></button>
                 <button id="login_button" class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="login" onclick="login_card_display()">account_circle</button>
                 <button style="display: none" class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Search">search</button>
                 <button style="display: none" class="material-icons mdc-top-app-bar__action-item mdc-icon-button" aria-label="Options">more_vert</button>

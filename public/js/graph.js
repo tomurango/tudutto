@@ -50,7 +50,7 @@ function insert_to_graph(a_day){
         var day_count = 0;
         //数値が小さい順に動いてるみたい
         for (let key in global_count_statics) {
-            //console.log('key:' + key + ' value:' + global_count_statics[key].count);
+            //('key:' + key + ' value:' + global_count_statics[key].count);
             if(day_count == 3){
                 var dom_id = "today_count"; 
             }else if(day_count == 2){

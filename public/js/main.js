@@ -34,7 +34,7 @@ tabBar.listen('MDCTabBar:activated',function(event){
         data_page_check();
     }else if(index==3){
         //あとでデータのページを表示するための場所に切り替わるかな？
-        console.log("data_page_?");
+        //console.log("data_page_?");
     }
 });
 
@@ -50,7 +50,7 @@ function login_card_display_back(){
 //google
 function google_click(){
     //ログインの動き
-    console.log("google ログインします");
+    //console.log("google ログインします");
     //セッションの永続性を指定から、ログインしてる感じ
     firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function() {
         var provider = new firebase.auth.GoogleAuthProvider();
@@ -80,7 +80,7 @@ function google_click(){
 //ログアウト
 function log_out(){
     firebase.auth().signOut().then(()=>{
-        console.log("ログアウトしました");
+        //console.log("ログアウトしました");
         //ログアウトしよーぜ
         //リダイレクトしてんね
         location.reload();
@@ -94,7 +94,7 @@ $(document).ready(function(){
     //chart js のグラフが表示されない問題の解決のための検証
     //document.getElementById("chart_contain").textContent = window.devicePixelRatio;
     firebase.auth().getRedirectResult().then(function(result) {
-        console.log(result);
+        //console.log(result);
         if (result.credential) {
         // This gives you a Google Access Token. You can use it to access the Google API.
         var token = result.credential.accessToken;
@@ -164,7 +164,7 @@ function fab_task_back(){
 function list_page_check(user){
     if (user) {
         // User is signed in.
-        console.log("user => ", user);
+        //console.log("user => ", user);
         //ログインしてたらボタンの表示を差し替える
         document.getElementById("usericon").src = user.photoURL;
         document.getElementById("login_icon").style.display = "flex";
@@ -247,12 +247,12 @@ function insert_task(task_data, task_id){
     if(task_data.finish){
         //check
         //buttonを押したときに詳細のダイアログを開かないようにするために、window.event.cancelBubble = true;をボタンのonclickに指定しましたよー
-        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:10px 10% 0px 0px">' + task_data.text + '</p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666">' + task_data.memo + '</p></div></div>';
+        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px">' + task_data.text + '</p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666">' + task_data.memo + '</p></div></div>';
         var tasks_container = document.getElementById("to_do_items_finished");
         tasks_container.insertAdjacentHTML("afterbegin", task_div);
     }else{
         //radio_button_unchecked
-        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check(this)">radio_button_unchecked</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:10px 10% 0px 0px">' + task_data.text + '</p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666">' + task_data.memo + '</p></div></div>';
+        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check(this)">radio_button_unchecked</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px">' + task_data.text + '</p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666">' + task_data.memo + '</p></div></div>';
         var tasks_container = document.getElementById("to_do_items");
         tasks_container.insertAdjacentHTML("afterbegin", task_div);
         //タスク残ってますよー
@@ -495,10 +495,18 @@ function count_page_check(){
     //user がログインしてたらボタンを表示する
     if(global_user == null){
         //console.log("null なのでボタンを使えません");
+        //ボタン消す
+        document.getElementById("count_page_fab").style.display = "none";
+        document.getElementById("count_page_fab").disabled = true;
     }else{
         if(can_user_count()){
+            //ボタン出す
             document.getElementById("count_page_fab").style.display = "flex";
             document.getElementById("count_page_fab").disabled = false;
+        }else{
+            //ボタン消す
+            document.getElementById("count_page_fab").style.display = "none";
+            document.getElementById("count_page_fab").disabled = true;
         }
     }
     //今の処理だとタブ切り替えで毎回やってるから、見直しが必要かもしれない

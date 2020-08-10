@@ -71,5 +71,7 @@ function task_delete(){
     //中身を空にする
     document.getElementById("task_textedit_input").value = "";
     document.getElementById("task_memoedit_area").value = "";
+    //完了タスク表示欄を表示するか否かを決める関数
+    finish_task_check();
 }
 

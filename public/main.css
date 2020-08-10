@@ -32,13 +32,15 @@ html{
     background-color: #eeeeee;
     overflow: hidden;
 }:root{
-    --mdc-theme-primary: #99cc00;
-    --mdc-theme-secondary: #ffcc66;
+    --mdc-theme-primary: #99cc33;
+    --mdc-theme-secondary: #993366;
     --mdc-theme-on-primary: #000000;
 }
 
 #top_header{
+    background-color: #ffffff;
     position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.26);
 }
 
 
