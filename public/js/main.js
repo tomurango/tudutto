@@ -108,10 +108,29 @@ $(document).ready(function(){
         if(global_user != null){
             //ログインしてる場合のみ行う。匿名ユーザである場合は問題が発生しそうではある
             //firestoreのユーザデータを取得
+            //非ログイン後のログイン入力でこっちは機能するけど、永続性が効いてないと判断し、下を仮設
             fire_userdata_get(global_user.uid);
+            //list page の表示を切り替える関数
+            list_page_check(result.user);
+        }else{
+            //ログインしてないときはこっちの処理でログインしてるかどうかを試みる
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    // User is signed in.
+                    //console.log("user", user);
+                    //イケるっぽいから書き足しちゃうね＾～
+                    global_user = user;
+                    fire_userdata_get(global_user.uid);
+                    //list page の表示を切り替える関数
+                    list_page_check(user);
+                } else {
+                    // No user is signed in.
+                    //こうなったら特に操作は発生しない感じかなと思ってたけど共通部分を持ってきました
+                    //list page の表示を切り替える関数
+                    list_page_check(result.user);
+                }
+              });
         }
-        //list page の表示を切り替える関数
-        list_page_check(result.user);
     }).catch(function(error) {
         // Handle Errors here.
         var errorCode = error.code;

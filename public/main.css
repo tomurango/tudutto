@@ -24,6 +24,8 @@
 html{
     height: 100%;
     width: 100%;
+    /*safari ios のバウンス？を止めるための施し*/
+    overflow: hidden;
 }body{
     height: 100%;
     width: 100%;
