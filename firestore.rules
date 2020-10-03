@@ -2,6 +2,30 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    //stripe extensionの指示により張り付け後にdeploy
+    match /customers/{uid} {
+      allow read: if request.auth.uid == uid;
+
+      match /checkout_sessions/{id} {
+        allow read, write: if request.auth.uid == uid;
+      }
+      match /subscriptions/{id} {
+        allow read: if request.auth.uid == uid;
+      }
+    }
+
+    match /products/{id} {
+      allow read: if true;
+
+      match /prices/{id} {
+        allow read: if true;
+      }
+    }
+
+
+
+    
+
     match /users/{userId} {
       allow read, update, delete: if request.auth.uid == userId;
       allow create: if request.auth.uid != null;
@@ -9,6 +33,18 @@ service cloud.firestore {
       match /tasks/{taskId} {
         allow read, write: if request.auth.uid == userId;
       }
+
+      match /diaries/{diaryId} {
+        allow write: if request.auth.uid == userId;
+        allow read: if true;
+        
+        match /comments/{commentId} {
+          allow read: if true;
+          allow write: if request.auth.uid != null;
+        }
+
+      }
+
     }
 
     match /counts/{countId} {
@@ -17,28 +53,12 @@ service cloud.firestore {
       allow create, delete: if false;
     }
 
-    match /boards/{boardId} {
-      allow create: if request.auth.uid != null;
-      allow read: if true;
-      allow update, delete: if false;
-
-      match /threads/{threadId} {
-        allow update, create: if request.auth.uid != null;
-        allow read: if true;
-        allow delete: if false;
-
-        match /comments/{commentId} {
-          allow create: if request.auth.uid != null;
-          allow read: if true;
-          allow update, delete: if false;
-        }
-      }
-    }
-
-    //collectionGroupで使用するために使いまっす。
-    match /{path=**}/threads/{threadId} {
+    //diaryのcollection groupで使うよ
+    match /{path=**}/diaries/{diaryId} {
       allow read: if request.auth.uid != null;
     }
+
+    //boardに関する記述は20200815を持って削除されました
 
   }
 }

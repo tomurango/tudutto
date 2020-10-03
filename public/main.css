@@ -32,7 +32,9 @@ html{
     margin: 0px;
     font-family: 'Noto Sans JP', sans-serif;
     background-color: #eeeeee;
-    overflow: hidden;
+    /*overflow: hidden; safari ios バウンス対策でauto にするが、そもそもhidden にしていた深い理由が不明なため要注意*/
+    /*変えたあと試したけど、結局変化ないんすけどだいじょぶっすかねぇ*/
+    overflow: auto;
 }:root{
     --mdc-theme-primary: #99cc33;
     --mdc-theme-secondary: #993366;
@@ -108,7 +110,7 @@ html{
     height: fit-content;
     padding: 16px ;
     position: relative;
-}@media screen and (min-width:376px){
+}@media screen and (min-width:600px){
     /*スマホ以外の時*/
     .log-chart{
         width: calc(50% - 24px);
@@ -116,11 +118,11 @@ html{
     }#data_page{
         flex-direction: row;
     }
-}@media screen and (max-width:375px){
+}@media screen and (max-width:599px){
     /*スマホの時*/
     .log-chart{
-        width: calc(100% - 32px);
-        margin: 16px 16px 0px 16px;
+        width: calc(100% - 16px);
+        margin: 8px 8px 0px 8px;
     }#data_page{
         flex-direction: column;
     }
@@ -213,7 +215,7 @@ html{
 
 
 #noresult_image{
-    background-image: url("images/sureddonaitoki_new.jpg");
+    background-image: url("images/sureddonaitoki_murasaki.jpg");
 }#noresult_image::before {
     display: block;
     content: " ";
@@ -249,4 +251,200 @@ html{
     background-color: #eeeeee;
     border: none;
     color: #eeeeee;
+}
+
+
+
+@media screen and (min-width:600px){
+    /*スマホ以外の時*/
+    .diary-card{
+        width: calc(50% - 24px);
+        margin: 16px 0px 0px 16px;
+    }#thread_container{
+        flex-direction: row;
+    }
+}@media screen and (max-width:599px){
+    /*スマホの時*/
+    .diary-card{
+        width: calc(100% - 16px);
+        margin: 8px 8px 0px 8px;
+    }#thread_container{
+        flex-direction: column;
+    }
+}
+.diary-card{
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: fit-content;
+}.header_erea{
+    height: 48px;
+    width: 100%;
+    position: relative;
+}.who_icon{
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    position: absolute;
+    top: 8px;
+    left: 8px;
+}.whos_diary{
+    margin: 0px;
+    position: absolute;
+    top: 8px;
+    left: 48px;
+    font-size: 16px;
+    font-weight: 600;
+}.what_time{
+    margin: 0px;
+    position: absolute;
+    top: 28px;
+    left: 48px;
+    font-size: 10px;
+    color: #777777;
+}.content_erea{
+    width: 100%;
+    position: relative;
+    text-align: left;
+    /*padding: 0px 8px 8px 48px;*/
+}.content_diary{
+    font-size: 16px;
+    margin: 0px 8px 8px 48px;
+}
+
+
+
+/*diaryのdetailでコンテンツを表示するときの縦横比の調整*/
+#diary_mimic_wrapper {
+    position: relative;
+    width: 100%;
+    max-height: 50%;
+}
+#diary_mimic_wrapper:before {
+    content:"";
+    display: block;
+    padding-top: 62%; /* 高さを幅の75%に固定 */
+}
+#diary_content_mimic {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    white-space: pre-line;
+}
+
+/*diaryのcomment入力のところらへん*/
+/*#diary_comment_input{
+    display: flex;
+    justify-content: start;
+}#diary_comeinput_icon{
+    margin: auto 12px auto 12px;
+}#diary_comeinput_text{
+    border: none; font-size: 18px; width: calc(100% - 98px);
+}#diary_comeinput_send{
+    color: #777777;
+}*/
+/*改定版（経験値.comのワダイへのコメントから持ってきたもの）*/
+#diary_comment_input{
+    position: relative;
+    left: 0px;
+    height: 56px;
+    width: 100%;
+    background-color: #ffffff;
+}#diary_comeinput_icon{
+    position: absolute;
+    border-radius: 50%;
+    object-fit: cover;
+    left: 12px;
+    top: 12px;
+}#diary_comeinput_text{
+    /*これは匿名の時に表示するテキストのcssだわ
+    position: absolute;
+    font-size: 16px;
+    margin: 0px;
+    color: #595959;
+    width: calc(100% - 156px);
+    border: none;
+    left: 72px;
+    top: 20px;
+    height: 26px;
+    */
+    position: absolute;
+    font-size: 18px;
+    width: calc(100% - 104px);
+    border: none;
+    left: 56px;
+    top: 16px;
+    height: 26px;
+    padding: 0px;
+}#diary_comeinput_send{
+    position: absolute;
+    right: 0px;
+    bottom: 4px;
+    color: #777777;
+}
+#norecomment_image{
+    background-image: url("images/nocommentbook.png");
+}#norecomment_image::before {
+    display: block;
+    content: " ";
+    margin-top: 100%;
+}#diary_comment_thread_commentarea{
+    flex-direction: column;
+}
+
+#diary_comment_thread_commentarea{
+    flex-direction: column;
+}.diary_card_comment{
+    width: calc(100% - 16px);
+    margin: 8px 8px 0px 8px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: fit-content;
+}.header_erea_comment{
+    height: 48px;
+    width: 100%;
+    position: relative;
+}.who_icon_comment{
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    position: absolute;
+    top: 8px;
+    left: 8px;
+}.whos_diary_comment{
+    margin: 0px;
+    position: absolute;
+    top: 8px;
+    left: 48px;
+    font-size: 16px;
+    font-weight: 600;
+}.what_time_comment{
+    margin: 0px;
+    position: absolute;
+    top: 28px;
+    left: 48px;
+    font-size: 10px;
+    color: #777777;
+}.content_erea_comment{
+    width: 100%;
+    position: relative;
+    text-align: left;
+    /*padding: 0px 8px 8px 48px;*/
+}.content_diary_comment{
+    font-size: 16px;
+    margin: 0px 8px 8px 48px;
+}
+
+#div_for_subscription{
+    display: none;
+    width: 100%;
+    height: ;
 }

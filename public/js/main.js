@@ -28,13 +28,16 @@ tabBar.listen('MDCTabBar:activated',function(event){
         document.getElementById("count_page").style.display = "flex";
         count_page_check();
     }else if(index==2){
-        //document.getElementById("talk_page").style.display = "flex";
-        //talk_page_check();
-        document.getElementById("data_page").style.display = "flex";
-        data_page_check();
+        //20200815 復活
+        document.getElementById("talk_page").style.display = "flex";
+        talk_page_check();
     }else if(index==3){
         //あとでデータのページを表示するための場所に切り替わるかな？
         //console.log("data_page_?");
+        //切り替わりましたよ
+        document.getElementById("data_page").style.display = "flex";
+        data_page_check();
+
     }
 });
 
@@ -186,6 +189,8 @@ function list_page_check(user){
         //console.log("user => ", user);
         //ログインしてたらボタンの表示を差し替える
         document.getElementById("usericon").src = user.photoURL;
+        //コメント投稿のページの分も挿入しておく
+        document.getElementById("diary_comeinput_icon").src = user.photoURL;
         document.getElementById("login_icon").style.display = "flex";
         document.getElementById("login_button").style.display = "none";
         //fab を表示する
@@ -266,14 +271,44 @@ function insert_task(task_data, task_id){
     if(task_data.finish){
         //check
         //buttonを押したときに詳細のダイアログを開かないようにするために、window.event.cancelBubble = true;をボタンのonclickに指定しましたよー
-        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px">' + task_data.text + '</p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666">' + task_data.memo + '</p></div></div>';
+        /*var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px">' + task_data.text + '</p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666">' + task_data.memo + '</p></div></div>';
         var tasks_container = document.getElementById("to_do_items_finished");
-        tasks_container.insertAdjacentHTML("afterbegin", task_div);
+        tasks_container.insertAdjacentHTML("afterbegin", task_div);*/
+
+        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px"></p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666"></p></div></div>';
+        var tasks_container = document.getElementById("to_do_items_finished");
+        var todo_promise = new Promise(function(resolve, reject){
+            tasks_container.insertAdjacentHTML("afterbegin", task_div);
+            resolve();
+        });
+        var queryid = "#" + task_id; 
+        todo_promise.then(function(){
+            //ここでtextContentいれる
+            $(queryid).find(".todo_first").text(task_data.text);
+            $(queryid).find(".todo_second").text(task_data.memo);
+        });
+
     }else{
         //radio_button_unchecked
+        /*
         var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check(this)">radio_button_unchecked</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px">' + task_data.text + '</p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666">' + task_data.memo + '</p></div></div>';
         var tasks_container = document.getElementById("to_do_items");
         tasks_container.insertAdjacentHTML("afterbegin", task_div);
+        */
+        
+        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check(this)">radio_button_unchecked</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px"></p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666"></p></div></div>';
+        var tasks_container = document.getElementById("to_do_items");
+        var todo_promise = new Promise(function(resolve, reject){
+            tasks_container.insertAdjacentHTML("afterbegin", task_div);
+            resolve();
+        });
+        var queryid = "#" + task_id; 
+        todo_promise.then(function(){
+            //ここでtextContentいれる
+            $(queryid).find(".todo_first").text(task_data.text);
+            $(queryid).find(".todo_second").text(task_data.memo);
+        });
+
         //タスク残ってますよー
         document.getElementById("list_page_placeholder").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "none";
@@ -405,6 +440,11 @@ function finish_task_check(){
             //もうタスクはない
             document.getElementById("to_do_items").style.display = "none";
             document.getElementById("task_complate").style.display = "block";
+            //ということはこれかつその日スタンプを押したかどうかを診断する
+            if(global_user_database.AlreadyPushed == false){
+                //まだ押してないので画面遷移する
+                tabBar.activateTab(1);
+            }
         }
         document.getElementById("list_page_placeholder").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "none";
@@ -549,7 +589,7 @@ function count_page_check(){
     });
 }
 
-
+//fab diary 作ったよーこれたぶん使わない
 function fab_talk(){
     //表示を出す
     document.getElementById("talk_card_div").style.display = "block";
@@ -589,6 +629,7 @@ function fab_talk(){
     });
 }
 
+//fab diary back 作ったんで使用することはおそらくない20200815
 function fab_talk_back(){
     //表示を出す
     document.getElementById("talk_card_div").style.display = "none";
@@ -617,9 +658,12 @@ function talk_page_check(){
     }
     //取得のタイムスタンプの流れとかあった気がする→重複取得に関して制限を考える感じで
     //それに関する対応を考えてから実装しようか
-    get_threads();
+    //get_threads();
+    //get threads 関数の再利用はちょっと挙動怖いんで、get diary 作る
+    get_diary();
 }
 
+//これもdiaryの置換によりあまり使用しないことになるであろう
 function talk_create(){
     //作成内容を取得
     var talk_board_pre = document.getElementById("talk_board_input").value;
@@ -678,6 +722,7 @@ function talk_create(){
     });
 }
 
+//ここもdirayに置き換えだねー
 function insert_thread(thread_doc_data, thread_id){
     //console.log("insert_thread", thread_doc_data);
     //global_threadsに代入
@@ -704,6 +749,7 @@ function date_nor_display(fire_date){
 
 var threads_get_flag = true;
 //とってきて挿入までするよ
+//おそらく以後は未使用になるけどdiaryのほうの関数とかの処理が上手く動いてから削除かな～？
 function get_threads(){
     if(threads_get_flag){
         //とる
@@ -721,7 +767,7 @@ function get_threads(){
                 document.getElementById("talk_page_placeholder").style.display = "none";
                 document.getElementById("thread_container").style.display = "block";
             }
-        })
+        });
     }else{
         //とらない
         return
@@ -935,6 +981,8 @@ function fire_userdata_get(uid){
     db.collection("users").doc(uid).get().then(function(doc){
         //データが未定義の時（初めての取得の時）
         if(doc.data() == undefined){
+            //利用規約を表示する
+            use_terms_dialog.open();
             var regist_doc = {   
                 AlreadyPushed:false
             }
@@ -948,6 +996,9 @@ function fire_userdata_get(uid){
     }).catch(function(error){
         console.log("error", error);
     });
+    //ログインしているのでchart-2を表示する（subscrtionのためのカード）
+    document.getElementById("chart_two").style.display = "flex";
+    getCustomClaimRole();
 }
 
 function reload(){
@@ -958,3 +1009,11 @@ function data_page_check(){
     //とりあえずグラフを表示するのがやるべきやね
     graph_check();
 };
+
+/// グローバル定数を定義する
+function define(name, value){
+    Object.defineProperty(window, name, { 
+        get: function(){return value;},
+        set: function(){throw(name+' is already defined !!');},
+    });
+}

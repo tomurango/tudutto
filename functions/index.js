@@ -95,3 +95,18 @@ function getDatethirty(date) {
     }
     return String(year) + month + day;
 }
+
+//3日前の日記を削除する挙動
+exports.deletenormaldiaryFunction = functions.pubsub.schedule('23 0 * * *').timeZone('Asia/Tokyo').onRun((context) => {
+    var controll_date = new Date();
+    controll_date.setDate(controll_date.getDate() - 3);
+    var three_days_ago = admin.firestore.Timestamp.fromDate(controll_date);
+    //消す動き
+    db.collectionGroup('diaries').where('userPlan', '==', 'normal').where('createdAt', '<', three_days_ago).delete()
+    .then(function (querySnapshot) {
+        console.log(querySnapshot);
+    }).catch(function(error){
+        console.log("Error =>", error);
+    });
+    return null;
+});
