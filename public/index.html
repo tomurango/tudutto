@@ -3,9 +3,9 @@
     <head>
         <title>つづッと</title>
         <!-- スマホ用アイコン -->
-        <link rel="apple-touch-icon" sizes="180x180" href="images/rogo_welcomeman_new.jpg">
+        <link rel="apple-touch-icon" sizes="180x180" href="images/rogoann_game.jpg">
         <!-- ファビコン -->
-        <link rel="icon" href="images/favicon_welcomeman_new.ico">
+        <link rel="icon" href="images/faviconbold.ico">
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <!--すまほで表示を整える-->
         <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -14,7 +14,7 @@
         <meta property="og:url" content="https://tudutto.com/">
         <meta property="og:title" content="つづッと">
         <meta property="og:description" content="継続のためのアプリ「つづッと」">
-        <meta property="og:image" content="images/rogo_welcomeman_new.jpg">
+        <meta property="og:image" content="images/rogoann_game.jpg">
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:site" content="@tomra_manabu">
         <!--material cdn-->
@@ -34,7 +34,7 @@
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
                 <button style="display: none" class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" aria-label="Open navigation menu">menu</button>
                 <!--<span class="mdc-top-app-bar__title">Page title</span>-->
-                <img id="header_logo" src="images/logo_row.png" style="width:auto; max-height: 64px; margin-left: 16px" onclick="reload()">
+                <img id="header_logo" src="images/logo_row.png" style="width:auto; max-height: 36px; margin-left: 16px" onclick="reload()">
                 </section>
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
                 <button id="login_icon" style="display:none; background-color:#ffffff; height:32px; width:32px; padding:0px; overflow: hidden; border:none; border-radius: 50%; right: 10px; position:relative;" onclick="login_card_display()"><img id="usericon" width="32" height="32" alt="Your Icon" onerror="this.src='/images/nanikaerror.jpg' "/></button>
@@ -257,6 +257,13 @@
                     <p class="text_down">すべてのタスクを完了しました。</p>
                 </div>
             </div>
+            <div id="create_task" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center;">
+                <div id="create_task_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
+                <div>
+                    <p class="text_up">タスクを作りましょう。</p>
+                    <p class="text_down">毎日続けるタスクを作りましょう！</p>
+                </div>
+            </div>
             <div id="to_do_items" style="width: 100%; display: none;">
                 <!--<div style="width: 100%; display: flex">
                     <div style="padding: 8px; width: 64px; box-sizing: border-box;">
@@ -308,7 +315,7 @@
                     <p class="text_down">その日のカウントが<br>表示されます。</p>
                 </div>
             </div>
-            <button id="count_page_fab" class="mdc-fab" aria-label="add count" style="display: none" disabled onclick="fab_count()">
+            <button id="count_page_fab" class="mdc-fab" aria-label="add count" style="display: none; background-color: #ffbfa2; color: #001a33;" disabled onclick="fab_count()">
                 <div class="mdc-fab__ripple"></div>
                 <span class="mdc-fab__icon material-icons">exposure_plus_1</span>
             </button>
@@ -338,7 +345,7 @@
             <div id="thread_container" style="display: none; width: 100%; height: fit-content; background-color: #eeeeee; flex-wrap: wrap; min-height: 100%; padding-bottom: 100%; box-sizing: border-box;" >
                 <!--<div id="" class="mdc-card diary-card" onclick="detail_of_diary(this)">
                     <div class="header_erea">
-                        <img class="who_icon" src="images/sureddonaitoki_murasaki.jpg">
+                        <img class="who_icon" src="images/sureddonaitoki.jpg">
                         <p class="whos_diary"></p>
                         <p class="what_time"></p>
                     </div>
@@ -431,20 +438,20 @@
                     <p class="text_down">取得した日記が<br>表示されます。</p>
                 </div>
             </div>
-            <button id="talk_page_fab" class="mdc-fab" aria-label="create thread" style="display: none; background-color: #99cc33" onclick="fab_diary()">
+            <button id="talk_page_fab" class="mdc-fab" aria-label="create thread" style="display: none; background-color: #3c6b8a; color: #fff2d3;" onclick="fab_diary()">
                 <div class="mdc-fab__ripple"></div>
                 <span class="mdc-fab__icon material-icons">chat</span>
             </button>
         </div>
-        <div id="data_page" class="top_level_page" style="display: none; background-color: #eeeeee; padding-bottom: 16px; box-sizing: border-box;">
+        <div id="data_page" class="top_level_page" style="display: none; background-color: #ffffff; padding-bottom: 16px; box-sizing: border-box;">
             <div id="chart_one" class="mdc-card log-chart">
                 <p style="position: absolute; margin: 0px; top: 32px; left: 32px;">カウント数</p>
                 <p style="position: absolute; color: #777777; font-size: 0.8em; margin: 0px; top: 52px; left: 32px;">目指せ100人</p>
                 <div id="count_chart_space" style="position: absolute; height: calc(100% - 128px); width: calc(100% - 64px); bottom: 48px;">
-                    <div id="threedaysago_count" style="height: 0%; width: 10%; position: absolute; bottom: 0px; left: 10%; border-radius: 4px 4px 0px 0px; background-color: #336600;z-index: 1;"></div>
-                    <div id="daybeforeyesterday_count" style="height: 0%; width: 10%; position: absolute; bottom: 0px; left: 30%; border-radius: 4px 4px 0px 0px; background-color: #336600;z-index: 1;"></div>
-                    <div id="yesterday_count" style="height: 0%; width: 10%; position: absolute; bottom: 0px; left: 50%; border-radius: 4px 4px 0px 0px; background-color: #336600;z-index: 1;"></div>
-                    <div id="today_count" style="height: 0%; width: 10%; position: absolute; bottom: 0px; left: 70%; border-radius: 4px 4px 0px 0px; background-color: #99cc00;z-index: 1;"></div>
+                    <div id="threedaysago_count" style="height: 0%; width: 10%; position: absolute; bottom: 0px; left: 10%; border-radius: 4px 4px 0px 0px; background-color: #001a33;z-index: 1;"></div>
+                    <div id="daybeforeyesterday_count" style="height: 0%; width: 10%; position: absolute; bottom: 0px; left: 30%; border-radius: 4px 4px 0px 0px; background-color: #001a33;z-index: 1;"></div>
+                    <div id="yesterday_count" style="height: 0%; width: 10%; position: absolute; bottom: 0px; left: 50%; border-radius: 4px 4px 0px 0px; background-color: #001a33;z-index: 1;"></div>
+                    <div id="today_count" style="height: 0%; width: 10%; position: absolute; bottom: 0px; left: 70%; border-radius: 4px 4px 0px 0px; background-color: #3c6b8a;z-index: 1;"></div>
                     <p class="graph_text" style="bottom: -16px; left: 10%">３日前</p>
                     <p class="graph_text" style="bottom: -16px; left: 30%">２日前</p>
                     <p class="graph_text" style="bottom: -16px; left: 50%">１日前</p>

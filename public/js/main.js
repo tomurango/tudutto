@@ -221,11 +221,14 @@ function list_page_check(user){
         document.getElementById("task_complate").style.display = "none";
         document.getElementById("to_do_items").style.display = "none";
         document.getElementById("finished_container").style.display = "none";
+        document.getElementById("create_task").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "block";
     }
 }
 
 function get_all_tasks(user){
+    
+    //console.log("get_all_task が呼び出された");
     db.collection("users").doc(user.uid).collection("tasks").get().then(function(tasks){
         //console.log(tasks);
         if (tasks.size > 0) {
@@ -244,21 +247,25 @@ function get_all_tasks(user){
                 document.getElementById("to_do_items").style.display = "none";
                 document.getElementById("list_page_anonymous").style.display = "none";
                 document.getElementById("task_complate").style.display = "block";
+                document.getElementById("create_task").style.display = "none";
             }else{
                 //タスク残ってますよー
                 document.getElementById("list_page_placeholder").style.display = "none";
                 document.getElementById("list_page_anonymous").style.display = "none";
                 document.getElementById("task_complate").style.display = "none";
                 document.getElementById("to_do_items").style.display = "block";
+                document.getElementById("create_task").style.display = "none";
             }
             finish_task_check();
         }else{
             //タスク完了してますよー(taskは存在していない)
+            //タスクを作れの指令に変更しました
             document.getElementById("list_page_placeholder").style.display = "none";
             document.getElementById("to_do_items").style.display = "none";
             document.getElementById("list_page_anonymous").style.display = "none";
             document.getElementById("finished_container").style.display = "none";
-            document.getElementById("task_complate").style.display = "block";
+            document.getElementById("task_complate").style.display = "none";
+            document.getElementById("create_task").style.display = "block";
         }
     }).catch(function(error) {
         console.log("Error getting document:", error);
@@ -266,6 +273,8 @@ function get_all_tasks(user){
 }
 
 function insert_task(task_data, task_id){
+    
+    //console.log("insert_task が呼び出された");
     global_tasks[task_id] = task_data;
     //console.log("task =>", task_data);
     if(task_data.finish){
@@ -313,9 +322,13 @@ function insert_task(task_data, task_id){
         document.getElementById("list_page_placeholder").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "none";
         document.getElementById("task_complate").style.display = "none";
+        document.getElementById("create_task").style.display = "none";
         document.getElementById("to_do_items").style.display = "block";
     }
-    finish_task_check();
+    //ここにこれがある理由がわからん↓
+    //たぶんタスクをチェックした後に画面を遷移させようとしたのだろうが、get_all_taskの時の誤作動につながっタので今取り除く
+    //task_checkの関数の使用内でinsert_taskの後に実行させる記述に変更
+    //finish_task_check();
 }
 
 //taskを完了させる
@@ -332,6 +345,7 @@ function task_check(radio_button){
         global_tasks[task_id]["finish"] = true;
         //挿入する
         insert_task(global_tasks[task_id], task_id);
+        finish_task_check();
     }).catch(function(error){
         console.log("error =>", error);
     });
@@ -401,6 +415,7 @@ function task_create(){
 
 //完了タスク表示欄を表示するか否かを決める関数
 function finish_task_check(){
+    //console.log("finish_task_check が呼び出された");
     var task_remain = 0;
     var task_finish = 0;
     var task_total = 0;
@@ -414,14 +429,19 @@ function finish_task_check(){
     for (let key in global_tasks) {
         //console.log('key:' + key + ' value:' + global_tasks[key]);
         task_total += 1;
+        //console.log("total_count", task_total);
+        //console.log("falseでないね" ,global_tasks[key].finish);
         if(global_tasks[key].finish == false){
             task_remain += 1;
+            //console.log("remain_count", task_remain);
         }else{
             task_finish += 1;
+            //console.log("finish_count", task_finish);
         }
     }
     if(task_total > 0){
         //何かしらタスクを保有している
+        document.getElementById("create_task").style.display = "none";
         if(task_finish > 0){
             //終わっているタスクがある
             document.getElementById("finished_container").style.display = "block";
@@ -433,28 +453,35 @@ function finish_task_check(){
             document.getElementById("expand_button").textContent = "expand_less";
         }
         if(task_remain > 0){
+            
             //まだタスクはある
             document.getElementById("task_complate").style.display = "none";
             document.getElementById("to_do_items").style.display = "block";
         }else{
             //もうタスクはない
+            //console.log(task_remain,"ここでの数値は0だよね？");
             document.getElementById("to_do_items").style.display = "none";
             document.getElementById("task_complate").style.display = "block";
             //ということはこれかつその日スタンプを押したかどうかを診断する
             if(global_user_database.AlreadyPushed == false){
                 //まだ押してないので画面遷移する
-                tabBar.activateTab(1);
+                if(task_total == task_finish){
+                    //予測しない挙動があるから、数を比較したif分を設置20201109
+                    tabBar.activateTab(1);
+                }
             }
         }
         document.getElementById("list_page_placeholder").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "none";
     }else{
         //そもそもタスクがない
+        //createtaskの表示に変更しました
         document.getElementById("list_page_placeholder").style.display = "none";
         document.getElementById("to_do_items").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "none";
         document.getElementById("finished_container").style.display = "none";
-        document.getElementById("task_complate").style.display = "block";
+        document.getElementById("task_complate").style.display = "none";
+        document.getElementById("create_task").style.display = "block";
     }
     document.getElementById("task_finished_count").textContent = task_finish;
 }

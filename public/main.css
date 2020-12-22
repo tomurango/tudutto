@@ -16,7 +16,7 @@
 }.mdc-tab-indicator.onfooter{
     display: none !important;
 }.mdc-tab--active .mdc-tab__icon{
-    color: #336600 !important;
+    color: #00405d !important;
 }.mdc-tab__text-label{
     font-size: 0.5em
 }
@@ -36,13 +36,13 @@ html{
     /*変えたあと試したけど、結局変化ないんすけどだいじょぶっすかねぇ*/
     overflow: auto;
 }:root{
-    --mdc-theme-primary: #99cc33;
-    --mdc-theme-secondary: #993366;
-    --mdc-theme-on-primary: #000000;
+    --mdc-theme-primary: #00405d;
+    --mdc-theme-secondary: #ffbfa2;
+    --mdc-theme-on-primary: #fff2d3;
 }
 
 #top_header{
-    background-color: #ffffff;
+    background-color: #001a33;
     position: relative;
     box-shadow: 0 2px 5px rgba(0,0,0,0.26);
 }
@@ -121,8 +121,8 @@ html{
 }@media screen and (max-width:599px){
     /*スマホの時*/
     .log-chart{
-        width: calc(100% - 16px);
-        margin: 8px 8px 0px 8px;
+        width: calc(100% - 32px);
+        margin: 16px 16px 0px 16px;
     }#data_page{
         flex-direction: column;
     }
@@ -154,6 +154,13 @@ html{
     content: " ";
     margin-top: 100%;
 }
+#create_task_image{
+    background-image: url("images/taskcreateman.jpg");
+}#create_task_image::before {
+    display: block;
+    content: " ";
+    margin-top: 100%;
+}
 .text_up{
     font-size: 1.2em;
 }.text_down{
@@ -168,27 +175,27 @@ html{
 @keyframes hurueru {
     0% {
         transform: translate(0px, 0px) rotateZ(0deg);
-        color: #003300;
+        color: #ffbfa2;
     }
     0.625% {
         transform: translate(4px, 4px) rotateZ(1deg);
-        color: #003300;
+        color: #ffbfa2;
     }
     1.25% {
         transform: translate(0px, 4px) rotateZ(0deg);
-        color: #003300;
+        color: #ffbfa2;
     }
     1.875% {
         transform: translate(4px, 0px) rotateZ(-1deg);
-        color: #003300;
+        color: #ffbfa2;
     }
     2.5% {
         transform: translate(0px, 0px) rotateZ(0deg);
-        color: #003300;
+        color: #ffbfa2;
     }
     100% {
         transform: translate(0px, 0px) rotateZ(0deg);
-        color: #669900;
+        color: #fff2d3;
     }
 }
 
@@ -215,7 +222,7 @@ html{
 
 
 #noresult_image{
-    background-image: url("images/sureddonaitoki_murasaki.jpg");
+    background-image: url("images/sureddonaitoki.jpg");
 }#noresult_image::before {
     display: block;
     content: " ";
@@ -389,7 +396,7 @@ html{
     color: #777777;
 }
 #norecomment_image{
-    background-image: url("images/nocommentbook.png");
+    background-image: url("images/nocommentbook.jpg");
 }#norecomment_image::before {
     display: block;
     content: " ";
@@ -447,4 +454,9 @@ html{
     display: none;
     width: 100%;
     height: ;
+}
+
+#list_page_fab{
+    background-color: #fff2d3;
+    color: #001a33;
 }
