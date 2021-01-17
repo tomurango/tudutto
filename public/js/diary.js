@@ -94,6 +94,7 @@ function diary_create(){
         }).then(function(){
             //表示を消す
             fab_diary_back();
+            talk_page_check();//20201228投稿後の表示がおぼつかないのでこれで実験
         }).catch(function(error){
             console.log("error", error);
         });
