@@ -25,20 +25,23 @@ tabBar.listen('MDCTabBar:activated',function(event){
         document.getElementById("list_page").style.display = "flex";
         //list_page_check は繰り返し発生することを想定していません
     }else if(index==1){
-        document.getElementById("count_page").style.display = "flex";
-        count_page_check();
-    }else if(index==2){
         //20200815 復活
         document.getElementById("talk_page").style.display = "flex";
         talk_page_check();
-    }else if(index==3){
+    }else if(index==2){
         //あとでデータのページを表示するための場所に切り替わるかな？
         //console.log("data_page_?");
         //切り替わりましたよ
         document.getElementById("data_page").style.display = "flex";
         data_page_check();
-
     }
+    /*
+    else if(index==1){
+        //20210118 削除
+        document.getElementById("count_page").style.display = "flex";
+        count_page_check();
+    }
+    */
 });
 
 function login_card_display(){
