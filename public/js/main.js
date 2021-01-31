@@ -366,6 +366,7 @@ function task_check_back(radio_button){
         global_tasks[task_id]["finish"] = false;
         //挿入する
         insert_task(global_tasks[task_id], task_id);
+        finish_task_check();//ブランチ分けたほうに反映されてなかった（されてると思ってた）
     }).catch(function(error){
         console.log("error =>", error);
     });
