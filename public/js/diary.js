@@ -21,14 +21,14 @@ function get_diary(){
         if(threads.size == 0){
             if(Object.keys(global_diary).length == 0){
                 //global変数のdiaryもからなので、
-                document.getElementById("thread_container").style.display = "none";
+                document.getElementById("have_hitokoto").style.display = "none";
                 document.getElementById("talk_page_placeholder").style.display = "none";
                 document.getElementById("talk_page_noresult").style.display = "block";
             }else{
                 //global_diaryは入ってるので
                 document.getElementById("talk_page_placeholder").style.display = "none";
                 document.getElementById("talk_page_noresult").style.display = "none";
-                document.getElementById("thread_container").style.display = "flex";
+                document.getElementById("have_hitokoto").style.display = "flex";
             }
         }else{
             //threadsはreverseしないと時間順で挿入されて行かないっぽい
@@ -37,7 +37,7 @@ function get_diary(){
                 insert_diary(thread.data(), thread.id);
             });
             document.getElementById("talk_page_placeholder").style.display = "none";
-            document.getElementById("thread_container").style.display = "flex";
+            document.getElementById("have_hitokoto").style.display = "flex";
         }
     }).catch(function(error){
         console.log("error =>", error);
@@ -94,6 +94,8 @@ function diary_create(){
         }).then(function(){
             //表示を消す
             fab_diary_back();
+            talk_page_check();//20210131こちらもブランチ作成で変化が反映されてなかった
+            fab_count();//20210131カウントをしっかりと増やしていく➡croudfunctionで書くのもいいのかもね
         }).catch(function(error){
             console.log("error", error);
         });

@@ -28,6 +28,7 @@ tabBar.listen('MDCTabBar:activated',function(event){
         //20200815 復活
         document.getElementById("talk_page").style.display = "flex";
         talk_page_check();
+        count_page_check();//countを日記のカウントに変更して再利用する
     }else if(index==2){
         //あとでデータのページを表示するための場所に切り替わるかな？
         //console.log("data_page_?");
@@ -518,11 +519,13 @@ function fab_count(){
     }).then(function(){
         //console.log("count しました");
         //数字増やす
-        var pre_count = document.getElementById("center_count").textContent;
-        document.getElementById("center_count").textContent = Number(pre_count) + 1;
+        var pre_count = document.getElementById("hitokoto_count_num").textContent;
+        document.getElementById("hitokoto_count_num").textContent = Number(pre_count) + 1;
         //ボタン消す
+        /*
         document.getElementById("count_page_fab").style.display = "none";
         document.getElementById("count_page_fab").disabled = true;
+        */
         //ここで一日一回だけの記述をしましょうか → データべースを書き換える
         db.collection("users").doc(global_user.uid).update({
             AlreadyPushed: true
@@ -586,17 +589,17 @@ function count_page_check(){
     if(global_user == null){
         //console.log("null なのでボタンを使えません");
         //ボタン消す
-        document.getElementById("count_page_fab").style.display = "none";
-        document.getElementById("count_page_fab").disabled = true;
+        document.getElementById("talk_page_fab").style.display = "none";
+        document.getElementById("talk_page_fab").disabled = true;
     }else{
         if(can_user_count()){
             //ボタン出す
-            document.getElementById("count_page_fab").style.display = "flex";
-            document.getElementById("count_page_fab").disabled = false;
+            document.getElementById("talk_page_fab").style.display = "flex";
+            document.getElementById("talk_page_fab").disabled = false;
         }else{
             //ボタン消す
-            document.getElementById("count_page_fab").style.display = "none";
-            document.getElementById("count_page_fab").disabled = true;
+            document.getElementById("talk_page_fab").style.display = "none";
+            document.getElementById("talk_page_fab").disabled = true;
         }
     }
     //今の処理だとタブ切り替えで毎回やってるから、見直しが必要かもしれない
@@ -605,18 +608,22 @@ function count_page_check(){
     //console.log(date_text);
     db.collection("counts").doc(date_text).get().then(function(doc){
         var today_count = doc.data().count;
-        document.getElementById("center_count").textContent = today_count;
+        document.getElementById("hitokoto_count_num").textContent = today_count;
+        /*20210131countの取得ナシはdiaryと同期するので非表示だと思われる。
         document.getElementById("count_day").textContent = date_text;
         //表示を切り替える
         document.getElementById("count_page_noresult").style.display = "none";
         document.getElementById("loading_container").style.display = "none";
         document.getElementById("count_container").style.display = "flex";
+        */
     }).catch(function(error){
         console.log("error =>", error);
         //firestoreの作成し忘れなどでもエラーは発生するその時の表示切替はここで行う感じかな
+        /*
         document.getElementById("count_container").style.display = "none";
         document.getElementById("loading_container").style.display = "none";
         document.getElementById("count_page_noresult").style.display = "block";
+        */
     });
 }
 
@@ -737,7 +744,7 @@ function talk_create(){
                 insert_thread(new_thread);
                 //表示する
                 document.getElementById("talk_page_noresult").style.display = "none";
-                document.getElementById("thread_container").style.display = "block";
+                document.getElementById("have_hitokoto").style.display = "block";
             })
         }else{
             //作成したら閉じる
@@ -746,7 +753,7 @@ function talk_create(){
             insert_thread(new_thread);
             //表示する
             document.getElementById("talk_page_noresult").style.display = "none";
-            document.getElementById("thread_container").style.display = "block";
+            document.getElementById("have_hitokoto").style.display = "block";
         }
     }).catch(function(error) {
         console.error("Error adding document: ", error);
@@ -796,7 +803,7 @@ function get_threads(){
                     insert_thread(thread.data(), thread.id);
                 });
                 document.getElementById("talk_page_placeholder").style.display = "none";
-                document.getElementById("thread_container").style.display = "block";
+                document.getElementById("have_hitokoto").style.display = "block";
             }
         });
     }else{
