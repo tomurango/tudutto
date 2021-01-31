@@ -260,8 +260,8 @@
             <div id="create_task" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center;">
                 <div id="create_task_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
                 <div>
-                    <p class="text_up">タスクを作りましょう。</p>
-                    <p class="text_down">毎日続けるタスクを作りましょう！</p>
+                    <p class="text_up">タスクを作りましょう！</p>
+                    <p class="text_down">最初は10秒でできるものがおすすめ</p>
                 </div>
             </div>
             <div id="to_do_items" style="width: 100%; display: none;">
@@ -323,28 +323,14 @@
         </div>
         -->
         <!--ここは後でワールドチャットシステム導入で用いる可能性があるので、基本放置で行こう-->
-        <div id="talk_page" class="top_level_page" style="display: none">
-            <!--<ul id="thread_container" class="mdc-list mdc-list--two-line" style="width: 100%; display: none">
-                <li class="mdc-list-item" tabindex="0">
-                    <span class="mdc-list-item__text">
-                        <span class="mdc-list-item__primary-text">英語の先生って几帳面だよね (15)</span>
-                        <span class="mdc-list-item__secondary-text">あるあるくん 2020年5月17日 13:48</span>
-                    </span>
-                </li>
-                <li class="mdc-list-item">
-                    <span class="mdc-list-item__text">
-                        <span class="mdc-list-item__primary-text">有名ブラック企業の実態 (47)</span>
-                        <span class="mdc-list-item__secondary-text">人生つらリーマン 2020年5月14日 18:51</span>
-                    </span>
-                </li>
-                <li class="mdc-list-item">
-                    <span class="mdc-list-item__text">
-                        <span class="mdc-list-item__primary-text">最近暑い件について (4)</span>
-                        <span class="mdc-list-item__secondary-text">赤メダカ 2020年4月23日 09:26</span>
-                    </span>
-                </li>
-            </ul>-->
-            <div id="thread_container" style="display: none; width: 100%; height: fit-content; background-color: #eeeeee; flex-wrap: wrap; min-height: 100%; padding-bottom: 100%; box-sizing: border-box;" >
+        <div id="talk_page" class="top_level_page" style="display: none; flex-direction: column;">
+            <div id="hitokoto_count_pla" style="padding: 8px;">
+                <div id="hitokoto_count_card" class="mdc-card" style="padding: 8px;">
+                    <p id="hitokoto_count_txt" style="color: #777777; font-size: 10px; margin: 0px;">本日ヒトコト</p>
+                    <p id="hitokoto_count_cont" style="margin: 0px; text-align: center;"><span id="hitokoto_count_num" style="font-size: 3em;">0</span>コト</p>
+                </div>
+            </div>
+            <div id="thread_container" style="display: none; width: 100%; height: fit-content; background-color: #ffffff; flex-wrap: wrap; min-height: 100%; padding-bottom: 100%; box-sizing: border-box;" >
                 <!--<div id="" class="mdc-card diary-card" onclick="detail_of_diary(this)">
                     <div class="header_erea">
                         <img class="who_icon" src="images/sureddonaitoki.jpg">
