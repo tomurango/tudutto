@@ -270,6 +270,9 @@ html{
     }#thread_container{
         flex-direction: row;
     }
+    #hitokoto_count_card{
+        margin: 16px;
+    }
 }@media screen and (max-width:599px){
     /*スマホの時*/
     .diary-card{
@@ -277,6 +280,9 @@ html{
         margin: 8px 8px 0px 8px;
     }#thread_container{
         flex-direction: column;
+    }
+    #hitokoto_count_card{
+        margin: 8px;
     }
 }
 .diary-card{

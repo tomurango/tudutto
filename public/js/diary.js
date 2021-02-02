@@ -121,8 +121,9 @@ function insert_diary(diary_doc_data, diary_id){
     //とりあえずglobal変数作って格納しておく
     global_diary[diary_id] = diary_doc_data;
     //console.log(diary_doc_data, diary_id);
-    //textContent挿入の儀式を執り行う
-    var content = '<div id="'+ diary_id +'" class="mdc-card diary-card" onclick="detail_of_diary(this)"><div class="header_erea"><img class="who_icon" src="'+ diary_doc_data.userIcon +'"  onerror="error_image(this)"><p class="whos_diary"></p><p class="what_time"></p></div><div class="content_erea"><p class="content_diary"></p></div></div>';
+    //textContent挿入の儀式を執り行う  
+    //20210202 onclick="detail_of_diary(this)" 今のところは左の記述を消してコメントをできなくしときました。コメントの可能性を残して変な気を使わせないためです（まだスタンプとかのがまし）
+    var content = '<div id="'+ diary_id +'" class="mdc-card diary-card"><div class="header_erea"><img class="who_icon" src="'+ diary_doc_data.userIcon +'"  onerror="error_image(this)"><p class="whos_diary"></p><p class="what_time"></p></div><div class="content_erea"><p class="content_diary"></p></div></div>';
     var promise = new Promise((resolve, reject) => {
         /*setTimeout(() => { 
             console.log('hello');
