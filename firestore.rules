@@ -35,8 +35,9 @@ service cloud.firestore {
       }
 
       match /diaries/{diaryId} {
-        allow write: if request.auth.uid == userId;
         allow read: if true;
+        allow create, delete: if request.auth.uid == userId;
+        allow update: if request.auth.uid != null;
         
         match /comments/{commentId} {
           allow read: if true;
@@ -54,8 +55,12 @@ service cloud.firestore {
     }
 
     //diaryのcollection groupで使うよ
+    //match /{path=**}/diaries/{diaryId} {
+    //  allow read: if request.auth.uid != null;
+    //}
+    //20210204ログインしてなくても見れた方が良いということで書き換え
     match /{path=**}/diaries/{diaryId} {
-      allow read: if request.auth.uid != null;
+      allow read: if true;
     }
 
     //boardに関する記述は20200815を持って削除されました

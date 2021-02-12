@@ -90,7 +90,9 @@ function diary_create(){
             userName: global_user.displayName,
             userIcon: global_user.photoURL,
             userPlan: userplan,
-            createdAt: new firebase.firestore.Timestamp.now()
+            createdAt: new firebase.firestore.Timestamp.now(),
+            countGood: 0,
+            countGift: 0
         }).then(function(){
             //表示を消す
             fab_diary_back();
@@ -121,9 +123,28 @@ function insert_diary(diary_doc_data, diary_id){
     //とりあえずglobal変数作って格納しておく
     global_diary[diary_id] = diary_doc_data;
     //console.log(diary_doc_data, diary_id);
+    //20210212 既にgoodやギフトをしていたらボタンの色を塗り替える
+    if(already_good(diary_id)){
+        var goodclass = "active";
+    }else{
+        var goodclass = "";
+    }
+    //Goodの高さの処理
+    if(diary_doc_data.countGood){
+        //console.log("カウントあり");
+        var goodheight = diary_doc_data.countGood * 5;
+        //console.log(goodheight , typeof goodheight);
+    }else{
+        //console.log("undefined でカウントなし");
+        var goodheight = 0;
+    }
     //textContent挿入の儀式を執り行う  
+    //20210204 graph_areaの追加
+    var graph_area = '<div class="graph_area"><div class="gift_bar"></div><div class="good_bar" style="height:' + goodheight + 'px"></div></div>'
+    //20210204 footerareaの追加
+    var footer_area = '<div class="footer_area"><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_gift" onclick="diary_gift(this)" style="top: 6px;" title="Cheer">card_giftcard</button><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_good ' +goodclass+ '" style="top:6px" onclick="diary_good(this)" title="Good">thumb_up</button></div>'
     //20210202 onclick="detail_of_diary(this)" 今のところは左の記述を消してコメントをできなくしときました。コメントの可能性を残して変な気を使わせないためです（まだスタンプとかのがまし）
-    var content = '<div id="'+ diary_id +'" class="mdc-card diary-card"><div class="header_erea"><img class="who_icon" src="'+ diary_doc_data.userIcon +'"  onerror="error_image(this)"><p class="whos_diary"></p><p class="what_time"></p></div><div class="content_erea"><p class="content_diary"></p></div></div>';
+    var content = '<div id="'+ diary_id +'" class="mdc-card diary-card"><div class="header_erea"><img class="who_icon" src="'+ diary_doc_data.userIcon +'"  onerror="error_image(this)"><p class="whos_diary"></p><p class="what_time"></p></div><div class="content_erea"><p class="content_diary"></p></div>' + graph_area + footer_area + '</div>';
     var promise = new Promise((resolve, reject) => {
         /*setTimeout(() => { 
             console.log('hello');
@@ -368,3 +389,98 @@ function jusert_diary_comment(diary_id){
     }
 }
 
+
+
+function diary_gift(){
+
+}
+
+/*
+function diary_good(good){
+    console.log(good.parentNode.parentNode.id);
+}
+*/
+
+//20210210経験値からコピーして持ってきた。それを書き換える形にしようと考えている
+function diary_good(good){
+    var diary_id = good.parentNode.parentNode.id;
+    //_で区切って分割する workcard userId jobId workId
+    //var what_user_job_work = id_card.split('_');
+    //userがいいねしてるかどうか確認する
+    var number = 0;
+    if(already_good(diary_id)){
+        //すでにグッドしてる グッドを取り消す
+        number = -1;
+        var type = "delete";
+        good.classList.remove("active");
+    }else{
+        //まだグッドしてない グッドをつける
+        number = 1;
+        var type = "add";
+        good.classList.add("active");
+    }
+    //とりあえず以下何もしない形でエラーの反応を見る
+    db.collection("users").doc(global_diary[diary_id].userId).collection("diaries").doc(diary_id).update({
+        countGood: firebase.firestore.FieldValue.increment(number)
+    }).then(function(){
+        //global変数の中身を書き換える
+        global_diary[diary_id]["countGood"] += number;
+        //userのgoodも書き換える
+        update_user_good(type, diary_id);
+    }).catch(function(error){
+        console.log("error", error);
+    });
+}
+
+//すでにグッドしたものかどうかの確認
+function already_good(diary_id){
+    for(var i=0; i< global_user_database.Good.length; i++){
+        if(global_user_database.Good[i] == diary_id){
+            //すでにグッドしている
+            return true;
+        }
+    }
+    return false;
+}
+
+//userのgoodeのカラムを書き換える
+function update_user_good(type, diary_id){
+    //global変数のほうを書き換える
+    if(type == "add"){
+        global_user_database.Good.push(diary_id);
+    }else if(type == "delete"){
+        /*spliceだと最後の一つになったときに挙動が怪しい
+        for(var i=0; i<global_user_database.good.length; i++){
+            if(global_user_database.good[i] == diary_id){
+                global_user_database.good.splice(i, i);
+            }
+        }
+        */
+        global_user_database.Good = global_user_database.Good.filter(function( item ) {
+            return item !== diary_id;
+        });
+    }
+    //console.log( "update", type , diary_id, global_user_database.good );
+    //firestore のデータベースを書き換える
+    var change;
+    if(type == "add"){
+        change = firebase.firestore.FieldValue.arrayUnion(diary_id);
+    }else if(type == "delete"){
+        change = firebase.firestore.FieldValue.arrayRemove(diary_id);
+    }
+    db.collection("users").doc(global_user.uid).update({
+        Good: change
+    }).then( function(){
+        //good処理完了
+        //console.log("good処理 ユーザ側完了");
+        //20210210 ここでカードの中のグラフの高さを挙げる処理をする
+        var good_height = document.getElementById(diary_id).getElementsByClassName("good_bar")[0].clientHeight;
+        if(type == "add"){
+            document.getElementById(diary_id).getElementsByClassName("good_bar")[0].style.height = String(good_height + 5) + "px";
+        }else if(type == "delete"){
+            document.getElementById(diary_id).getElementsByClassName("good_bar")[0].style.height = String(good_height - 5) + "px";
+        }
+    }).catch(function(error){
+        console.log("error => ", error)
+    });
+}

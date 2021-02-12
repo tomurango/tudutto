@@ -1021,8 +1021,11 @@ function fire_userdata_get(uid){
         if(doc.data() == undefined){
             //利用規約を表示する
             use_terms_dialog.open();
+            //20210210 Good Gift の初期化の追加
             var regist_doc = {   
-                AlreadyPushed:false
+                AlreadyPushed:false,
+                Good: [],
+                Gift: []
             }
             db.collection("users").doc(uid).set(regist_doc).then(function(){
                 global_user_database = regist_doc;

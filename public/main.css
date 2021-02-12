@@ -121,8 +121,8 @@ html{
 }@media screen and (max-width:599px){
     /*スマホの時*/
     .log-chart{
-        width: calc(100% - 32px);
-        margin: 16px 16px 0px 16px;
+        width: calc(100% - 16px);
+        margin: 8px 8px 0px 8px;
     }#data_page{
         flex-direction: column;
     }
@@ -324,6 +324,33 @@ html{
 }.content_diary{
     font-size: 16px;
     margin: 0px 8px 8px 48px;
+}.footer_area {
+    width: 100%;
+    position: relative;
+    text-align: right;
+    height: 48px;
+}.graph_area{
+    position: absolute;
+    bottom: 48px;
+    right: 0px;
+    width: 96px;
+    height: auto;
+}.gift_bar{
+    position: absolute;
+    left: 12px;
+    bottom: 0px;
+    width: 24px;
+    height: 0px;
+    border-radius: 4px 4px 0px 0px;
+    background-color: #ca8f73;
+}.good_bar{
+    position: absolute;
+    left: 60px;
+    bottom: 0px;
+    width: 24px;
+    height: 0px;
+    border-radius: 4px 4px 0px 0px;
+    background-color: #ffbfa2;
 }
 
 
@@ -459,10 +486,17 @@ html{
 #div_for_subscription{
     display: none;
     width: 100%;
-    height: ;
+    /*height: ; 20210210 なんか未指定のheightがある*/
 }
 
 #list_page_fab{
     background-color: #fff2d3;
     color: #001a33;
+}
+
+.diary_gift.active{
+    color: #ca8f73;
+}
+.diary_good.active{
+    color: #ffbfa2;
 }
