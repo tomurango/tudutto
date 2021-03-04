@@ -129,3 +129,130 @@ exports.deleteDiary = functions.region('asia-northeast1').pubsub.schedule('23 0 
     });
     return delete_promise;
 });
+
+
+//20210214 こっからはGiftのための記述を設ける
+const stripe = require('stripe')('sk_test_51HJd7bK4amKkUSI0gd1p6xtB6vVoOeuaV8Ek8gvoPHUvl5vICWTbdXnR1lQySaBxymTWEUOqm3HMteZqbgJ3F71n00n3SyqMYc');
+const express = require('express');
+const app = express();
+
+//20210217ここからhttp request を受け取るための追加記述
+// Automatically allow cross-origin requests
+const cors = require('cors');
+app.use(cors({ origin: true }));
+
+
+app.use(express.static('.'));
+const YOUR_DOMAIN = 'http://yarukeeper.com';
+app.post('/create-checkout-session', async (req, res) => {
+    //console.log("とだい", req.body["diaryTo"]);
+    //console.log("ゆざふろ", req.body["userFrom"]);
+    //console.log("ゆざと", req.body["userTo"]);
+    const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+            {
+                price_data: {
+                currency: 'jpy',
+                product_data: {
+                    name: 'チア―',
+                    images: ['https://yarukeeper.com/images/rogoann_game.jpg'],
+                },
+                unit_amount: 500
+                },
+                quantity: 1
+            },
+        ],
+        /*line_items: [
+            {price: 'price_1IKH71K4amKkUSI0W0l7TI78', quantity: 1},
+        ],*/
+        payment_intent_data:{
+            metadata: { fromUser : req.body["userFrom"], toDiary: req.body["diaryTo"], toUser: req.body["userTo"]}
+        },
+        mode: 'payment',
+        success_url: `${YOUR_DOMAIN}/success.html`,
+        cancel_url: `${YOUR_DOMAIN}/cancel.html`,
+    });
+    res.json({ id: session.id });
+});
+//実行例を確認するためのapp.listenと認識書かなくてもいい感じ？
+//app.listen(4242, () => console.log('Running on port 4242'));
+
+
+//成功後の処理は以下と認識
+// Set your secret key. Remember to switch to your live secret key in production.
+// See your keys here: https://dashboard.stripe.com/account/apikeys
+//const stripe = require('stripe')('sk_test_51HJd7bK4amKkUSI0gd1p6xtB6vVoOeuaV8Ek8gvoPHUvl5vICWTbdXnR1lQySaBxymTWEUOqm3HMteZqbgJ3F71n00n3SyqMYc');
+// This example uses Express to receive webhooks
+//const app = require('express')();
+// Use body-parser to retrieve the raw body as a buffer
+const bodyParser = require('body-parser');
+
+// Match the raw body to content type application/json
+app.post('/webhook', bodyParser.raw({type: 'application/json'}), (request, response) => {
+    let event;
+    //console.log("リクエスト", request);
+    //console.log("レスポンス", response);
+    //console.log("ボディ", request.body);
+    try {
+        //event = JSON.parse(request.body);
+        event=request.body;
+        //console.log("event", event);
+    } catch (err) {
+        console.log("error message", err.message);
+        response.status(400).send(`Webhook Error: ${err.message}`);
+    }
+    //console.log("イベント", event);
+    // Handle the event
+    switch (event.type) {
+        case 'payment_intent.succeeded':
+            const paymentIntent = event.data.object;
+            console.log('PaymentIntent was successful!');
+            //console.log("ペイメントインテント", paymentIntent);
+            //ここにGiftのグラフを増やす処理を書く
+            //console.log("めたでた１", paymentIntent.charges.data[0].metadata);
+            //console.log("めたでた２", paymentIntent.metadata);
+            var toDiaryId = paymentIntent.metadata.toDiary;
+            //console.log("トダイアリ", toDiaryId);
+            var toUserId = paymentIntent.metadata.toUser;
+            //console.log("とゆざあいで", toUserId);
+            var fromUserId = paymentIntent.metadata.fromUser;
+            //console.log("ふろゆざ", fromUserId);
+            //diaryのGIFTのカウントを増やす処理
+            var promiseDiary = db.collection('users').doc(toUserId).collection("diaries").doc(toDiaryId).update({
+                countGift: admin.firestore.FieldValue.increment(1)
+            }).then(function(data){
+                console.log("Gift完了",data);
+            }).catch(function(error){
+                console.log("Error =>", error);
+            });
+            //ユーザ側で何にGiftを送ったのか記す処理
+            var promiseUser = db.collection('users').doc(fromUserId).update({
+                Gift: admin.firestore.FieldValue.arrayUnion(toDiaryId)
+            }).then(function(data){
+                console.log("Gift完了",data);
+            }).catch(function(error){
+                console.log("Error =>", error);
+            });
+            //非同期化の検証のためプロミスallを戻り値にしています
+            Promise.all([promiseDiary, promiseUser]).then((values) => {
+                console.log(values);
+            });
+            break;
+        case 'payment_method.attached':
+            const paymentMethod = event.data.object;
+            console.log('PaymentMethod was attached to a Customer!');
+            break;
+        // ... handle other event types
+        default:
+            console.log(`Unhandled event type ${event.type}`);
+    }
+    // Return a 200 response to acknowledge receipt of the event
+    response.json({received: true});
+});
+
+app.listen(4242, () => console.log('Running on port 4242'));//これ上でも書いてるから消した
+
+//202210217 ここもhttp request を受け取るための記述
+// Expose Express API as a single Cloud Function:
+exports.widgets = functions.region('asia-northeast1').https.onRequest(app);

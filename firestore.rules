@@ -27,8 +27,10 @@ service cloud.firestore {
     
 
     match /users/{userId} {
-      allow read, update, delete: if request.auth.uid == userId;
+      allow read, delete: if request.auth.uid == userId;
       allow create: if request.auth.uid != null;
+      //20210214 Gift の追加に伴い、支払いの証明にしたいなと考えたからGiftの書き換えを制限しようとした
+      allow update: if request.auth.uid == userId && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['Gift']));
       
       match /tasks/{taskId} {
         allow read, write: if request.auth.uid == userId;
@@ -36,8 +38,11 @@ service cloud.firestore {
 
       match /diaries/{diaryId} {
         allow read: if true;
-        allow create, delete: if request.auth.uid == userId;
-        allow update: if request.auth.uid != null;
+        allow create: if request.auth.uid == userId && request.resource.data.countGift == 0;
+        allow delete: if request.auth.uid == userId;
+        //allow update: if request.auth.uid != null;
+        //allow update: if request.resource.data.population > 0 && request.resource.data.name == resource.data.name;
+        allow update: if request.auth.uid != null && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['countGift']));
         
         match /comments/{commentId} {
           allow read: if true;

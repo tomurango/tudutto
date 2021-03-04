@@ -547,6 +547,70 @@
             </div>
         </div>
 
+        <!--gift dialog-->
+        <div id="gift_dialog" class="mdc-dialog">
+            <div class="mdc-dialog__container">
+                <div class="mdc-dialog__surface"
+                    role="alertdialog"
+                    aria-modal="true"
+                    aria-labelledby="my-dialog-title"
+                    aria-describedby="my-dialog-content">
+                    <div class="mdc-dialog__content" id="my-dialog-content">
+                        チア―を購入しますか？
+                        <div class="product" style="display: flex; position: relative; top: 16px;">
+                            <img style="width: 50px; height: 50px; margin: 0px; border-radius: 5px;"
+                            src="https://yarukeeper.com/images/rogoann_game.jpg"
+                            alt="チア―のイメージ画像がここに"
+                            />
+                            <div class="description" style="position: relative; left: 16px;">
+                            <h3 style="top: 10px; left: 60px; margin: 0px;">チア―</h3>
+                            <h5 style="top: 30px; left: 60px; margin: 0px;">500円</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mdc-dialog__actions">
+                        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
+                            <div class="mdc-button__ripple"></div>
+                            <span class="mdc-button__label">キャンセル</span>
+                        </button>
+                        <!--<button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="gift" onclick="gift_stripe()">
+                            <div class="mdc-button__ripple"></div>
+                            <span class="mdc-button__label">購入する</span>
+                        </button>-->
+                        <!-- Create a button that your customers click to complete their purchase. Customize the styling to suit your branding. -->
+                        <button
+                        class="mdc-button mdc-dialog__button"
+                        id="checkout-button"
+                        role="link"
+                        type="button"
+                        >
+                        購入
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mdc-dialog__scrim"></div>
+        </div>
+
+        <div id="gift_already_dialog" class="mdc-dialog">
+            <div class="mdc-dialog__container">
+                <div class="mdc-dialog__surface">
+                    <div class="mdc-dialog__content" id="my-dialog-content-second">
+                        このチア―は既に贈っています。
+                    </div>
+                    <div class="mdc-dialog__actions">
+                        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel" onclick="">
+                            <div class="mdc-button__ripple"></div>
+                            <span class="mdc-button__label">了解</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mdc-dialog__scrim"></div>
+        </div>
+
+
+
         <!--利用規約に同意するためのdiv-->
         <!--ここに本文を書いてしまう形でひとまず進む-->
         <div id="use_terms_dialog" class="mdc-dialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content">
@@ -714,4 +778,41 @@
     <script src="js/task.js"></script>
     <script src="js/diary.js"></script>
     <script src="js/subscription.js"></script>
+
+    <!--stripe checkout のためのコピー-->
+    <script type="text/javascript">
+        // Create an instance of the Stripe object with your publishable API key
+        var stripe = Stripe("pk_test_51HJd7bK4amKkUSI0v1KwlONpt66eSdYQp054Goeveigjshls9m0zU63pLVnmXFR7cYZZvKqFxFW9E8APQFLTr2Ci005Wzw2ajd");
+        var checkoutButton = document.getElementById("checkout-button");
+        checkoutButton.addEventListener("click", function () {
+            var data = {
+                userFrom: global_user.uid,
+                diaryTo: PostGiftId,
+                userTo: PostUserId
+            };
+
+            fetch("https://asia-northeast1-levup-5017a.cloudfunctions.net/widgets/create-checkout-session", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify(data)
+            }).then(function (response) {
+                return response.json();
+            }).then(function (session) {
+                return stripe.redirectToCheckout({ sessionId: session.id });
+            }).then(function (result) {
+                // If redirectToCheckout fails due to a browser or network
+                // error, you should display the localized error message to your
+                // customer using error.message.
+                if (result.error) {
+                    alert(result.error.message);
+                }
+            }).catch(function (error) {
+                console.error("Error:", error);
+            });
+        });
+    </script>
+     
+        
 </html>

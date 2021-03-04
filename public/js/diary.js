@@ -138,11 +138,29 @@ function insert_diary(diary_doc_data, diary_id){
         //console.log("undefined でカウントなし");
         var goodheight = 0;
     }
+
+    //20210220 Giftの支払いテストがいい感じだから実装
+    if(already_gift(diary_id)){
+        //console.log("これどう？");
+        var giftclass = "active";
+    }else{
+        var giftclass = "";
+    }
+    //Goodの高さの処理
+    if(diary_doc_data.countGift){
+        //console.log("カウントあり");
+        var giftheight = diary_doc_data.countGift * 5;
+        //console.log(goodheight , typeof goodheight);
+    }else{
+        //console.log("undefined でカウントなし");
+        var giftheight = 0;
+    }
+
     //textContent挿入の儀式を執り行う  
     //20210204 graph_areaの追加
-    var graph_area = '<div class="graph_area"><div class="gift_bar"></div><div class="good_bar" style="height:' + goodheight + 'px"></div></div>'
+    var graph_area = '<div class="graph_area"><div class="gift_bar" style="height:' + giftheight + 'px"></div><div class="good_bar" style="height:' + goodheight + 'px"></div></div>'
     //20210204 footerareaの追加
-    var footer_area = '<div class="footer_area"><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_gift" onclick="diary_gift(this)" style="top: 6px;" title="Cheer">card_giftcard</button><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_good ' +goodclass+ '" style="top:6px" onclick="diary_good(this)" title="Good">thumb_up</button></div>'
+    var footer_area = '<div class="footer_area"><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_gift ' + giftclass + '" onclick="diary_gift(this)" style="top: 6px;" title="Cheer">card_giftcard</button><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_good ' +goodclass+ '" style="top:6px" onclick="diary_good(this)" title="Good">thumb_up</button></div>'
     //20210202 onclick="detail_of_diary(this)" 今のところは左の記述を消してコメントをできなくしときました。コメントの可能性を残して変な気を使わせないためです（まだスタンプとかのがまし）
     var content = '<div id="'+ diary_id +'" class="mdc-card diary-card"><div class="header_erea"><img class="who_icon" src="'+ diary_doc_data.userIcon +'"  onerror="error_image(this)"><p class="whos_diary"></p><p class="what_time"></p></div><div class="content_erea"><p class="content_diary"></p></div>' + graph_area + footer_area + '</div>';
     var promise = new Promise((resolve, reject) => {
@@ -389,12 +407,6 @@ function jusert_diary_comment(diary_id){
     }
 }
 
-
-
-function diary_gift(){
-
-}
-
 /*
 function diary_good(good){
     console.log(good.parentNode.parentNode.id);
@@ -484,3 +496,47 @@ function update_user_good(type, diary_id){
         console.log("error => ", error)
     });
 }
+
+
+//const dialog = new MDCDialog(document.querySelector('.mdc-dialog'));
+var gift_dialog = new mdc.dialog.MDCDialog(document.querySelector('#gift_dialog'));
+gift_dialog.scrimClickAction = "";
+
+var giftalreadydialog = new mdc.dialog.MDCDialog(document.querySelector('#gift_already_dialog'));
+giftalreadydialog.scrimClickAction = "";
+
+//送信するギフトのための変数
+var PostGiftId;
+var PostUserId;
+function diary_gift(gift){
+    var diary_id = gift.parentNode.parentNode.id;
+    PostGiftId = diary_id;
+    PostUserId = global_diary[diary_id].userId;
+    //console.log(PostGiftId , PostUserId);
+    //Giftを既に送っていたら表面上はとりあえず贈れないようにする
+    //セキュリティなどの観点では不確定なのでとりあえずといった感じ
+    if(already_gift(diary_id)){
+        //console.log("ここ");
+        giftalreadydialog.open();
+    }else{
+        gift_dialog.open();
+    }
+}
+
+/*function gift_stripe(){
+    この関数はstripe の checkout を利用することで必要ない感じになったはずです
+}*/
+
+//すでにグッドしたものかどうかの確認
+function already_gift(diary_id){
+    for(var i=0; i< global_user_database.Gift.length; i++){
+        if(global_user_database.Gift[i] == diary_id){
+            //すでにグッドしている
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
