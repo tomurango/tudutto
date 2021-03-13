@@ -161,3 +161,11 @@ function subscription_detail_back(){
   document.getElementById("div_for_subscription").style.display = "none";
 }
 
+function stripe_detail(){
+  document.getElementById("div_for_stripe").style.display = "block";
+}
+
+function stripe_detail_back(){
+  document.getElementById("div_for_stripe").style.display = "none";
+}
+

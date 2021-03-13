@@ -234,8 +234,28 @@ app.post('/webhook', bodyParser.raw({type: 'application/json'}), (request, respo
             }).catch(function(error){
                 console.log("Error =>", error);
             });
-            //非同期化の検証のためプロミスallを戻り値にしています
-            Promise.all([promiseDiary, promiseUser]).then((values) => {
+            //20210305支払いのフラグをユーザのデータベースに書き込む
+            //promiseGiftじゃなくてmoney_dataをプロミスに代入してその下の階層でpromiseGiftを動かすとかのがいいかも
+            var promiseGift = db.collection("users").doc(toUserId).get().then(function(firedata){
+                //ユーザがstripeのIdを持ってるかどうかで分岐
+                //ユーザの継続数などに応じて分岐
+                var result_amount = GiftMoneyF(firedata.data());
+                var result = {
+                    Date: admin.firestore.FieldValue.serverTimestamp(),
+                    From: fromUserId,
+                    IdStripe: firedata.data().IdStripe,
+                    Amount: result_amount
+                }
+                db.collection('users').doc(toUserId).collection("money").add(result).then((docRef) => {
+                    console.log("Document written with ID: ", docRef.id);
+                }).catch((error) => {
+                    console.error("Error adding document: ", error);
+                });
+            }).catach(function(error){
+                console.log("Error", error);
+            });
+            //非同期化の検証のためプロミスallを戻り値にしています➡問題なさそう
+            Promise.all([promiseDiary, promiseUser,promiseGift]).then((values) => {
                 console.log(values);
             });
             break;
@@ -251,8 +271,101 @@ app.post('/webhook', bodyParser.raw({type: 'application/json'}), (request, respo
     response.json({received: true});
 });
 
+//20210312 とりあえず追加しましたが、StripeConnectStandard登録のGitにはもうちょい書かれてるのでこれで完遂なのかはちょっと不明
+app.post("/onboard-user", async (req, res) => {
+    try {
+        /*
+        const account = await stripe.accounts.create({type: "standard"});
+        req.session.accountID = account.id;
+    
+        const origin = `${req.headers.origin}`;
+        const accountLinkURL = await generateAccountLink(account.id, origin);
+        res.send({ url: accountLinkURL });
+        */
+
+        /*上Git 下Doc*/
+        const account = await stripe.accounts.create({
+            type: 'standard',
+        });
+        //refreshとかで使いそうだからsessionなんちゃらに代入だね
+        //req.session.accountID = account.id;20210312ここの時点でなぜかエラーはいたから除外する
+        //20210312アカウントのID的なやつ、Documentで書かれてるやつを基本的に参考にしたよおそらくこれで動いてくれるはずなんだがどうだわからん
+        //sample ? acct_1032D82eZvKYlo2C このアカウントらしきものの正体がわからん
+
+        //本当はこの辺りで、IDをfirestore側に登録する喜寿を書くのが順当なんだろうが、standardアカウントは
+        //ユーザにやさしくない（手続きがめんどい）のでcustomに変更する一応git commit しておく
+        //データベース統合ができてないのでユーザはアカウント作っても何もできないナウ
+
+        //202210313上で作ったアカウントに関するIDを使う必要があるっぽいね
+        const accountLinks = await stripe.accountLinks.create({
+            account: account.id,
+            refresh_url: 'https://asia-northeast1-levup-5017a.cloudfunctions.net/widgets/onboard-user',
+            return_url: 'https://yarukeeper.com/stripe-success.html',
+            type: 'account_onboarding',
+        }).then((link) => link.url);
+        res.send({ url: accountLinks });
+    } catch (err) {
+        res.status(500).send({
+            error: err.message,
+        });
+    }
+});
+
+//20210312なんかrefreshも指定した方がベストプラクティスらしいので。
+app.get("/onboard-user/refresh", async (req, res) => {
+    if (!req.session.accountID) {
+        res.redirect("/");
+        return;
+    }
+    try {
+        const { accountID } = req.session;
+        //20210312refreshじゃない上でのエラーに基づいて対応しました
+        /*
+        const origin = `${req.secure ? "https://" : "https://"}${req.headers.host}`;
+        const accountLinkURL = await generateAccountLink(accountID, origin);
+        res.redirect(accountLinkURL);
+        */
+        const accountLinks = await stripe.accountLinks.create({
+            account: accountID,
+            refresh_url: 'https://asia-northeast1-levup-5017a.cloudfunctions.net/widgets/onboard-user',
+            return_url: 'https://yarukeeper.com/stripe-success.html',
+            type: 'account_onboarding',
+        }).then((link) => link.url);
+        res.redirect(accountLinks);
+    } catch (err) {
+        res.status(500).send({
+            error: err.message,
+        });
+    }
+});
+
 app.listen(4242, () => console.log('Running on port 4242'));//これ上でも書いてるから消した
 
 //202210217 ここもhttp request を受け取るための記述
 // Expose Express API as a single Cloud Function:
 exports.widgets = functions.region('asia-northeast1').https.onRequest(app);
+
+function GiftMoneyF(userdata){
+    var result = userdata.total + 299;
+    if(result > 400){
+        result = 400;
+    }
+    return result;
+};
+
+//20210309 diary と user の total のカウントの紐づけを行いたいので、oncreate で増加させる
+exports.DiaryToCount = functions.firestore.document('users/{userId}').onCreate((snap, context) => {
+    // Get an object representing the document
+    // e.g. {'name': 'Marie', 'age': 66}
+    const newValue = snap.data();
+
+    // access a particular field as you would any JS property
+    const name = newValue.name;
+
+    // perform desired operations ...
+    //
+    var promisetotal = db.collection("users").doc(context.params.userId).update({
+        total: admin.firestore.FieldValue.increment(1)
+    });
+    return promisetotal;
+});

@@ -1039,6 +1039,8 @@ function fire_userdata_get(uid){
     });
     //ログインしているのでchart-2を表示する（subscrtionのためのカード）
     document.getElementById("chart_two").style.display = "flex";
+    //20210312ユーザがstripeに登録するためのカードも追加でーす
+    document.getElementById("chart_three").style.display = "flex";
     getCustomClaimRole();
 }
 
