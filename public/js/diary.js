@@ -2,9 +2,11 @@
 var global_diary_comment = {};
 
 //3日以内のnagareについて扱うためのタイムスタンプ 3日としているのは記憶のイメージに追加づけるため、記録したいなら課金してほすぃ
-var three_date_ago_trend = new Date();
-three_date_ago_trend.setDate(three_date_ago_trend.getDate() - 3);
-var diary_timestamp = firebase.firestore.Timestamp.fromDate(three_date_ago_trend);
+//20210321それぞれの日の0時0分からとってくるように変えます
+var today0 = new Date(new Date().setHours(0, 0, 0, 0));
+//var three_date_ago_trend = new Date();
+//three_date_ago_trend.setDate(three_date_ago_trend.getDate() - 3);
+var diary_timestamp = firebase.firestore.Timestamp.fromDate(today0);
 
 function get_diary(){
     //とりあえず、見た目の動きをそれっぽくする
@@ -19,6 +21,7 @@ function get_diary(){
         //timestampの書き換え
         diary_timestamp = new firebase.firestore.Timestamp.now();
         if(threads.size == 0){
+            //連想配列の長さ取得サンプル
             if(Object.keys(global_diary).length == 0){
                 //global変数のdiaryもからなので、
                 document.getElementById("have_hitokoto").style.display = "none";
@@ -83,20 +86,33 @@ function diary_create(){
     var the_diary = document.getElementById("diary_input").value;
     //入力条件を管理する
     if(diary_rule(the_diary)){
-        //記入する
-        db.collection("users").doc(global_user.uid).collection("diaries").add({
+        var the_time = new firebase.firestore.Timestamp.now();
+        var new_diary = {
             conTent: the_diary,
             userId: global_user.uid,
             userName: global_user.displayName,
             userIcon: global_user.photoURL,
-            userPlan: userplan,
-            createdAt: new firebase.firestore.Timestamp.now(),
-            countGood: 0,
-            countGift: 0
-        }).then(function(){
-            //表示を消す
+            //userPlan: userplan,
+            createdAt: the_time,
+            countGood: 0
+            //20210327 Gift関連は消すことにした
+            //countGift: 0
+        }
+        //記入する
+        db.collection("users").doc(global_user.uid).collection("diaries").add(new_diary).then(function(docRef){
+            //入力欄の表示を消す
             fab_diary_back();
-            talk_page_check();//20210131こちらもブランチ作成で変化が反映されてなかった
+            //talk_page_check();//20210131こちらもブランチ作成で変化が反映されてなかった
+            //count_page_check();//20210321ボタン等の表示切替はこの関数で行うものでしたー。一つ上の行の記述がおそらく誤りだった。これにより日記作成後の動きが正しくなった
+            //20210327count_page_checkはfab_countの後じゃないとおそらくあかんので、位置を変えました
+            //けど、とりあえずボタン消しとくのがいいとは思うので消しときます
+            document.getElementById("talk_page_fab").style.display = "none";
+            document.getElementById("talk_page_fab").disabled = true;
+            //カードを挿入するけど、自分で作成したカードを再取得するのを避けるためのタイムスタンプ定義
+            //理想はgetDiaryで毎回取得してみるとかだろうけど速度遅いしなぁって感じか
+            diary_timestamp = the_time;
+            //カード挿入
+            insert_diary(new_diary, docRef.id)
             fab_count();//20210131カウントをしっかりと増やしていく➡croudfunctionで書くのもいいのかもね
         }).catch(function(error){
             console.log("error", error);
@@ -140,27 +156,32 @@ function insert_diary(diary_doc_data, diary_id){
     }
 
     //20210220 Giftの支払いテストがいい感じだから実装
+    /*
     if(already_gift(diary_id)){
-        //console.log("これどう？");
+        console.log("これどう？");
         var giftclass = "active";
     }else{
         var giftclass = "";
     }
-    //Goodの高さの処理
+    Goodの高さの処理
     if(diary_doc_data.countGift){
-        //console.log("カウントあり");
+        console.log("カウントあり");
         var giftheight = diary_doc_data.countGift * 5;
-        //console.log(goodheight , typeof goodheight);
+        console.log(goodheight , typeof goodheight);
     }else{
-        //console.log("undefined でカウントなし");
+        console.log("undefined でカウントなし");
         var giftheight = 0;
     }
+    */
 
     //textContent挿入の儀式を執り行う  
     //20210204 graph_areaの追加
-    var graph_area = '<div class="graph_area"><div class="gift_bar" style="height:' + giftheight + 'px"></div><div class="good_bar" style="height:' + goodheight + 'px"></div></div>'
+    //var graph_area = '<div class="graph_area"><div class="gift_bar" style="height:' + giftheight + 'px"></div><div class="good_bar" style="height:' + goodheight + 'px"></div></div>'
+    //20210321giftを取り除いた
+    var graph_area = '<div class="graph_area"><div class="good_bar" style="height:' + goodheight + 'px"></div></div>';
+    var footer_area = '<div class="footer_area"><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_good ' +goodclass+ '" style="top:6px" onclick="diary_good(this)" title="Good">thumb_up</button></div>'
     //20210204 footerareaの追加
-    var footer_area = '<div class="footer_area"><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_gift ' + giftclass + '" onclick="diary_gift(this)" style="top: 6px;" title="Cheer">card_giftcard</button><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_good ' +goodclass+ '" style="top:6px" onclick="diary_good(this)" title="Good">thumb_up</button></div>'
+    //var footer_area = '<div class="footer_area"><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_gift ' + giftclass + '" onclick="diary_gift(this)" style="top: 6px;" title="Cheer">card_giftcard</button><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_good ' +goodclass+ '" style="top:6px" onclick="diary_good(this)" title="Good">thumb_up</button></div>'
     //20210202 onclick="detail_of_diary(this)" 今のところは左の記述を消してコメントをできなくしときました。コメントの可能性を残して変な気を使わせないためです（まだスタンプとかのがまし）
     var content = '<div id="'+ diary_id +'" class="mdc-card diary-card"><div class="header_erea"><img class="who_icon" src="'+ diary_doc_data.userIcon +'"  onerror="error_image(this)"><p class="whos_diary"></p><p class="what_time"></p></div><div class="content_erea"><p class="content_diary"></p></div>' + graph_area + footer_area + '</div>';
     var promise = new Promise((resolve, reject) => {
@@ -179,6 +200,10 @@ function insert_diary(diary_doc_data, diary_id){
         $(queryid).find(".whos_diary").text(diary_doc_data.userName);
         $(queryid).find(".content_diary").text(diary_doc_data.conTent);
         $(queryid).find(".what_time").text(time_text);
+        //20210409diary入ったら表示を切り替えたいのでその記述 createdairy の中に入れてもいいかもね
+        document.getElementById("talk_page_placeholder").style.display = "none";
+        document.getElementById("talk_page_noresult").style.display = "none";
+        document.getElementById("have_hitokoto").style.display = "flex";
     });
     
 }
@@ -186,6 +211,7 @@ function insert_diary(diary_doc_data, diary_id){
 //commentする用の変数
 var diary_id_batton;
 //diaryの詳細のdivを開く関数
+//20210327コメントの実装今は無いからこれ使ってないよね現在（確認）
 function detail_of_diary(diary_element){
     //console.log(diary_element.id);
     //中身を書き足す
@@ -499,15 +525,16 @@ function update_user_good(type, diary_id){
 
 
 //const dialog = new MDCDialog(document.querySelector('.mdc-dialog'));
-var gift_dialog = new mdc.dialog.MDCDialog(document.querySelector('#gift_dialog'));
-gift_dialog.scrimClickAction = "";
+//var gift_dialog = new mdc.dialog.MDCDialog(document.querySelector('#gift_dialog'));
+//gift_dialog.scrimClickAction = "";
 
-var giftalreadydialog = new mdc.dialog.MDCDialog(document.querySelector('#gift_already_dialog'));
-giftalreadydialog.scrimClickAction = "";
+//var giftalreadydialog = new mdc.dialog.MDCDialog(document.querySelector('#gift_already_dialog'));
+//giftalreadydialog.scrimClickAction = "";
 
 //送信するギフトのための変数
-var PostGiftId;
-var PostUserId;
+//var PostGiftId;
+//var PostUserId;
+/*
 function diary_gift(gift){
     var diary_id = gift.parentNode.parentNode.id;
     PostGiftId = diary_id;
@@ -522,12 +549,14 @@ function diary_gift(gift){
         gift_dialog.open();
     }
 }
+*/
 
 /*function gift_stripe(){
     この関数はstripe の checkout を利用することで必要ない感じになったはずです
 }*/
 
-//すでにグッドしたものかどうかの確認
+//すでにグッド(Giftの間違いだろ)したものかどうかの確認
+/*
 function already_gift(diary_id){
     for(var i=0; i< global_user_database.Gift.length; i++){
         if(global_user_database.Gift[i] == diary_id){
@@ -537,6 +566,6 @@ function already_gift(diary_id){
     }
     return false;
 }
-
+*/
 
 

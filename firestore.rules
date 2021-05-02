@@ -3,6 +3,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     //stripe extensionの指示により張り付け後にdeploy
+    
     match /customers/{uid} {
       allow read: if request.auth.uid == uid;
 
@@ -10,7 +11,7 @@ service cloud.firestore {
         allow read, write: if request.auth.uid == uid;
       }
       match /subscriptions/{id} {
-        allow read: if request.auth.uid == uid;
+       allow read: if request.auth.uid == uid;
       }
     }
 
@@ -20,7 +21,12 @@ service cloud.firestore {
       match /prices/{id} {
         allow read: if true;
       }
+
+      match /tax_rates/{id} {
+        allow read: if true;
+      }
     }
+    
 
 
 
@@ -30,19 +36,22 @@ service cloud.firestore {
       allow read, delete: if request.auth.uid == userId;
       allow create: if request.auth.uid != null;
       //20210214 Gift の追加に伴い、支払いの証明にしたいなと考えたからGiftの書き換えを制限しようとした
-      allow update: if request.auth.uid == userId && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['Gift']));
-      
+      //allow update: if request.auth.uid == userId && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['Gift']));
+      allow update: if request.auth.uid == userId;
+
       match /tasks/{taskId} {
         allow read, write: if request.auth.uid == userId;
       }
 
       match /diaries/{diaryId} {
         allow read: if true;
-        allow create: if request.auth.uid == userId && request.resource.data.countGift == 0;
+        //allow create: if request.auth.uid == userId && request.resource.data.countGift == 0;
+        allow create: if request.auth.uid == userId;
         allow delete: if request.auth.uid == userId;
         //allow update: if request.auth.uid != null;
         //allow update: if request.resource.data.population > 0 && request.resource.data.name == resource.data.name;
-        allow update: if request.auth.uid != null && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['countGift']));
+        //allow update: if request.auth.uid != null && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['countGift']));
+        allow update: if request.auth.uid != null;
         
         match /comments/{commentId} {
           allow read: if true;

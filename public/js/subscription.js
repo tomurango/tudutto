@@ -2,6 +2,9 @@
 async function getCustomClaimRole() {
   await firebase.auth().currentUser.getIdToken(true);
   const decodedToken = await firebase.auth().currentUser.getIdTokenResult();
+  //console.log("token", decodedToken);
+  //console.log("stripe", decodedToken.claims.stripeRole);
+  //console.log("firebase", decodedToken.claims.firebaseRole);
   if(decodedToken.claims.stripeRole){
     //課金ユーザ
     define('userplan','continue');

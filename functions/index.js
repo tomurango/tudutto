@@ -132,7 +132,9 @@ exports.deleteDiary = functions.region('asia-northeast1').pubsub.schedule('23 0 
 
 
 //20210214 こっからはGiftのための記述を設ける
-const stripe = require('stripe')('sk_test_51HJd7bK4amKkUSI0gd1p6xtB6vVoOeuaV8Ek8gvoPHUvl5vICWTbdXnR1lQySaBxymTWEUOqm3HMteZqbgJ3F71n00n3SyqMYc');
+//20210327 こっからのGiftのための記述は除外したい
+/*
+const stripe = require('stripe')('sk_test_aidaihdioa');ここ書き換えてどうぞ
 const express = require('express');
 const app = express();
 
@@ -162,11 +164,11 @@ app.post('/create-checkout-session', async (req, res) => {
                 },
                 quantity: 1
             },
-        ],
+        ],*/
         /*line_items: [
             {price: 'price_1IKH71K4amKkUSI0W0l7TI78', quantity: 1},
         ],*/
-        payment_intent_data:{
+        /*payment_intent_data:{
             metadata: { fromUser : req.body["userFrom"], toDiary: req.body["diaryTo"], toUser: req.body["userTo"]}
         },
         mode: 'payment',
@@ -273,7 +275,7 @@ app.post('/webhook', bodyParser.raw({type: 'application/json'}), (request, respo
 
 //20210312 とりあえず追加しましたが、StripeConnectStandard登録のGitにはもうちょい書かれてるのでこれで完遂なのかはちょっと不明
 app.post("/onboard-user", async (req, res) => {
-    try {
+    try {*/
         /*
         const account = await stripe.accounts.create({type: "standard"});
         req.session.accountID = account.id;
@@ -284,6 +286,7 @@ app.post("/onboard-user", async (req, res) => {
         */
 
         /*上Git 下Doc*/
+        /*
         const account = await stripe.accounts.create({
             type: 'standard',
         });
@@ -320,11 +323,13 @@ app.get("/onboard-user/refresh", async (req, res) => {
     try {
         const { accountID } = req.session;
         //20210312refreshじゃない上でのエラーに基づいて対応しました
+        */
         /*
         const origin = `${req.secure ? "https://" : "https://"}${req.headers.host}`;
         const accountLinkURL = await generateAccountLink(accountID, origin);
         res.redirect(accountLinkURL);
         */
+        /*
         const accountLinks = await stripe.accountLinks.create({
             account: accountID,
             refresh_url: 'https://asia-northeast1-levup-5017a.cloudfunctions.net/widgets/onboard-user',
@@ -351,11 +356,13 @@ function GiftMoneyF(userdata){
         result = 400;
     }
     return result;
-};
+};*/
 
 //20210309 diary と user の total のカウントの紐づけを行いたいので、oncreate で増加させる
-exports.DiaryToCount = functions.firestore.document('users/{userId}').onCreate((snap, context) => {
-    // Get an object representing the document
+//exports.DiaryToCount = functions.firestore.document('users/{userId}').onCreate((snap, context) => {
+//20210327上の記述じゃあ、ユーザ作られたらtotal追加するみたいなよくわからん状況なので書き換える
+exports.DiaryToCount = functions.firestore.document('users/{userId}/diaries/{diaryId}').onCreate((snap, context) => {
+// Get an object representing the document
     // e.g. {'name': 'Marie', 'age': 66}
     const newValue = snap.data();
 

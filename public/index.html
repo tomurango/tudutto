@@ -154,9 +154,17 @@
             <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" onclick="subscription_detail_back()">clear</button>
             <p style="position: absolute; left: 48px; top: 12px; margin: 0px; color: #333333;">プランとは？</p>
             <div style="position: relative; padding: 16px">
-                <p style="font-size: 0.8em; color: #777777; margin: 0px;">コンティニュープラン</p>
-                <p style="margin: 0px;">コンティニュープランに変更することで、日記の保存がされるようになります。</p>
-                <button class="mdc-button mdc-button--touch" onclick="subscribe()">
+                <p style="font-size: 2em; margin: 20px 0px 0px 0px; font-weight: bold;">２つのプラン</p>
+                <p style="font-size: 0.8em; color: #777777; margin: 0px;">ノーマルプラン</p>
+                <p style="margin: 0px;">デフォルトのプラン。<br>標準的にヤルキーパーを利用できます。</p>
+                <p style="font-size: 0.8em; color: #777777; margin: 0px;">メンバープラン</p>
+                <p style="margin: 0px;">月額1000円のプラン。<br>より参加的にヤルキーパーを利用できます。</p>
+                <p style="font-size: 2em; margin: 50px 0px 0px 0px; font-weight: bold;">メンバー用機能</p>
+                <p style="font-size: 0.8em; color: #777777; margin: 0px;">実装済み</p>
+                <p style="margin: 0px;">何もできません</p>
+                <p style="font-size: 0.8em; color: #777777; margin: 0px;">実装予定</p>
+                <p style="margin: 0px;">広告が出せる。ユーザの報告ができる。</p>
+                <button class="mdc-button mdc-button--touch" style="margin: 30px 0px 0px -6px;" onclick="subscribe()">
                     <div class="mdc-button__ripple"></div>
                     <span class="mdc-button__label">プランを変更する</span>
                     <div class="mdc-button__touch"></div>
@@ -164,8 +172,9 @@
             </div>
         </div>
         <!--プラン変更を進めたのちに実際に変更できるようなUXをさせるためのdiv-->
+        
+        <!--
         <div id="div_for_stripe" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff; overflow-y: scroll">
-            <!--戻るボタン-->
             <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" onclick="stripe_detail_back()">clear</button>
             <p style="position: absolute; left: 48px; top: 12px; margin: 0px; color: #333333;">Stripeとは？</p>
             <div style="position: relative; padding: 16px">
@@ -178,6 +187,7 @@
                 </button>
             </div>
         </div>
+        -->
         
 
         <!--
@@ -485,6 +495,7 @@
                     </button>
                 </div>
             </div>
+            <!--
             <div id="chart_three" class="mdc-card log-chart" style="display: none;">
                 <p style="color: #777777; font-size: 0.8em; margin: 0px">Stripeアカウント</p>
                 <p style="text-align: center; margin: 30px 0px 0px 0px;">未登録</p>
@@ -496,6 +507,7 @@
                     </button>
                 </div>
             </div>
+            -->
             <!--
             <button class="mdc-fab" aria-label="Favorite">
                 <div class="mdc-fab__ripple"></div>
@@ -575,7 +587,7 @@
         </div>
 
         <!--gift dialog-->
-        <div id="gift_dialog" class="mdc-dialog">
+        <!--div id="gift_dialog" class="mdc-dialog">
             <div class="mdc-dialog__container">
                 <div class="mdc-dialog__surface"
                     role="alertdialog"
@@ -600,11 +612,6 @@
                             <div class="mdc-button__ripple"></div>
                             <span class="mdc-button__label">キャンセル</span>
                         </button>
-                        <!--<button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="gift" onclick="gift_stripe()">
-                            <div class="mdc-button__ripple"></div>
-                            <span class="mdc-button__label">購入する</span>
-                        </button>-->
-                        <!-- Create a button that your customers click to complete their purchase. Customize the styling to suit your branding. -->
                         <button
                         class="mdc-button mdc-dialog__button"
                         id="checkout-button"
@@ -617,9 +624,9 @@
                 </div>
             </div>
             <div class="mdc-dialog__scrim"></div>
-        </div>
+        </div-->
 
-        <div id="gift_already_dialog" class="mdc-dialog">
+        <!--div id="gift_already_dialog" class="mdc-dialog">
             <div class="mdc-dialog__container">
                 <div class="mdc-dialog__surface">
                     <div class="mdc-dialog__content" id="my-dialog-content-second">
@@ -634,7 +641,7 @@
                 </div>
             </div>
             <div class="mdc-dialog__scrim"></div>
-        </div>
+        </div-->
 
 
 
@@ -779,10 +786,10 @@
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-functions.js"></script>
     <!-- TODO: Add SDKs for Firebase products that you want to use
         https://firebase.google.com/docs/web/setup#available-libraries -->
-    <script>
+    <!--script>
         // Your web app's Firebase configuration
         var firebaseConfig = {
-            apiKey: "AIzaSyAh8ECDXJr3M3PIWtLYSIwKAJll4jFNO3c",
+            apiKey: "apikey",
             authDomain: "levup-5017a.firebaseapp.com",
             databaseURL: "https://levup-5017a.firebaseio.com",
             projectId: "levup-5017a",
@@ -792,8 +799,8 @@
         };
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-    </script>
-    <!--<script src="/__/firebase/init.js"></script>-->
+    </script-->
+    <script src="/__/firebase/init.js"></script>
 
     <!--stripeに関しての記述-->
     <script src="https://js.stripe.com/v3/"></script>
@@ -808,7 +815,7 @@
 
     <!--stripe checkout のためのコピー-->
     <!--20210312 stripe の ID 登録のためにも追加で使用-->
-    <script type="text/javascript">
+    <!--script type="text/javascript">
         // Create an instance of the Stripe object with your publishable API key
         var stripe = Stripe("pk_test_51HJd7bK4amKkUSI0v1KwlONpt66eSdYQp054Goeveigjshls9m0zU63pLVnmXFR7cYZZvKqFxFW9E8APQFLTr2Ci005Wzw2ajd");
         var checkoutButton = document.getElementById("checkout-button");
@@ -863,7 +870,7 @@
                 });
             },false);
         }
-    </script>
+    </script-->
      
         
 </html>

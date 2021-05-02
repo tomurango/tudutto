@@ -2,7 +2,7 @@
 var global_user_database;
 var global_tasks = {};
 var global_threads = {};
-const db = firebase.firestore()
+const db = firebase.firestore();
 var global_timestamps = {};//要削除？
 var global_comments = {};//要削除？
 //var comment_listeners_global = {};
@@ -532,6 +532,8 @@ function fab_count(){
         }).then(function(){
             //globalを変数を書き換える
             global_user_database.AlreadyPushed = true;
+            //count_page_check();
+            //20210327 count page check は主にカウントに関する処理を取り扱うものなので、diaryを入れ込むには少し違うと思う
         });
     }).catch(function(error){
         console.log("error =>", error);
@@ -1024,8 +1026,8 @@ function fire_userdata_get(uid){
             //20210210 Good Gift の初期化の追加
             var regist_doc = {   
                 AlreadyPushed:false,
-                Good: [],
-                Gift: []
+                Good: []
+                //Gift: []
             }
             db.collection("users").doc(uid).set(regist_doc).then(function(){
                 global_user_database = regist_doc;
@@ -1037,10 +1039,12 @@ function fire_userdata_get(uid){
     }).catch(function(error){
         console.log("error", error);
     });
+    //20210320グラフ系はもろとも停止
+    //20210409サブすく系統は再開
     //ログインしているのでchart-2を表示する（subscrtionのためのカード）
     document.getElementById("chart_two").style.display = "flex";
     //20210312ユーザがstripeに登録するためのカードも追加でーす
-    document.getElementById("chart_three").style.display = "flex";
+    //document.getElementById("chart_three").style.display = "flex";
     getCustomClaimRole();
 }
 
