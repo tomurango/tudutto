@@ -8,11 +8,18 @@ async function getCustomClaimRole() {
   if(decodedToken.claims.stripeRole){
     //課金ユーザ
     define('userplan','continue');
-    document.getElementById("user_role_display").textContent = "コンティニュープラン";
+    document.getElementById("user_role_display").textContent = "メンバープラン";
+    //subscriptionのsubmitボタンをとりあえずdisactiveにする
+    //document.getElementById("subscsubmit").disabled = true;
+    //と思ってたけど、表示するボタンをこれによって変更するのがいいと思うので
+    //非課金にするためのボタンを表示
+    document.getElementById("notsubscsubmit").style.display = "flex";
   }else{
     //ヒカキンユーザ
     define('userplan','normal');
     document.getElementById("user_role_display").textContent = "ノーマルプラン";
+    //課金をするためのボタンを表示
+    document.getElementById("subscsubmit").style.display = "flex";
   }
   return decodedToken.claims.stripeRole;
 }

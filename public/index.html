@@ -24,6 +24,7 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <!--fonts-->
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
         <!--css-->
         <link href="main.css" rel="stylesheet">
         <link href="loading.css" rel="stylesheet">
@@ -159,14 +160,19 @@
                 <p style="margin: 0px;">デフォルトのプラン。<br>標準的にヤルキーパーを利用できます。</p>
                 <p style="font-size: 0.8em; color: #777777; margin: 0px;">メンバープラン</p>
                 <p style="margin: 0px;">月額1000円のプラン。<br>より参加的にヤルキーパーを利用できます。</p>
-                <p style="font-size: 2em; margin: 50px 0px 0px 0px; font-weight: bold;">メンバー用機能</p>
+                <p style="font-size: 2em; margin: 50px 0px 0px 0px; font-weight: bold;">メンバー機能</p>
                 <p style="font-size: 0.8em; color: #777777; margin: 0px;">実装済み</p>
                 <p style="margin: 0px;">何もできません</p>
                 <p style="font-size: 0.8em; color: #777777; margin: 0px;">実装予定</p>
                 <p style="margin: 0px;">広告が出せる。ユーザの報告ができる。</p>
-                <button class="mdc-button mdc-button--touch" style="margin: 30px 0px 0px -6px;" onclick="subscribe()">
+                <button id="subscsubmit" class="mdc-button mdc-button--touch" style="margin: 30px 0px 0px -6px; display: none;" onclick="subscribe()">
                     <div class="mdc-button__ripple"></div>
-                    <span class="mdc-button__label">プランを変更する</span>
+                    <span class="mdc-button__label">メンバープランに変更する</span>
+                    <div class="mdc-button__touch"></div>
+                </button>
+                <button id="notsubscsubmit" class="mdc-button mdc-button--touch" style="margin: 30px 0px 0px -6px; display: none;" onclick="">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">ノーマルプランに変更する</span>
                     <div class="mdc-button__touch"></div>
                 </button>
             </div>
@@ -269,6 +275,19 @@
                     <div style="position: absolute; background-color: #ffffff; top: 44px; left: 0px; height: 20px; width: 100%;"></div>
                 </div>
             </div>
+
+            <!--広告用-->
+            <div id="adv_list" class="mdc-card adv-card" style="display: none;">
+                <a id="adv_list_link" class="adv_link">
+                    <p style="margin: 0px;">
+                        <span class="material-icons adv_icon">
+                            open_in_new
+                        </span>
+                        広告を開く
+                    </p>
+                </a>
+            </div>
+
             <div id="list_page_anonymous" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center;">
                 <div id="anonymous_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
                 <div>
@@ -290,7 +309,7 @@
                     <p class="text_down">最初は10秒でできるものがおすすめ</p>
                 </div>
             </div>
-            <div id="to_do_items" style="width: 100%; display: none;">
+            <div id="to_do_items" style="width: 100%; display: none; padding-bottom: 200px;">
                 <!--<div style="width: 100%; display: flex">
                     <div style="padding: 8px; width: 64px; box-sizing: border-box;">
                         <button class="mdc-icon-button material-icons" onclick="task_check(this)">radio_button_unchecked</button>
@@ -323,7 +342,7 @@
             </div>
             <button id="list_page_fab" class="mdc-fab" style="display: none" aria-label="create_task" onclick="fab_task()">
                 <div class="mdc-fab__ripple"></div>
-                <span class="mdc-fab__icon material-icons">add</span>
+                <span class="mdc-fab__icon material-icons" style="color: #001a33;">add</span>
             </button>
         </div>
         <!--
@@ -350,6 +369,19 @@
         -->
         <!--ここは後でワールドチャットシステム導入で用いる可能性があるので、基本放置で行こう-->
         <div id="talk_page" class="top_level_page" style="display: none; flex-direction: column;">
+
+            <!--広告用-->
+            <div id="adv_talk" class="mdc-card adv-card" style="display: none;">
+                <a id="adv_talk_link" class="adv_link">
+                    <p style="margin: 0px;">
+                        <span class="material-icons adv_icon">
+                            open_in_new
+                        </span>
+                        広告を開く
+                    </p>
+                </a>
+            </div>
+            
             <div id="have_hitokoto" style="display: none; width: 100%; height: fit-content; background-color: #ffffff; flex-wrap: wrap; min-height: 100%; padding-bottom: 100%; box-sizing: border-box;" >
                 <div id="hitokoto_count_pla" style="display: flex; width: 100%; height: fit-content; background-color: #ffffff;">
                     <div id="hitokoto_count_card" class="mdc-card" style="padding: 8px; width: 100%;">
@@ -447,7 +479,7 @@
                 
                 
             </div>
-            <div id="talk_page_noresult" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center;">
+            <div id="talk_page_noresult" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center; padding-bottom: 200px;">
                 <div id="noresult_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
                 <div>
                     <p class="text_up">結果が取得できませんでした。</p>
@@ -460,6 +492,19 @@
             </button>
         </div>
         <div id="data_page" class="top_level_page" style="display: none; background-color: #ffffff; padding-bottom: 16px; box-sizing: border-box;">
+            
+            <!--広告用-->
+            <div id="adv_data" class="mdc-card adv-card">
+                <a id="adv_data_link" class="adv_link">
+                    <p style="margin: 0px;">
+                        <span class="material-icons adv_icon">
+                            open_in_new
+                        </span>
+                        広告を開く
+                    </p>
+                </a>
+            </div>
+
             <div id="chart_one" class="mdc-card log-chart">
                 <p style="position: absolute; margin: 0px; top: 32px; left: 32px;">カウント数</p>
                 <p style="position: absolute; color: #777777; font-size: 0.8em; margin: 0px; top: 52px; left: 32px;">目指せ100人</p>
@@ -812,6 +857,7 @@
     <script src="js/task.js"></script>
     <script src="js/diary.js"></script>
     <script src="js/subscription.js"></script>
+    <script src="js/adv.js"></script>
 
     <!--stripe checkout のためのコピー-->
     <!--20210312 stripe の ID 登録のためにも追加で使用-->

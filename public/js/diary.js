@@ -20,6 +20,8 @@ function get_diary(){
     db.collectionGroup("diaries").where('createdAt', '>' , diary_timestamp).orderBy("createdAt", "desc").limit(10).get().then(function(threads){
         //timestampの書き換え
         diary_timestamp = new firebase.firestore.Timestamp.now();
+        //広告の表示
+        document.getElementById("adv_talk").style.display = "block";
         if(threads.size == 0){
             //連想配列の長さ取得サンプル
             if(Object.keys(global_diary).length == 0){

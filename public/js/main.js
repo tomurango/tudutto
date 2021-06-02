@@ -20,6 +20,8 @@ tabBar.listen('MDCTabBar:activated',function(event){
     for (var i=0, len=top_level_pages.length|0; i<len; i=i+1|0) {
         top_level_pages[i].style.display = "none";
     }
+    //広告を読みこんでindexに該当する箇所に挿入する
+    insert_adv(index);
     //indexによって処理を分岐して記述する
     if(index==0){
         document.getElementById("list_page").style.display = "flex";
@@ -188,6 +190,8 @@ function fab_task_back(){
 
 //userの種類によってページの表示を切り替えるための関数
 function list_page_check(user){
+    //20210603list_pageのみ、check関数内で広告を実行する。理由としてタブの切り替えで実行されないから
+    insert_adv(0);
     if (user) {
         // User is signed in.
         //console.log("user => ", user);
@@ -227,6 +231,9 @@ function list_page_check(user){
         document.getElementById("finished_container").style.display = "none";
         document.getElementById("create_task").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "block";
+        //広告の表示を追加20210502
+        document.getElementById("adv_list").style.display = "block";
+        //20210603広告をあえて非表示にしてから表示にしているのかは不明。ただ、list_pageのみこのようになっている
     }
 }
 
@@ -235,6 +242,8 @@ function get_all_tasks(user){
     //console.log("get_all_task が呼び出された");
     db.collection("users").doc(user.uid).collection("tasks").get().then(function(tasks){
         //console.log(tasks);
+        //広告の表示を追加20210502
+        document.getElementById("adv_list").style.display = "block";
         if (tasks.size > 0) {
             //console.log("tasks =>", tasks);
             var task_remain = 0;
