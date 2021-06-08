@@ -175,9 +175,47 @@
                     <span class="mdc-button__label">ノーマルプランに変更する</span>
                     <div class="mdc-button__touch"></div>
                 </button>
+                <button id="notloggedin" class="mdc-button mdc-button--touch" style="margin: 30px 0px 0px -6px; display: none;" onclick="login_card_display()">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">プランを変えるにはログインする</span>
+                    <div class="mdc-button__touch"></div>
+                </button>
             </div>
         </div>
         <!--プラン変更を進めたのちに実際に変更できるようなUXをさせるためのdiv-->
+
+        <!--広告を管理するためのdiv-->
+        <div id="div_for_adv" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff; overflow-y: scroll">
+            <!--戻るボタン-->
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" onclick="adv_detail_back()">clear</button>
+            <p style="position: absolute; left: 48px; top: 12px; margin: 0px; color: #333333;">広告を作成する</p>
+            <!--画像入力及び、プレビューエリア-->
+            <label id="adv_img_label" for="adv_img_inp">
+                <p style="font-size: 0.8em; color: #777777; margin: 0px; margin-left: 16px;">広告イメージ</p>
+                <div id="adv_img_pre" class="mdc-card adv-card">
+                    <a id="adv_crea_link" class="adv_link">
+                        <p style="margin: 0px;">
+                            <span class="material-icons adv_icon">
+                                open_in_new
+                            </span>
+                            広告を開く
+                        </p>
+                    </a>
+                </div>
+            </label>
+            <input id="adv_img_inp" type="file" required accept="image/*" style="display: none;">
+
+            <p style="font-size: 0.8em; color: #777777; margin: 16px 0px 0px 16px;">文字色</p>
+            <input id="adv_col_input" style="width: 80%;
+                font-size: 20px; border: none; margin: 0px 0px 0px 16px;" placeholder="000000"
+            >
+            <p style="font-size: 0.8em; color: #777777; margin: 16px 0px 0px 16px;">リンク</p>
+            <input id="adv_lin_input" style="width: 80%;
+                font-size: 20px; border: none; margin: 0px 0px 0px 16px;" placeholder="https://yarukeeper.com"
+            >
+            
+        </div>
+        <!--広告を管理するためのdiv-->
         
         <!--
         <div id="div_for_stripe" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff; overflow-y: scroll">
@@ -536,6 +574,22 @@
                     <button class="mdc-button mdc-button--touch" onclick="subscription_detail()">
                         <div class="mdc-button__ripple"></div>
                         <span class="mdc-button__label">プランとは？</span>
+                        <div class="mdc-button__touch"></div>
+                    </button>
+                </div>
+            </div>
+            <div id="chart_three" class="mdc-card log-chart" style="display: none;">
+                <p style="color: #777777; font-size: 0.8em; margin: 0px">広告の管理</p>
+                <p id="user_adv_display" style="text-align: center; margin: 30px 0px 0px 0px;">広告が出せます</p>
+                <div class="mdc-touch-target-wrapper" style="text-align: right;">
+                    <button class="mdc-button mdc-button--touch" onclick="">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">一覧する</span>
+                        <div class="mdc-button__touch"></div>
+                    </button>
+                    <button class="mdc-button mdc-button--touch" onclick="adv_detail()">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">作成する</span>
                         <div class="mdc-button__touch"></div>
                     </button>
                 </div>

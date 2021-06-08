@@ -14,6 +14,8 @@ async function getCustomClaimRole() {
     //と思ってたけど、表示するボタンをこれによって変更するのがいいと思うので
     //非課金にするためのボタンを表示
     document.getElementById("notsubscsubmit").style.display = "flex";
+    //20210603課金ユーザなので、広告管理のdiv(カード)を表示
+    document.getElementById("chart_three").style.display = "flex";
   }else{
     //ヒカキンユーザ
     define('userplan','normal');
@@ -179,3 +181,4 @@ function stripe_detail_back(){
   document.getElementById("div_for_stripe").style.display = "none";
 }
 
+//20210603備忘録プラン変更の関数（サブすくの解約）の実装をしましょう

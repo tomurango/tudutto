@@ -137,6 +137,8 @@ $(document).ready(function(){
                     //こうなったら特に操作は発生しない感じかなと思ってたけど共通部分を持ってきました
                     //list page の表示を切り替える関数
                     list_page_check(result.user);
+                    //20210603ここでログインしていないと判断して、広告後のログインボタンの表示を行う
+                    document.getElementById("notloggedin").style.display = "flex";
                 }
               });
         }

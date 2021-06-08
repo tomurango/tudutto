@@ -510,7 +510,7 @@ html{
 /* 広告用のカード */
 .adv-card{
     box-sizing: border-box;
-    background-size: contain;
+    background-size: cover;
 }.adv-card::before {
     display: block;
     content: " ";
@@ -536,3 +536,10 @@ html{
         margin: 8px 8px 0px 8px;
     }
 }
+
+/*広告作成ページに関する記述*/
+#adv_img_pre{
+    background-image: url(images/insert_image.jpg);
+}
+
+
