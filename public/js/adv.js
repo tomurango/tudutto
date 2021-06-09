@@ -64,7 +64,8 @@ function adv_detail(){
         }
     });
     //リンク入力イベント
-    $('#adv_lin_input').on('change', function (e) {
+    $('#adv_lin_input').on('input', function (e) {
+        console.log(e.target.value);
         if(cansubmit_adv()){
             //提出要件を満たしているのでボタンを有効化
             document.getElementById("adv_crea_button").disabled = false;
@@ -87,7 +88,7 @@ function adv_detail(){
     */
     //カラーコードinputイベント
     $('#adv_col_input').on('input', function (e) {
-        //console.log("color code", e.target.value);
+        console.log("color code", e.target.value);
         document.getElementById("adv_crea_link").style.color = e.target.value;
         if(cansubmit_adv()){
             //提出要件を満たしているのでボタンを有効化
@@ -101,13 +102,20 @@ function adv_detail(){
     document.getElementById("div_for_adv").style.display = "block";
 }
 function adv_detail_back(){
-    //表示を閉じる
-    document.getElementById("div_for_adv").style.display = "none";
-    //入力イベント停止
-    $('#adv_img_inp').off('change');
-    $('#adv_lin_input').off('change');
-    //$('#adv_col_input').off('change');
-    $('#adv_col_input').off('input');
+    if(is_inputed_adv()){
+        //入力があったら
+        //dialogを開く
+        adv_del_dia.open();
+    }else{
+        //入力がなければ
+        //表示を閉じる
+        document.getElementById("div_for_adv").style.display = "none";
+        //入力イベント停止
+        $('#adv_img_inp').off('change');
+        $('#adv_lin_input').off('input');
+        //$('#adv_col_input').off('change');
+        $('#adv_col_input').off('input');
+    }
 }
 
 //20210603previewとinputhidden等の実装をしましょう
@@ -176,3 +184,54 @@ function cansubmit_adv(){
 }
 
 //20210609広告申請のonclick dialog と実際の申請処理、作成divを閉じるときのalert dialog と削除処理。の実装をしましょう。
+var adv_crea_dia = new mdc.dialog.MDCDialog(document.querySelector('#adv_crea_dia'));
+adv_crea_dia.scrimClickAction = "";
+var adv_del_dia = new mdc.dialog.MDCDialog(document.querySelector('#adv_del_dia'));
+adv_del_dia.scrimClickAction = "";
+
+function send_myadv(){
+    //申請をここで送信することを想定しているよー
+    console.log("広告を申請します");
+}
+function is_inputed_adv(){
+    if(document.getElementById("adv_img_inp").value == ""){
+        //画像はない
+        if(document.getElementById("adv_lin_input").value == ""){
+            //リンクはない
+            if(document.getElementById("adv_col_input").value == "#000000"){
+                //色もない(黒)
+                return false;
+            }else{
+                return true;
+            }
+        }else{
+            //リンクはある
+            return true;
+        }
+    }else{
+        //画像がある
+        return true;
+    }
+    
+}
+function del_adv_inp(){
+    //ボタンの無力化
+    document.getElementById("adv_crea_button").disabled = true;
+    //表示を閉じる
+    document.getElementById("div_for_adv").style.display = "none";
+    //入力イベント停止
+    $('#adv_img_inp').off('change');
+    $('#adv_lin_input').off('input');
+    //$('#adv_col_input').off('change');
+    $('#adv_col_input').off('input');
+    //プレビューを戻す
+    document.getElementById("adv_img_pre").style.backgroundImage = "url(images/insert_image.jpg)";
+    //サンプルカラーを戻す
+    document.getElementById("adv_crea_link").style.color = "#000000";
+    //入力値を初期値に戻す
+    document.getElementById("adv_img_inp").value = "";
+    document.getElementById("adv_lin_input").value = "";
+    document.getElementById("adv_col_input").value = "#000000";
+}
+
+//申請を記録して、課金ユーザが判断する構築を目指して、データベース、画像保存、権限などの想像をする
