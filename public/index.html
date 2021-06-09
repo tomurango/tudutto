@@ -206,13 +206,16 @@
             <input id="adv_img_inp" type="file" required accept="image/*" style="display: none;">
 
             <p style="font-size: 0.8em; color: #777777; margin: 16px 0px 0px 16px;">文字色</p>
-            <input id="adv_col_input" style="width: 80%;
-                font-size: 20px; border: none; margin: 0px 0px 0px 16px;" placeholder="000000"
+            <input type="color" id="adv_col_input" style="border: none; margin: 0px 0px 0px 16px;" value="#000000" placeholder="#000000"
             >
             <p style="font-size: 0.8em; color: #777777; margin: 16px 0px 0px 16px;">リンク</p>
-            <input id="adv_lin_input" style="width: 80%;
+            <input id="adv_lin_input" type="url" style="width: 80%;
                 font-size: 20px; border: none; margin: 0px 0px 0px 16px;" placeholder="https://yarukeeper.com"
             >
+            <button id="adv_crea_button" class="mdc-button mdc-button--outlined" style="margin: 30px 0px 0px 16px;" disabled onclick="">
+                <div class="mdc-button__ripple"></div>
+                <span class="mdc-button__label">申請</span>
+            </button>
             
         </div>
         <!--広告を管理するためのdiv-->
@@ -580,7 +583,7 @@
             </div>
             <div id="chart_three" class="mdc-card log-chart" style="display: none;">
                 <p style="color: #777777; font-size: 0.8em; margin: 0px">広告の管理</p>
-                <p id="user_adv_display" style="text-align: center; margin: 30px 0px 0px 0px;">広告が出せます</p>
+                <p id="user_adv_display" style="text-align: center; margin: 30px 0px 20px 0px;">広告が出せます</p>
                 <div class="mdc-touch-target-wrapper" style="text-align: right;">
                     <button class="mdc-button mdc-button--touch" onclick="">
                         <div class="mdc-button__ripple"></div>

@@ -54,6 +54,48 @@ function adv_detail(){
             document.getElementById("adv_img_pre").style.backgroundImage = "url(images/insert_image.jpg)";
             alert("svg, png, jpg, gif のいずれかの形式でアップロードしてください");
         }
+        //上の画像プレビュー判定と重複はあるが、可読性を考慮して独立した処理を設けておきます。
+        if(cansubmit_adv()){
+            //提出要件を満たしているのでボタンを有効化
+            document.getElementById("adv_crea_button").disabled = false;
+        }else{
+            //不適当なので、ボタン無力化
+            document.getElementById("adv_crea_button").disabled = true;
+        }
+    });
+    //リンク入力イベント
+    $('#adv_lin_input').on('change', function (e) {
+        if(cansubmit_adv()){
+            //提出要件を満たしているのでボタンを有効化
+            document.getElementById("adv_crea_button").disabled = false;
+        }else{
+            //不適当なので、ボタン無力化
+            document.getElementById("adv_crea_button").disabled = true;
+        }
+    });
+    //カラーコード入力イベント
+    /*入力と変化のイベントを別にする必要はないと感じたので除外
+    $('#adv_col_input').on('change', function (e) {
+        if(cansubmit_adv()){
+            //提出要件を満たしているのでボタンを有効化
+            document.getElementById("adv_crea_button").disabled = false;
+        }else{
+            //不適当なので、ボタン無力化
+            document.getElementById("adv_crea_button").disabled = true;
+        }
+    });
+    */
+    //カラーコードinputイベント
+    $('#adv_col_input').on('input', function (e) {
+        //console.log("color code", e.target.value);
+        document.getElementById("adv_crea_link").style.color = e.target.value;
+        if(cansubmit_adv()){
+            //提出要件を満たしているのでボタンを有効化
+            document.getElementById("adv_crea_button").disabled = false;
+        }else{
+            //不適当なので、ボタン無力化
+            document.getElementById("adv_crea_button").disabled = true;
+        }
     });
     //div表示
     document.getElementById("div_for_adv").style.display = "block";
@@ -63,6 +105,9 @@ function adv_detail_back(){
     document.getElementById("div_for_adv").style.display = "none";
     //入力イベント停止
     $('#adv_img_inp').off('change');
+    $('#adv_lin_input').off('change');
+    //$('#adv_col_input').off('change');
+    $('#adv_col_input').off('input');
 }
 
 //20210603previewとinputhidden等の実装をしましょう
@@ -76,5 +121,58 @@ function con_file_ext(the_extention){
     }
     return false;
 }
-
 //20210609文字色のプレビュー反映、広告申請ボタンの実装、実際に申請を出した時のフローを考える
+//ネットで拾ったURLパターンの判定関数
+/*
+function isURL(str) {
+    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return pattern.test(str);
+}
+*/
+function isValidHttpUrl(string) {
+    let url;
+  
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;  
+    }
+  
+    return url.protocol === "http:" || url.protocol === "https:";
+}
+//同じくコピペコード
+function isColor (color) {
+    return color.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/) !== null;
+}
+
+function cansubmit_adv(){
+    var adv_lin_input = document.getElementById("adv_lin_input").value;
+    if(isValidHttpUrl(adv_lin_input)){
+        //入力していて、その値が、URLなのでOKです。
+        var adv_img_inp = document.getElementById("adv_img_inp").value.split('.');
+        if(con_file_ext(adv_img_inp[adv_img_inp.length - 1].toLowerCase())){
+            //画像が入力されていて、適切な拡張子もついてまっす
+            var adv_col_input = document.getElementById("adv_col_input").value;
+            if(isColor(adv_col_input)){
+                //色もしっかり入力されている
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            //画像の入力は不適当なので、ボタン無力化
+            return false;
+        }
+    }else{
+        //入力されていない若しくは、URLとして不適当である
+        //ボタンを無力化する
+        return false;
+    }
+}
+
+//20210609広告申請のonclick dialog と実際の申請処理、作成divを閉じるときのalert dialog と削除処理。の実装をしましょう。
