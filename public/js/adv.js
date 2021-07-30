@@ -1,4 +1,8 @@
 //20210601広告を読み込んで表示する関数をここから組む感じで行こうか。久々の進捗だー！
+
+//const { userInfo } = require("os");
+//20210710上の記述が勝手に書き込まれていた
+
 //20210603一度広告を読み込んだら、とりあえず自動での再読み込みはしないようにしようか
 var adv_flag = [true, true, true];
 //関数自体は、babで切替した時に一度だけ作動するイメージ
@@ -17,15 +21,15 @@ function insert_adv(index){
 function insert_adv_yar(index){
     //広告のページごとに分岐して、背景画像と文字色を変更するつもりでっす
     if(index==0){
-        document.getElementById("adv_list").style.backgroundImage= "url(images/adv/adv1.jpg)";
+        document.getElementById("adv_list").style.backgroundImage= "url(images/adv1.jpg)";
         document.getElementById("adv_list_link").style.color= "#fff2d3";
         document.getElementById('adv_list_link').setAttribute('href',"javascript:subscription_detail();");
     }else if(index==1){
-        document.getElementById("adv_talk").style.backgroundImage= "url(images/adv/adv2.jpg)";
+        document.getElementById("adv_talk").style.backgroundImage= "url(images/adv2.jpg)";
         document.getElementById("adv_talk_link").style.color= "#fff2d3";
         document.getElementById('adv_talk_link').setAttribute('href',"javascript:subscription_detail();");
     }else if(index==2){
-        document.getElementById("adv_data").style.backgroundImage= "url(images/adv/adv3.jpg)";
+        document.getElementById("adv_data").style.backgroundImage= "url(images/adv3.jpg)";
         document.getElementById("adv_data_link").style.color= "#fff2d3";
         document.getElementById('adv_data_link').setAttribute('href',"javascript:subscription_detail();");
     }
@@ -45,7 +49,11 @@ function adv_detail(){
             reader.onload = function (e) {
                 //$("#preview").attr('src', e.target.result);
                 //console.log(e.target.result,e.target);
-                document.getElementById("adv_img_pre").style.backgroundImage = "url(" + e.target.result + ")";;
+                //20210730画像の読み込みが以下の記述で急になされなくなった。なんでだろう、なんでだろう、なでだなんでだろう
+                //document.getElementById("adv_img_pre").style.backgroundImage = "url(" + e.target.result + ");";
+                $('#adv_img_pre').css({
+                    backgroundImage: 'url("'+ e.target.result +'")' // "" で括っていないとIEでは表示されない
+                });
             }
             reader.readAsDataURL(e.target.files[0]);
         }else{
@@ -62,16 +70,33 @@ function adv_detail(){
             //不適当なので、ボタン無力化
             document.getElementById("adv_crea_button").disabled = true;
         }
+        //入力があり、文字が存在するとき
+        if(document.getElementById("adv_img_inp").value){
+            //console.log("alert flag ok");
+            del_ala_img = true;
+        }else{
+            //console.log("alert flag no color");
+            del_ala_img = false;
+        }
+        
     });
     //リンク入力イベント
     $('#adv_lin_input').on('input', function (e) {
-        console.log(e.target.value);
+        //console.log(e.target.value);
         if(cansubmit_adv()){
             //提出要件を満たしているのでボタンを有効化
             document.getElementById("adv_crea_button").disabled = false;
         }else{
             //不適当なので、ボタン無力化
             document.getElementById("adv_crea_button").disabled = true;
+        }
+        //入力があり、文字が存在するとき
+        if(document.getElementById("adv_lin_input").value){
+            //console.log("alert flag ok");
+            del_ala_lin = true;
+        }else{
+            //console.log("alert flag no color");
+            del_ala_lin = false;
         }
     });
     //カラーコード入力イベント
@@ -88,7 +113,7 @@ function adv_detail(){
     */
     //カラーコードinputイベント
     $('#adv_col_input').on('input', function (e) {
-        console.log("color code", e.target.value);
+        //console.log("color code", e.target.value);
         document.getElementById("adv_crea_link").style.color = e.target.value;
         if(cansubmit_adv()){
             //提出要件を満たしているのでボタンを有効化
@@ -97,12 +122,30 @@ function adv_detail(){
             //不適当なので、ボタン無力化
             document.getElementById("adv_crea_button").disabled = true;
         }
+        //入力があり、文字が存在するとき
+        if(document.getElementById("adv_col_input").value){
+            //console.log("alert flag ok");
+            del_ala_col = true;
+        }else{
+            //console.log("alert flag no color");
+            del_ala_col = false;
+        }
     });
+    //自分が申請した広告が存在するかどうかの判断。
+    getmyadv();
     //div表示
     document.getElementById("div_for_adv").style.display = "block";
 }
+
+
+//20210730 削除しますがよろしいのアラートを管理するためのフラグ、60行付近の関数にて管理している
+var del_ala_col = false;
+var del_ala_lin = false;
+var del_ala_img = false;
 function adv_detail_back(){
-    if(is_inputed_adv()){
+    //if(is_inputed_adv()){
+    //上の記述では、自分が以前申請したいた物も取得して、反応してしまうので改定。関数に関しても記述を取り除くことがより良いと考える。
+    if(del_ala_col || del_ala_img || del_ala_lin){
         //入力があったら
         //dialogを開く
         adv_del_dia.open();
@@ -115,6 +158,10 @@ function adv_detail_back(){
         $('#adv_lin_input').off('input');
         //$('#adv_col_input').off('change');
         $('#adv_col_input').off('input');
+        //フラグの初期化
+        del_ala_col = false;
+        del_ala_lin = false;
+        del_ala_img = false;
     }
 }
 
@@ -232,6 +279,108 @@ function del_adv_inp(){
     document.getElementById("adv_img_inp").value = "";
     document.getElementById("adv_lin_input").value = "";
     document.getElementById("adv_col_input").value = "#000000";
+    //フラグの初期化
+    del_ala_col = false;
+    del_ala_lin = false;
+    del_ala_img = false;
 }
 
 //申請を記録して、課金ユーザが判断する構築を目指して、データベース、画像保存、権限などの想像をする
+//20210707以後久しぶりにcloud storage を使用するのでhttps://firebase.google.com/codelabs/firebase-web#9を参考にすると良さそう。（要観察）
+//下はコピペです
+// Saves a new message containing an image in Firebase.
+// This first saves the image in Firebase storage.
+function saveAdv(){
+    //申請ボタンと作成するボタンのdisactive
+    document.getElementById("adv_crea_button").disabled = true;
+    document.getElementById("to_adv_detail").disabled = true;
+    //広告のdetailを閉じる
+    document.getElementById("div_for_adv").style.display = "none";
+    //入力イベント停止
+    $('#adv_img_inp').off('change');
+    $('#adv_lin_input').off('input');
+    //$('#adv_col_input').off('change');
+    $('#adv_col_input').off('input');
+    //経験値からコピペ加工
+    var file = document.getElementById("adv_img_inp").files[0];
+    var colorcode = document.getElementById("adv_col_input").value;
+    var advlink = document.getElementById("adv_lin_input").value;
+    //読み込み中画像
+    var LOADING_IMAGE_URL = "";
+    // 1 - We add a message with a loading icon that will get updated with the shared image.
+    db.collection('advs').doc(global_user.uid).set({
+        name: global_user.displayName,
+        imageUrl: LOADING_IMAGE_URL,
+        //profilePicUrl: getProfilePicUrl(),
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        colorCode: colorcode,
+        advUrl: advlink
+    }).then(function() {
+        //console.log("advRef1", advRef);
+        //ここでメッセージを出す
+        snackbar.open();
+        // 2 - Upload the image to Cloud Storage.
+        //var filePath = firebase.auth().currentUser.uid + '/' + advRef.id + '/' + file.name;
+        //var filePath = firebase.auth().currentUser.uid + '/' +  file.name;
+        var filePath = 'advs/' + firebase.auth().currentUser.uid;
+        return firebase.storage().ref(filePath).put(file).then(function(fileSnapshot) {
+            // 3 - Generate a public URL for the file.
+            //console.log("advRef2", advRef);
+            return fileSnapshot.ref.getDownloadURL().then((url) => {
+                //console.log("advRef3", advRef);
+                // 4 - Update the chat message placeholder with the image's URL.
+                // addではなく、set なのでパスを手動で指定する return advRef.update({
+                return db.collection('advs').doc(global_user.uid).update({
+                    imageUrl: url,
+                    storageUri: fileSnapshot.metadata.fullPath
+                }).then(function(){
+                    //ボタンや入力のあたいを元に戻す処理をする（後にユーザの広告がデフォで入るなら、変更あり）
+                    //プレビューを戻す
+                    document.getElementById("adv_img_pre").style.backgroundImage = "url(images/insert_image.jpg)";
+                    //サンプルカラーを戻す
+                    document.getElementById("adv_crea_link").style.color = "#000000";
+                    //入力値を初期値に戻す
+                    document.getElementById("adv_img_inp").value = "";
+                    document.getElementById("adv_lin_input").value = "";
+                    document.getElementById("adv_col_input").value = "#000000";
+                    //ボタン戻し                
+                    document.getElementById("to_adv_detail").disabled = false;
+                });
+            });
+        });
+    }).catch(function(error) {
+        console.error('There was an error uploading a file to Cloud Storage:', error);
+    });
+}
+
+const snackbar = new mdc.snackbar.MDCSnackbar(document.querySelector('.mdc-snackbar'));
+
+
+//広告作成のボタンを押したときに自分のデータを取ってきてあるなら、それを代入する処理を行う。
+
+function getmyadv(){
+    db.collection("advs").doc(global_user.uid).get().then(function(result_doc){
+        //console.log(result_doc.data());
+        insertmyadv(result_doc.data());
+    }).catch(function(error){
+        console.log("error", error);
+    });
+}
+
+function insertmyadv(data){
+    //文字色
+    document.getElementById("adv_col_input").value = data.colorCode;
+    document.getElementById("adv_crea_link").style.color = data.colorCode;
+    //リンク
+    document.getElementById("adv_lin_input").value = data.advUrl;
+    //画像
+    //var urlstyle = 'url(' + data.imageUrl + ');';
+    //console.log(urlstyle, typeof data.imageUrl);
+    //document.getElementById("div_for_adv").style.backgroundImage = urlstyle;
+    //document.getElementById("div_for_adv").style.backgroundImage = "url(" + data.imageUrl + ");";
+    //document.getElementById("adv_img_pre").style.backgroundImage = "url(images/insert_image.jpg)";
+    //document.getElementById("div_for_adv").style.backgroundImage = "url(https://firebasestorage.googleapis.com/v0/b/levup-5017a.appspot.com/o/advs%2F8uH1wWLpXsgOiVWrfLNDBvAd27E2?alt=media&token=9ff7495e-3d8d-479f-a526-7929babb8ca6)";
+    $('#adv_img_pre').css({
+        backgroundImage: 'url("'+ data.imageUrl +'")' // "" で括っていないとIEでは表示されない
+    });
+}

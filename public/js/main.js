@@ -8,6 +8,8 @@ var global_comments = {};//要削除？
 //var comment_listeners_global = {};
 var global_now_board;//要削除？
 var global_now_thread;//要削除？
+//20210707広告画像保存のために作成
+const storage = firebase.storage();
 
 /* tab navigation */
 var tabBar = new mdc.tabBar.MDCTabBar(document.querySelector('#bottom_app_bar'));

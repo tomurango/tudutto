@@ -590,7 +590,7 @@
                         <span class="mdc-button__label">一覧する</span>
                         <div class="mdc-button__touch"></div>
                     </button>
-                    <button class="mdc-button mdc-button--touch" onclick="adv_detail()">
+                    <button id="to_adv_detail" class="mdc-button mdc-button--touch" onclick="adv_detail()">
                         <div class="mdc-button__ripple"></div>
                         <span class="mdc-button__label">作成する</span>
                         <div class="mdc-button__touch"></div>
@@ -696,7 +696,7 @@
                     </section>
                     <footer class="mdc-dialog__actions">
                         <button type="button" class="mdc-button mdc-dialog__button mdc-ripple-upgraded" data-mdc-dialog-action="close" style="--mdc-ripple-fg-size:45px; --mdc-ripple-fg-scale:2.10168; --mdc-ripple-fg-translate-start:-2.32294px, 8px; --mdc-ripple-fg-translate-end:15.7656px, -4.5px;">キャンセル</button>
-                        <button type="button" class="mdc-button mdc-dialog__button mdc-ripple-upgraded" data-mdc-dialog-action="accept" onclick="" style="--mdc-ripple-fg-size:49px; --mdc-ripple-fg-scale:2.0438; --mdc-ripple-fg-translate-start:6.47913px, 6px; --mdc-ripple-fg-translate-end:16.8229px, -6.5px;">申請する</button>
+                        <button type="button" class="mdc-button mdc-dialog__button mdc-ripple-upgraded" data-mdc-dialog-action="accept" onclick="saveAdv()" style="--mdc-ripple-fg-size:49px; --mdc-ripple-fg-scale:2.0438; --mdc-ripple-fg-translate-start:6.47913px, 6px; --mdc-ripple-fg-translate-end:16.8229px, -6.5px;">申請する</button>
                     </footer>
                 </div>
             </div>
@@ -717,6 +717,21 @@
                 </div>
             </div>
             <div class="mdc-dialog__scrim">
+            </div>
+        </div>
+
+        <!-- 広告を申請した時の途中処理にて表示 -->
+        <div id="sinsei_ok" class="mdc-snackbar">
+            <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+                <div class="mdc-snackbar__label" aria-atomic="false">
+                    申請を受け付けました
+                </div>
+                <!--div class="mdc-snackbar__actions" aria-atomic="true">
+                    <button type="button" class="mdc-button mdc-snackbar__action">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">Retry</span>
+                    </button>
+                </div-->
             </div>
         </div>
 
@@ -918,6 +933,9 @@
     <script src="/__/firebase/7.2.3/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-functions.js"></script>
+    <!-- 広告画像のためにconfig 追加 -->
+    <!--script src="/__/firebase/8.6.7/firebase-storage.js"></script-->
+    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-storage.js"></script>
     <!-- TODO: Add SDKs for Firebase products that you want to use
         https://firebase.google.com/docs/web/setup#available-libraries -->
     <!--script>

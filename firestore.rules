@@ -83,5 +83,16 @@ service cloud.firestore {
 
     //boardに関する記述は20200815を持って削除されました
 
+    //20210726広告のための権限設定
+    //function hasContinueSubs() {
+    //  return request.auth.token.stripeRole == "continue";
+    //}
+    match /advs/{advId} {
+      allow read: if true;
+      //allow write: if true;
+      //allow write: if request.auth.uid != advId && hasContinueSubs();
+      allow write: if request.auth.uid == advId && request.auth.token.stripeRole == "continue";
+    }
+
   }
 }
