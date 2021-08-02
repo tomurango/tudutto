@@ -219,6 +219,40 @@
             
         </div>
         <!--広告を管理するためのdiv-->
+
+        <!--広告を一覧投票するためのdiv-->
+        <div id="div_for_othersadv" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff; overflow-y: scroll">
+            <!--戻るボタン-->
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" onclick="adv_others_back()">clear</button>
+            <p style="position: absolute; left: 48px; top: 12px; margin: 0px; color: #333333;">広告に投票する</p>
+            <!--他の人の投票を入れ込んでいくためのdiv-->
+            <div id="otheradv_lis" style="display: none;">
+                <!--div id="" class="mdc-card vote_card">
+                    <a id="" class="adv_link">
+                        <p style="margin: 0px;">
+                            <span class="material-icons adv_icon">
+                                open_in_new
+                            </span>
+                            広告を開く
+                        </p>
+                    </a>
+                    <div class="vote_madia"></div>
+                    <div class="vote_footer">
+                        <button class="material-icons mdc-icon-button vote_button" onclick="">thumb_up</button>
+                        <button class="material-icons mdc-icon-button vote_button" onclick="">thumb_down</button>
+                    </div>
+                </div-->
+            </div>
+            <!--placeholder-->
+            <div id="otheradv_pla" style="display: block;">
+                <b>読み込み中</b>
+            </div>
+            <!--取得できなかった時のdiv-->
+            <div id="otheradv_non" style="display: none;">
+                <b>取得できませんでした</b>
+            </div>
+        </div>
+        <!--広告を一覧投票するためのdiv-->
         
         <!--
         <div id="div_for_stripe" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff; overflow-y: scroll">
@@ -585,9 +619,9 @@
                 <p style="color: #777777; font-size: 0.8em; margin: 0px">広告の管理</p>
                 <p id="user_adv_display" style="text-align: center; margin: 30px 0px 20px 0px;">広告が出せます</p>
                 <div class="mdc-touch-target-wrapper" style="text-align: right;">
-                    <button class="mdc-button mdc-button--touch" onclick="">
+                    <button class="mdc-button mdc-button--touch" onclick="adv_others()">
                         <div class="mdc-button__ripple"></div>
-                        <span class="mdc-button__label">一覧する</span>
+                        <span class="mdc-button__label">投票する</span>
                         <div class="mdc-button__touch"></div>
                     </button>
                     <button id="to_adv_detail" class="mdc-button mdc-button--touch" onclick="adv_detail()">
@@ -928,14 +962,16 @@
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js"></script>
     -->
-    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+
+    <!--20210730 version 8.7.0 に揃えたら動いた。firestore where query の != のために記述変更-->
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
     <!-- Add Firebase products that you want to use -->
-    <script src="/__/firebase/7.2.3/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-functions.js"></script>
+    <script src="/__/firebase/8.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-functions.js"></script>
     <!-- 広告画像のためにconfig 追加 -->
     <!--script src="/__/firebase/8.6.7/firebase-storage.js"></script-->
-    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-storage.js"></script>
     <!-- TODO: Add SDKs for Firebase products that you want to use
         https://firebase.google.com/docs/web/setup#available-libraries -->
     <!--script>

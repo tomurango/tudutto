@@ -91,7 +91,9 @@ service cloud.firestore {
       allow read: if true;
       //allow write: if true;
       //allow write: if request.auth.uid != advId && hasContinueSubs();
-      allow write: if request.auth.uid == advId && request.auth.token.stripeRole == "continue";
+      allow create, delete: if request.auth.uid == advId && request.auth.token.stripeRole == "continue";
+      //投票のためにupdateは分ける
+      allow update: if request.auth.token.stripeRole == "continue";
     }
 
   }

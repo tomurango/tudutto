@@ -291,6 +291,10 @@ function del_adv_inp(){
 // Saves a new message containing an image in Firebase.
 // This first saves the image in Firebase storage.
 function saveAdv(){
+    //フラグの初期化
+    del_ala_col = false;
+    del_ala_lin = false;
+    del_ala_img = false;
     //申請ボタンと作成するボタンのdisactive
     document.getElementById("adv_crea_button").disabled = true;
     document.getElementById("to_adv_detail").disabled = true;
@@ -314,7 +318,10 @@ function saveAdv(){
         //profilePicUrl: getProfilePicUrl(),
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         colorCode: colorcode,
-        advUrl: advlink
+        advUrl: advlink,
+        goodList:[],
+        badList:[]
+        //uid: global_user.uid//queryのためにfield追加 と思っていたが二度目以降は取得しない形なのでひとまず除外
     }).then(function() {
         //console.log("advRef1", advRef);
         //ここでメッセージを出す
@@ -368,6 +375,7 @@ function getmyadv(){
 }
 
 function insertmyadv(data){
+    //console.log(data, data.colorCode);
     //文字色
     document.getElementById("adv_col_input").value = data.colorCode;
     document.getElementById("adv_crea_link").style.color = data.colorCode;
@@ -384,3 +392,176 @@ function insertmyadv(data){
         backgroundImage: 'url("'+ data.imageUrl +'")' // "" で括っていないとIEでは表示されない
     });
 }
+
+//一覧投票するを表示する関数
+function adv_others(){
+    get_adv_others();
+    document.getElementById("div_for_othersadv").style.display = "block";
+}
+
+function adv_others_back(){
+    document.getElementById("div_for_othersadv").style.display = "none";
+}
+
+//2度目以降は今よりあとのやつを取得したい（重複を避けるため）
+var adv_others_flag = true;
+//var adv_others_time;
+function get_adv_others(){
+    //.where(firebase.firestore.FieldPath.documentId(), "in", listOfReferences)
+    //db.collection('books').where('__name__', '==' ,'fK3ddutEpD2qQqRMXNW5').get().
+    var uid = global_user.uid;
+    //console.log(typeof uid);
+    //db.collection("advs").where(firebase.firestore.FieldPath.documentId(), "not-in", uid)
+    if(adv_others_flag){
+        //flagの挿入とタイムスタンプの定義をここで行いたい感じ。
+        adv_others_flag = false;
+        //adv_others_time = new firebase.firestore.Timestamp.now();
+        db.collection("advs").where('__name__', '!=' , uid).get()
+        .then((querySnapshot) => {
+            //global変数二も入れ込む感じで
+
+            //挿入
+            get_after_otheadv(querySnapshot);
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        });
+    }else{
+        //二度目以降なのでtimestampにしたがって取得してもらう。
+        //.orderBy('createdAt', 'asc').startAt(startDate).endAt(endDate).
+        //と思っていたが、難しいからパス。2回目以降は取得しないくする
+        /*
+        db.collection("advs").orderBy('timestamp', 'asc').startAt(adv_others_time).endAt(new firebase.firestore.Timestamp.now()).where("uid", "!=", global_user.uid).get()
+        //.then(get_after_otheadv(querySnapshot))
+        .then((querySnapshot) => {
+            adv_others_time = new firebase.firestore.Timestamp.now();
+            get_after_otheadv(querySnapshot)
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        });
+        */
+       return
+    }
+}
+
+function get_after_otheadv(querySnapshot){
+    if(querySnapshot.size > 0){
+        //一つ以上あるので挿入
+        querySnapshot.forEach((doc) => {
+            insert_other_adv(doc.id, doc.data())
+            //console.log(doc.id, ' => ', doc.data());
+        });
+        document.getElementById("otheradv_lis").style.display = "block";
+        document.getElementById("otheradv_non").style.display = "none";
+        document.getElementById("otheradv_pla").style.display = "none";
+    }else{
+        //一つもないので
+        document.getElementById("otheradv_lis").style.display = "none";
+        document.getElementById("otheradv_non").style.display = "block";
+        document.getElementById("otheradv_pla").style.display = "none";
+    }
+}
+
+var global_adv_other = {};
+function insert_other_adv(id, data){
+    //global変数に代入
+    global_adv_other[id] = data;
+    //console.log(id,data);
+    //原型を作ってそれをコピーしていく
+    //insert_taskをコピーしてそれを書き換える形で実装目指す
+    var vote_div = '<div id="' + id + '_advcard" class="mdc-card vote_card"><a id="' + id + '_advlink" class="adv_link"><p style="margin: 0px;"><span class="material-icons adv_icon">open_in_new</span>広告を開く</p></a><div class="vote_madia"></div><div class="vote_footer"><button class="material-icons mdc-icon-button vote_button good" onclick="adv_ok(this)">thumb_up</button><button class="material-icons mdc-icon-button vote_button bad" onclick="adv_no(this)">thumb_down</button></div></div>';
+    var votes_container = document.getElementById("otheradv_lis");
+    var vote_promise = new Promise(function(resolve, reject){
+        votes_container.insertAdjacentHTML("afterbegin", vote_div);
+        resolve();
+    });
+    var queryid = "#" + id + "_advcard"; 
+    vote_promise.then(function(){
+        //ここでtextContentいれる
+        $(queryid).find(".adv_link").css('color',data.colorCode);
+        $(queryid).find(".adv_link").attr("href", data.advUrl);
+        $(queryid).find(".vote_madia").css({
+            backgroundImage: 'url("'+ data.imageUrl +'")' // "" で括っていないとIEでは表示されない
+        });
+    });
+}
+
+function adv_ok(good_element){
+    //表示の切替等
+    var adv_id = good_element.parentNode.parentNode.id.split('_')[0];
+    //console.log("adv ok !", adv_id);
+    bad_element = good_element.nextSibling;
+    good_element.classList.toggle("active");
+    bad_element.classList.remove("active");
+    //toggle_goodbad(good_element);
+    //toggle_goodbad(bad_element);
+    //でーたべすの書き換え
+    if(global_adv_other[adv_id]["goodList"].includes(global_user.uid)){
+        //goodlistに記述があるとき
+        db.collection("advs").doc(adv_id).update({
+            goodList: firebase.firestore.FieldValue.arrayRemove(global_user.uid)
+        }).then(function(){
+            //申請を受け付けたの表示をする と思ったけどいちいちうざいので取り除く
+            //snackbar.open();
+        }).catch(function(error){
+            console.log("error", error);
+        });
+    }else{
+        //goodlistに記述がない時
+        db.collection("advs").doc(adv_id).update({
+            goodList: firebase.firestore.FieldValue.arrayUnion(global_user.uid),
+            badList: firebase.firestore.FieldValue.arrayRemove(global_user.uid)
+        }).then(function(){
+            //申請を受け付けたの表示をする
+            //snackbar.open();
+        }).catch(function(error){
+            console.log("error", error);
+        });
+    }
+}
+
+function adv_no(bad_element){
+    good_element = bad_element.previousSibling;
+    //console.log("adv no !");
+    good_element.classList.remove("active");
+    bad_element.classList.toggle("active");
+    //toggle_goodbad(good_element);
+    //toggle_goodbad(bad_element);
+    //表示の切替等
+    var adv_id = bad_element.parentNode.parentNode.id.split('_')[0];
+    //でーたべすの書き換え
+    if(global_adv_other[adv_id]["badList"].includes(global_user.uid)){
+        //badlistに記述がある時
+        db.collection("advs").doc(adv_id).update({
+            badList: firebase.firestore.FieldValue.arrayRemove(global_user.uid)
+        }).then(function(){
+            //申請を受け付けたの表示をする
+            //snackbar.open();
+        }).catch(function(error){
+            console.log("error", error);
+        });
+    }else{
+        //badlistに記述がない時
+        db.collection("advs").doc(adv_id).update({
+            badList: firebase.firestore.FieldValue.arrayUnion(global_user.uid),
+            goodList: firebase.firestore.FieldValue.arrayRemove(global_user.uid)
+        }).then(function(){
+            //申請を受け付けたの表示をする
+            //snackbar.open();
+        }).catch(function(error){
+            console.log("error", error);
+        });
+        //badlistに記述がある時
+    }
+}
+
+/*
+function toggle_goodbad(element){
+    if(element.classList.contains("active")){
+        element.classList.remove("active");
+    }else{
+        element.classList.add("active");
+    }
+}
+*/
