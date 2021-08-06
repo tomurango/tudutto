@@ -116,6 +116,8 @@ $(document).ready(function(){
         global_user = result.user;
         //user 登録をする関数を書く 初めてのログインのみ登録を行う
         //user_register(result.user);
+        //20210806一度だけの実行という考えを見込んでここで一度だけ広告を３つ取ってきてglobal変数に入れ込む処理
+        advsforDisplay();
         if(global_user != null){
             //ログインしてる場合のみ行う。匿名ユーザである場合は問題が発生しそうではある
             //firestoreのユーザデータを取得

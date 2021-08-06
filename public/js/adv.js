@@ -12,9 +12,10 @@ function insert_adv(index){
         //console.log(index, "広告入れるよ");
         //条件分岐して挿入する広告を分岐させる未来をイメージしてる
         //とりあえず、こっちで用意した広告を入れることを前提にして考えてみる。
-        insert_adv_yar(index);
+        insert_adv_use(index);
         //広告を入れたらフラグの更新を行い、再挿入を防ぐ
-        adv_flag[index]=false;
+        //adv_flag[index]=false;
+        //ユーザの広告が入ったらフラグを取り除くことにする
     }
 }
 
@@ -32,6 +33,50 @@ function insert_adv_yar(index){
         document.getElementById("adv_data").style.backgroundImage= "url(images/adv3.jpg)";
         document.getElementById("adv_data_link").style.color= "#fff2d3";
         document.getElementById('adv_data_link').setAttribute('href',"javascript:subscription_detail();");
+    }
+}
+//20210806課金ユーザの広告を入れるための関数
+function insert_adv_use(index){
+    //20210806とりあえずglobal変数を参照してindexに該当する広告が変数にない場合、ヤルキーパーのやつを挿入する
+    if(global_adv_dis[index] == undefined){
+        //該当広告がないので
+        return insert_adv_yar(index);
+    }else{
+        //広告のページごとに分岐して、背景画像と文字色を変更するつもりでっす
+        //以下の記述法はinsert_adv_othersの関数より引用
+        adv_flag[index]=false;
+        if(index==0){
+            //console.log(index);
+            //console.log(global_adv_dis[index]);
+            //console.log(global_adv_dis[index].colorCode);
+            //ここでtextContentいれる
+            $("#adv_list_link").css('color',global_adv_dis[index].colorCode);
+            $("#adv_list_link").attr("href", global_adv_dis[index].advUrl);
+            $("#adv_list").css({
+                backgroundImage: 'url("'+ global_adv_dis[index].imageUrl +'")' // "" で括っていないとIEでは表示されない
+            });
+            //document.getElementById("adv_list").style.backgroundImage= "url(images/adv1.jpg)";
+            //document.getElementById("adv_list_link").style.color= "#fff2d3";
+            //document.getElementById('adv_list_link').setAttribute('href',"javascript:subscription_detail();");
+        }else if(index==1){
+            $("#adv_talk_link").css('color',global_adv_dis[index].colorCode);
+            $("#adv_talk_link").attr("href", global_adv_dis[index].advUrl);
+            $("#adv_talk").css({
+                backgroundImage: 'url("'+ global_adv_dis[index].imageUrl +'")' // "" で括っていないとIEでは表示されない
+            });
+            //document.getElementById("adv_talk").style.backgroundImage= "url(images/adv2.jpg)";
+            //document.getElementById("adv_talk_link").style.color= "#fff2d3";
+            //document.getElementById('adv_talk_link').setAttribute('href',"javascript:subscription_detail();");
+        }else if(index==2){
+            $("#adv_data_link").css('color',global_adv_dis[index].colorCode);
+            $("#adv_data_link").attr("href", global_adv_dis[index].advUrl);
+            $("#adv_data").css({
+                backgroundImage: 'url("'+ global_adv_dis[index].imageUrl +'")' // "" で括っていないとIEでは表示されない
+            });
+            //document.getElementById("adv_data").style.backgroundImage= "url(images/adv3.jpg)";
+            //document.getElementById("adv_data_link").style.color= "#fff2d3";
+            //document.getElementById('adv_data_link').setAttribute('href',"javascript:subscription_detail();");
+        }
     }
 }
 
@@ -320,8 +365,9 @@ function saveAdv(){
         colorCode: colorcode,
         advUrl: advlink,
         goodList:[],
-        badList:[]
+        badList:[],
         //uid: global_user.uid//queryのためにfield追加 と思っていたが二度目以降は取得しない形なのでひとまず除外
+        votePoint: 0 //取ってくる投票を選定するために追加20210806
     }).then(function() {
         //console.log("advRef1", advRef);
         //ここでメッセージを出す
@@ -484,6 +530,14 @@ function insert_other_adv(id, data){
         $(queryid).find(".vote_madia").css({
             backgroundImage: 'url("'+ data.imageUrl +'")' // "" で括っていないとIEでは表示されない
         });
+        //過去にボタンを押したかどうかで処理を追加で書いていこう
+        if(data.goodList.includes(global_user.uid)){
+            //goodListにある
+            $(queryid).find(".good").addClass("active");
+        }else if(data.badList.includes(global_user.uid)){
+            //badList
+            $(queryid).find(".bad").addClass("active");
+        }
     });
 }
 
@@ -500,10 +554,12 @@ function adv_ok(good_element){
     if(global_adv_other[adv_id]["goodList"].includes(global_user.uid)){
         //goodlistに記述があるとき
         db.collection("advs").doc(adv_id).update({
-            goodList: firebase.firestore.FieldValue.arrayRemove(global_user.uid)
+            goodList: firebase.firestore.FieldValue.arrayRemove(global_user.uid),
+            votePoint: firebase.firestore.FieldValue.increment(-1)
         }).then(function(){
-            //申請を受け付けたの表示をする と思ったけどいちいちうざいので取り除く
-            //snackbar.open();
+            //申請を受け付けたの表示をする と思ったけどいちいちうざいので取り除く 
+            //と思ったけどやっぱとりあえず入れとく
+            snackbar.open();
         }).catch(function(error){
             console.log("error", error);
         });
@@ -511,10 +567,11 @@ function adv_ok(good_element){
         //goodlistに記述がない時
         db.collection("advs").doc(adv_id).update({
             goodList: firebase.firestore.FieldValue.arrayUnion(global_user.uid),
-            badList: firebase.firestore.FieldValue.arrayRemove(global_user.uid)
+            badList: firebase.firestore.FieldValue.arrayRemove(global_user.uid),
+            votePoint: firebase.firestore.FieldValue.increment(1)
         }).then(function(){
             //申請を受け付けたの表示をする
-            //snackbar.open();
+            snackbar.open();
         }).catch(function(error){
             console.log("error", error);
         });
@@ -534,10 +591,11 @@ function adv_no(bad_element){
     if(global_adv_other[adv_id]["badList"].includes(global_user.uid)){
         //badlistに記述がある時
         db.collection("advs").doc(adv_id).update({
-            badList: firebase.firestore.FieldValue.arrayRemove(global_user.uid)
+            badList: firebase.firestore.FieldValue.arrayRemove(global_user.uid),
+            votePoint: firebase.firestore.FieldValue.increment(1)
         }).then(function(){
             //申請を受け付けたの表示をする
-            //snackbar.open();
+            snackbar.open();
         }).catch(function(error){
             console.log("error", error);
         });
@@ -545,10 +603,11 @@ function adv_no(bad_element){
         //badlistに記述がない時
         db.collection("advs").doc(adv_id).update({
             badList: firebase.firestore.FieldValue.arrayUnion(global_user.uid),
-            goodList: firebase.firestore.FieldValue.arrayRemove(global_user.uid)
+            goodList: firebase.firestore.FieldValue.arrayRemove(global_user.uid),
+            votePoint: firebase.firestore.FieldValue.increment(-1)
         }).then(function(){
             //申請を受け付けたの表示をする
-            //snackbar.open();
+            snackbar.open();
         }).catch(function(error){
             console.log("error", error);
         });
@@ -565,3 +624,29 @@ function toggle_goodbad(element){
     }
 }
 */
+
+//20210806投票でgoodの多い広告のみ取ってきて、表示するなどの条件を設けたいが
+//実装可能だろうか？私たちは真実を知るためにジャングルの奥地へと向かった
+//一度取得だけしてglobal変数に入れ込んだのちにそれぞれを必要なとき広告に入れるようにした
+//なぜなら、そのようにサンプルの広告を入れるように実装してしまっているから
+var global_adv_dis = [];
+function advsforDisplay(){
+    db.collection("advs").where('votePoint', '>' , 0).limit(3).get()
+    .then((querySnapshot) => {
+        //広告は3つでひとまず桶にする20210806
+        //querySnapshot.forEach(function(adv){
+        //    console.log("adv",adv);
+        //});
+        //for (let i = 0; i < 3; i++) {
+            // 値が 0 から 2 まで計 3 回実行される
+            //console.log("adv",i,querySnapshot);
+        //}
+        querySnapshot.forEach(function(adv){
+            global_adv_dis.push(adv.data());
+        });
+    })
+    .catch((error) => {
+        console.log("Error getting documents: ", error);
+    });
+}
+
