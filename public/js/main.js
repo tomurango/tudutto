@@ -29,10 +29,26 @@ tabBar.listen('MDCTabBar:activated',function(event){
         document.getElementById("list_page").style.display = "flex";
         //list_page_check は繰り返し発生することを想定していません
     }else if(index==1){
-        //20200815 復活
+        //20210812 7:00 からと 19:00 からの一時間の範囲外なら、表示できないようにする
+        var now_fire = new firebase.firestore.Timestamp.now();
+        var now_date = now_fire.toDate();
+        var now_hour = now_date.getHours();
+        //console.log(now_hour);
         document.getElementById("talk_page").style.display = "flex";
-        talk_page_check();
-        count_page_check();//countを日記のカウントに変更して再利用する
+        if(now_hour==7||now_hour==19){
+            //20200815 復活
+            talk_page_check();
+            count_page_check();//countを日記のカウントに変更して再利用する
+        }else{//20210812追加
+            //時間外なので、
+            //console.log("koti")
+            document.getElementById("talk_page_placeholder").style.display = "none";
+            document.getElementById("talk_page_noresult").style.display = "none";
+            document.getElementById("have_hitokoto").style.display = "none";
+            document.getElementById("talk_page_timeover").style.display = "flex";
+            //広告の表示
+            document.getElementById("adv_talk").style.display = "block";
+        }
     }else if(index==2){
         //あとでデータのページを表示するための場所に切り替わるかな？
         //console.log("data_page_?");
@@ -719,6 +735,7 @@ function talk_page_check(){
 }
 
 //これもdiaryの置換によりあまり使用しないことになるであろう
+/*
 function talk_create(){
     //作成内容を取得
     var talk_board_pre = document.getElementById("talk_board_input").value;
@@ -775,7 +792,7 @@ function talk_create(){
     }).catch(function(error) {
         console.error("Error adding document: ", error);
     });
-}
+}*/
 
 //ここもdirayに置き換えだねー
 function insert_thread(thread_doc_data, thread_id){
@@ -805,7 +822,7 @@ function date_nor_display(fire_date){
 var threads_get_flag = true;
 //とってきて挿入までするよ
 //おそらく以後は未使用になるけどdiaryのほうの関数とかの処理が上手く動いてから削除かな～？
-function get_threads(){
+/*function get_threads(){
     if(threads_get_flag){
         //とる
         //今はいってる分をすべて消す
@@ -827,7 +844,7 @@ function get_threads(){
         //とらない
         return
     }
-} 
+} */
 
 //underbar を使用不可にするための関数
 function underbar_check(sourceStr){

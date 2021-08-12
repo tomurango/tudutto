@@ -29,11 +29,13 @@ function get_diary(){
                 document.getElementById("have_hitokoto").style.display = "none";
                 document.getElementById("talk_page_placeholder").style.display = "none";
                 document.getElementById("talk_page_noresult").style.display = "block";
+                document.getElementById("talk_page_timeover").style.display = "none";
             }else{
                 //global_diaryは入ってるので
                 document.getElementById("talk_page_placeholder").style.display = "none";
                 document.getElementById("talk_page_noresult").style.display = "none";
                 document.getElementById("have_hitokoto").style.display = "flex";
+                document.getElementById("talk_page_timeover").style.display = "none";
             }
         }else{
             //threadsはreverseしないと時間順で挿入されて行かないっぽい
@@ -43,6 +45,9 @@ function get_diary(){
             });
             document.getElementById("talk_page_placeholder").style.display = "none";
             document.getElementById("have_hitokoto").style.display = "flex";
+            //なぜか追加されてなかったので、非表示を追加
+            document.getElementById("talk_page_timeover").style.display = "none";
+            document.getElementById("talk_page_noresult").style.display = "none";
         }
     }).catch(function(error){
         console.log("error =>", error);
@@ -50,6 +55,8 @@ function get_diary(){
         setTimeout(function(){
             document.getElementById("talk_page_placeholder").style.display = "none";
             document.getElementById("talk_page_noresult").style.display = "block";
+            document.getElementById("talk_page_timeover").style.display = "none";
+            document.getElementById("have_hitokoto").style.display = "none";
         },1000);
     });
 }
@@ -206,6 +213,7 @@ function insert_diary(diary_doc_data, diary_id){
         document.getElementById("talk_page_placeholder").style.display = "none";
         document.getElementById("talk_page_noresult").style.display = "none";
         document.getElementById("have_hitokoto").style.display = "flex";
+        document.getElementById("talk_page_timeover").style.display = "none";
     });
     
 }

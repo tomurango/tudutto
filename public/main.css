@@ -233,6 +233,14 @@ html{
     content: " ";
     margin-top: 100%;
 }
+#timeover_image{
+    background-image: url("images/timeover.jpg");
+    margin: 50px 20%;
+}#timeover_image::before {
+    display: block;
+    content: " ";
+    margin-top: 100%;
+}
 #nocount_image{
     background-image: url("images/nanikaerror.jpg");
 }#nocount_image::before {
@@ -240,6 +248,7 @@ html{
     content: " ";
     margin-top: 100%;
 }
+
 
 
 #chart_one::before {
