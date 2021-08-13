@@ -10,7 +10,7 @@ var diary_timestamp = firebase.firestore.Timestamp.fromDate(today0);
 
 function get_diary(){
     //とりあえず、見た目の動きをそれっぽくする
-    /*
+    /* 
     setTimeout(function(){
         document.getElementById("talk_page_placeholder").style.display = "none";
         document.getElementById("talk_page_noresult").style.display = "block";
