@@ -537,6 +537,9 @@ html{
     .adv-card{
         width: calc(100% - 32px);
         margin: 16px 16px 0px 16px;
+        max-height: 250px;
+        background-size: contain;
+        background-repeat: no-repeat;
     }
 }@media screen and (max-width:599px){
     /*スマホの時*/
@@ -584,4 +587,21 @@ html{
     color: #00405d;
 }.bad.active{
     color: #871212;
+}
+
+.mission{
+    display: block;
+    z-index: 4;
+    position: fixed;
+    top: 56px;
+    width: 100%;
+    background-color: #00405d;
+}.mission_sub{
+    font-size: 0.8em;
+    color: #eeeeee;
+    margin: 8px 8px 0px 8px;
+}.mission_main{
+    font-size: 2em;
+    color: #eeeeee;
+    margin: 8px;
 }
