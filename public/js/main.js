@@ -35,7 +35,7 @@ tabBar.listen('MDCTabBar:activated',function(event){
         var now_hour = now_date.getHours();
         //console.log(now_hour);
         document.getElementById("talk_page").style.display = "flex";
-        if(now_hour==7||now_hour==19){
+        if(check_talk_time(now_hour)){
             //20200815 復活
             talk_page_check();
             count_page_check();//countを日記のカウントに変更して再利用する
@@ -1116,5 +1116,13 @@ function close_userterm(){
     if(tutorial_flag){
         //ミッション１を開く
         document.getElementById("mission_one").style.display = "block";
+    }
+}
+
+function check_talk_time(now_hour){
+    if(now_hour==6||now_hour==7||now_hour==8||now_hour==9||now_hour==10||now_hour==12||now_hour==13||now_hour==14||now_hour==15||now_hour==18||now_hour==19||now_hour==20||now_hour==21||now_hour==22){
+        return true
+    }else{
+        return false
     }
 }
