@@ -35,7 +35,7 @@ tabBar.listen('MDCTabBar:activated',function(event){
         var now_hour = now_date.getHours();
         //console.log(now_hour);
         document.getElementById("talk_page").style.display = "flex";
-        if(now_hour==7||now_hour==19){
+        if(check_talk_time(now_hour)){
             //20200815 復活
             talk_page_check();
             count_page_check();//countを日記のカウントに変更して再利用する
@@ -45,7 +45,7 @@ tabBar.listen('MDCTabBar:activated',function(event){
             document.getElementById("talk_page_placeholder").style.display = "none";
             document.getElementById("talk_page_noresult").style.display = "none";
             document.getElementById("have_hitokoto").style.display = "none";
-            document.getElementById("talk_page_timeover").style.display = "flex";
+            document.getElementById("talk_page_timeover").style.display = "block";
             //広告の表示
             document.getElementById("adv_talk").style.display = "block";
         }
@@ -262,7 +262,8 @@ function list_page_check(user){
 function get_all_tasks(user){
     
     //console.log("get_all_task が呼び出された");
-    db.collection("users").doc(user.uid).collection("tasks").get().then(function(tasks){
+    //遅延対策でlimitを設ける
+    db.collection("users").doc(user.uid).collection("tasks").limit(10).get().then(function(tasks){
         //console.log(tasks);
         //広告の表示を追加20210502
         document.getElementById("adv_list").style.display = "block";
@@ -381,6 +382,11 @@ function task_check(radio_button){
         //挿入する
         insert_task(global_tasks[task_id], task_id);
         finish_task_check();
+        //tutorial
+        if(tutorial_flag){
+            document.getElementById("mission_two").style.display = "none";
+            document.getElementById("mission_three").style.display = "block";
+        }
     }).catch(function(error){
         console.log("error =>", error);
     });
@@ -429,6 +435,11 @@ function task_create(){
     if(task_text == ""){
         //入力しないと送信できないようにしたい
         return
+    }
+    //tutorial
+    if(tutorial_flag){
+        document.getElementById("mission_one").style.display = "none";
+        document.getElementById("mission_two").style.display = "block";
     }
     //作成
     var new_task = {
@@ -1048,6 +1059,7 @@ function can_user_count(){
     }
 }
 
+var tutorial_flag = false;
 //firestoreのユーザデータをとってきてglobal変数に入れるための記述
 function fire_userdata_get(uid){
     db.collection("users").doc(uid).get().then(function(doc){
@@ -1055,6 +1067,8 @@ function fire_userdata_get(uid){
         if(doc.data() == undefined){
             //利用規約を表示する
             use_terms_dialog.open();
+            //20210816 tutorialのためのフラグ起動
+            tutorial_flag = true;
             //20210210 Good Gift の初期化の追加
             var regist_doc = {   
                 AlreadyPushed:false,
@@ -1095,4 +1109,20 @@ function define(name, value){
         get: function(){return value;},
         set: function(){throw(name+' is already defined !!');},
     });
+}
+
+function close_userterm(){
+    use_terms_dialog.close();
+    if(tutorial_flag){
+        //ミッション１を開く
+        document.getElementById("mission_one").style.display = "block";
+    }
+}
+
+function check_talk_time(now_hour){
+    if(now_hour==6||now_hour==7||now_hour==8||now_hour==9||now_hour==10||now_hour==12||now_hour==13||now_hour==14||now_hour==15||now_hour==18||now_hour==19||now_hour==20||now_hour==21||now_hour==22){
+        return true
+    }else{
+        return false
+    }
 }
