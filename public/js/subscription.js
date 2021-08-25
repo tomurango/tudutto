@@ -2,14 +2,26 @@
 async function getCustomClaimRole() {
   await firebase.auth().currentUser.getIdToken(true);
   const decodedToken = await firebase.auth().currentUser.getIdTokenResult();
+  //console.log("token", decodedToken);
+  //console.log("stripe", decodedToken.claims.stripeRole);
+  //console.log("firebase", decodedToken.claims.firebaseRole);
   if(decodedToken.claims.stripeRole){
     //課金ユーザ
     define('userplan','continue');
-    document.getElementById("user_role_display").textContent = "コンティニュープラン";
+    document.getElementById("user_role_display").textContent = "メンバープラン";
+    //subscriptionのsubmitボタンをとりあえずdisactiveにする
+    //document.getElementById("subscsubmit").disabled = true;
+    //と思ってたけど、表示するボタンをこれによって変更するのがいいと思うので
+    //非課金にするためのボタンを表示
+    document.getElementById("notsubscsubmit").style.display = "flex";
+    //20210603課金ユーザなので、広告管理のdiv(カード)を表示
+    document.getElementById("chart_three").style.display = "flex";
   }else{
     //ヒカキンユーザ
     define('userplan','normal');
     document.getElementById("user_role_display").textContent = "ノーマルプラン";
+    //課金をするためのボタンを表示
+    document.getElementById("subscsubmit").style.display = "flex";
   }
   return decodedToken.claims.stripeRole;
 }
@@ -161,3 +173,12 @@ function subscription_detail_back(){
   document.getElementById("div_for_subscription").style.display = "none";
 }
 
+function stripe_detail(){
+  document.getElementById("div_for_stripe").style.display = "block";
+}
+
+function stripe_detail_back(){
+  document.getElementById("div_for_stripe").style.display = "none";
+}
+
+//20210603備忘録プラン変更の関数（サブすくの解約）の実装をしましょう

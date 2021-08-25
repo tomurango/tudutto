@@ -2,12 +2,14 @@
 var global_user_database;
 var global_tasks = {};
 var global_threads = {};
-const db = firebase.firestore()
+const db = firebase.firestore();
 var global_timestamps = {};//要削除？
 var global_comments = {};//要削除？
 //var comment_listeners_global = {};
 var global_now_board;//要削除？
 var global_now_thread;//要削除？
+//20210707広告画像保存のために作成
+const storage = firebase.storage();
 
 /* tab navigation */
 var tabBar = new mdc.tabBar.MDCTabBar(document.querySelector('#bottom_app_bar'));
@@ -20,25 +22,47 @@ tabBar.listen('MDCTabBar:activated',function(event){
     for (var i=0, len=top_level_pages.length|0; i<len; i=i+1|0) {
         top_level_pages[i].style.display = "none";
     }
+    //広告を読みこんでindexに該当する箇所に挿入する
+    insert_adv(index);
     //indexによって処理を分岐して記述する
     if(index==0){
         document.getElementById("list_page").style.display = "flex";
         //list_page_check は繰り返し発生することを想定していません
     }else if(index==1){
-        document.getElementById("count_page").style.display = "flex";
-        count_page_check();
-    }else if(index==2){
-        //20200815 復活
+        //20210812 7:00 からと 19:00 からの一時間の範囲外なら、表示できないようにする
+        var now_fire = new firebase.firestore.Timestamp.now();
+        var now_date = now_fire.toDate();
+        var now_hour = now_date.getHours();
+        //console.log(now_hour);
         document.getElementById("talk_page").style.display = "flex";
-        talk_page_check();
-    }else if(index==3){
+        if(check_talk_time(now_hour)){
+            //20200815 復活
+            talk_page_check();
+            count_page_check();//countを日記のカウントに変更して再利用する
+        }else{//20210812追加
+            //時間外なので、
+            //console.log("koti")
+            document.getElementById("talk_page_placeholder").style.display = "none";
+            document.getElementById("talk_page_noresult").style.display = "none";
+            document.getElementById("have_hitokoto").style.display = "none";
+            document.getElementById("talk_page_timeover").style.display = "block";
+            //広告の表示
+            document.getElementById("adv_talk").style.display = "block";
+        }
+    }else if(index==2){
         //あとでデータのページを表示するための場所に切り替わるかな？
         //console.log("data_page_?");
         //切り替わりましたよ
         document.getElementById("data_page").style.display = "flex";
         data_page_check();
-
     }
+    /*
+    else if(index==1){
+        //20210118 削除
+        document.getElementById("count_page").style.display = "flex";
+        count_page_check();
+    }
+    */
 });
 
 function login_card_display(){
@@ -108,6 +132,8 @@ $(document).ready(function(){
         global_user = result.user;
         //user 登録をする関数を書く 初めてのログインのみ登録を行う
         //user_register(result.user);
+        //20210806一度だけの実行という考えを見込んでここで一度だけ広告を３つ取ってきてglobal変数に入れ込む処理
+        advsforDisplay();
         if(global_user != null){
             //ログインしてる場合のみ行う。匿名ユーザである場合は問題が発生しそうではある
             //firestoreのユーザデータを取得
@@ -131,6 +157,8 @@ $(document).ready(function(){
                     //こうなったら特に操作は発生しない感じかなと思ってたけど共通部分を持ってきました
                     //list page の表示を切り替える関数
                     list_page_check(result.user);
+                    //20210603ここでログインしていないと判断して、広告後のログインボタンの表示を行う
+                    document.getElementById("notloggedin").style.display = "flex";
                 }
               });
         }
@@ -184,6 +212,8 @@ function fab_task_back(){
 
 //userの種類によってページの表示を切り替えるための関数
 function list_page_check(user){
+    //20210603list_pageのみ、check関数内で広告を実行する。理由としてタブの切り替えで実行されないから
+    insert_adv(0);
     if (user) {
         // User is signed in.
         //console.log("user => ", user);
@@ -223,14 +253,20 @@ function list_page_check(user){
         document.getElementById("finished_container").style.display = "none";
         document.getElementById("create_task").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "block";
+        //広告の表示を追加20210502
+        document.getElementById("adv_list").style.display = "block";
+        //20210603広告をあえて非表示にしてから表示にしているのかは不明。ただ、list_pageのみこのようになっている
     }
 }
 
 function get_all_tasks(user){
     
     //console.log("get_all_task が呼び出された");
-    db.collection("users").doc(user.uid).collection("tasks").get().then(function(tasks){
+    //遅延対策でlimitを設ける
+    db.collection("users").doc(user.uid).collection("tasks").limit(10).get().then(function(tasks){
         //console.log(tasks);
+        //広告の表示を追加20210502
+        document.getElementById("adv_list").style.display = "block";
         if (tasks.size > 0) {
             //console.log("tasks =>", tasks);
             var task_remain = 0;
@@ -346,6 +382,11 @@ function task_check(radio_button){
         //挿入する
         insert_task(global_tasks[task_id], task_id);
         finish_task_check();
+        //tutorial
+        if(tutorial_flag){
+            document.getElementById("mission_two").style.display = "none";
+            document.getElementById("mission_three").style.display = "block";
+        }
     }).catch(function(error){
         console.log("error =>", error);
     });
@@ -363,7 +404,7 @@ function task_check_back(radio_button){
         global_tasks[task_id]["finish"] = false;
         //挿入する
         insert_task(global_tasks[task_id], task_id);
-        finish_task_check();//20201228タスクをuncheckしても表示がうまく反映されないので設置
+        finish_task_check();//ブランチ分けたほうに反映されてなかった（されてると思ってた）
     }).catch(function(error){
         console.log("error =>", error);
     });
@@ -394,6 +435,11 @@ function task_create(){
     if(task_text == ""){
         //入力しないと送信できないようにしたい
         return
+    }
+    //tutorial
+    if(tutorial_flag){
+        document.getElementById("mission_one").style.display = "none";
+        document.getElementById("mission_two").style.display = "block";
     }
     //作成
     var new_task = {
@@ -515,17 +561,21 @@ function fab_count(){
     }).then(function(){
         //console.log("count しました");
         //数字増やす
-        var pre_count = document.getElementById("center_count").textContent;
-        document.getElementById("center_count").textContent = Number(pre_count) + 1;
+        var pre_count = document.getElementById("hitokoto_count_num").textContent;
+        document.getElementById("hitokoto_count_num").textContent = Number(pre_count) + 1;
         //ボタン消す
+        /*
         document.getElementById("count_page_fab").style.display = "none";
         document.getElementById("count_page_fab").disabled = true;
+        */
         //ここで一日一回だけの記述をしましょうか → データべースを書き換える
         db.collection("users").doc(global_user.uid).update({
             AlreadyPushed: true
         }).then(function(){
             //globalを変数を書き換える
             global_user_database.AlreadyPushed = true;
+            //count_page_check();
+            //20210327 count page check は主にカウントに関する処理を取り扱うものなので、diaryを入れ込むには少し違うと思う
         });
     }).catch(function(error){
         console.log("error =>", error);
@@ -583,17 +633,17 @@ function count_page_check(){
     if(global_user == null){
         //console.log("null なのでボタンを使えません");
         //ボタン消す
-        document.getElementById("count_page_fab").style.display = "none";
-        document.getElementById("count_page_fab").disabled = true;
+        document.getElementById("talk_page_fab").style.display = "none";
+        document.getElementById("talk_page_fab").disabled = true;
     }else{
         if(can_user_count()){
             //ボタン出す
-            document.getElementById("count_page_fab").style.display = "flex";
-            document.getElementById("count_page_fab").disabled = false;
+            document.getElementById("talk_page_fab").style.display = "flex";
+            document.getElementById("talk_page_fab").disabled = false;
         }else{
             //ボタン消す
-            document.getElementById("count_page_fab").style.display = "none";
-            document.getElementById("count_page_fab").disabled = true;
+            document.getElementById("talk_page_fab").style.display = "none";
+            document.getElementById("talk_page_fab").disabled = true;
         }
     }
     //今の処理だとタブ切り替えで毎回やってるから、見直しが必要かもしれない
@@ -602,18 +652,22 @@ function count_page_check(){
     //console.log(date_text);
     db.collection("counts").doc(date_text).get().then(function(doc){
         var today_count = doc.data().count;
-        document.getElementById("center_count").textContent = today_count;
+        document.getElementById("hitokoto_count_num").textContent = today_count;
+        /*20210131countの取得ナシはdiaryと同期するので非表示だと思われる。
         document.getElementById("count_day").textContent = date_text;
         //表示を切り替える
         document.getElementById("count_page_noresult").style.display = "none";
         document.getElementById("loading_container").style.display = "none";
         document.getElementById("count_container").style.display = "flex";
+        */
     }).catch(function(error){
         console.log("error =>", error);
         //firestoreの作成し忘れなどでもエラーは発生するその時の表示切替はここで行う感じかな
+        /*
         document.getElementById("count_container").style.display = "none";
         document.getElementById("loading_container").style.display = "none";
         document.getElementById("count_page_noresult").style.display = "block";
+        */
     });
 }
 
@@ -692,6 +746,7 @@ function talk_page_check(){
 }
 
 //これもdiaryの置換によりあまり使用しないことになるであろう
+/*
 function talk_create(){
     //作成内容を取得
     var talk_board_pre = document.getElementById("talk_board_input").value;
@@ -734,7 +789,7 @@ function talk_create(){
                 insert_thread(new_thread);
                 //表示する
                 document.getElementById("talk_page_noresult").style.display = "none";
-                document.getElementById("thread_container").style.display = "block";
+                document.getElementById("have_hitokoto").style.display = "block";
             })
         }else{
             //作成したら閉じる
@@ -743,12 +798,12 @@ function talk_create(){
             insert_thread(new_thread);
             //表示する
             document.getElementById("talk_page_noresult").style.display = "none";
-            document.getElementById("thread_container").style.display = "block";
+            document.getElementById("have_hitokoto").style.display = "block";
         }
     }).catch(function(error) {
         console.error("Error adding document: ", error);
     });
-}
+}*/
 
 //ここもdirayに置き換えだねー
 function insert_thread(thread_doc_data, thread_id){
@@ -778,7 +833,7 @@ function date_nor_display(fire_date){
 var threads_get_flag = true;
 //とってきて挿入までするよ
 //おそらく以後は未使用になるけどdiaryのほうの関数とかの処理が上手く動いてから削除かな～？
-function get_threads(){
+/*function get_threads(){
     if(threads_get_flag){
         //とる
         //今はいってる分をすべて消す
@@ -793,14 +848,14 @@ function get_threads(){
                     insert_thread(thread.data(), thread.id);
                 });
                 document.getElementById("talk_page_placeholder").style.display = "none";
-                document.getElementById("thread_container").style.display = "block";
+                document.getElementById("have_hitokoto").style.display = "block";
             }
         });
     }else{
         //とらない
         return
     }
-} 
+} */
 
 //underbar を使用不可にするための関数
 function underbar_check(sourceStr){
@@ -1004,6 +1059,7 @@ function can_user_count(){
     }
 }
 
+var tutorial_flag = false;
 //firestoreのユーザデータをとってきてglobal変数に入れるための記述
 function fire_userdata_get(uid){
     db.collection("users").doc(uid).get().then(function(doc){
@@ -1011,8 +1067,13 @@ function fire_userdata_get(uid){
         if(doc.data() == undefined){
             //利用規約を表示する
             use_terms_dialog.open();
+            //20210816 tutorialのためのフラグ起動
+            tutorial_flag = true;
+            //20210210 Good Gift の初期化の追加
             var regist_doc = {   
-                AlreadyPushed:false
+                AlreadyPushed:false,
+                Good: []
+                //Gift: []
             }
             db.collection("users").doc(uid).set(regist_doc).then(function(){
                 global_user_database = regist_doc;
@@ -1024,8 +1085,12 @@ function fire_userdata_get(uid){
     }).catch(function(error){
         console.log("error", error);
     });
+    //20210320グラフ系はもろとも停止
+    //20210409サブすく系統は再開
     //ログインしているのでchart-2を表示する（subscrtionのためのカード）
     document.getElementById("chart_two").style.display = "flex";
+    //20210312ユーザがstripeに登録するためのカードも追加でーす
+    //document.getElementById("chart_three").style.display = "flex";
     getCustomClaimRole();
 }
 
@@ -1044,4 +1109,20 @@ function define(name, value){
         get: function(){return value;},
         set: function(){throw(name+' is already defined !!');},
     });
+}
+
+function close_userterm(){
+    use_terms_dialog.close();
+    if(tutorial_flag){
+        //ミッション１を開く
+        document.getElementById("mission_one").style.display = "block";
+    }
+}
+
+function check_talk_time(now_hour){
+    if(now_hour==6||now_hour==7||now_hour==8||now_hour==9||now_hour==10||now_hour==12||now_hour==13||now_hour==14||now_hour==15||now_hour==18||now_hour==19||now_hour==20||now_hour==21||now_hour==22){
+        return true
+    }else{
+        return false
+    }
 }

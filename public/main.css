@@ -60,6 +60,10 @@ html{
         height: 56px;
     }
 }.top_level_page{
+    /* 広告のために表示をずらす */
+    /*position: relative;*/
+    /*top: 200px;*/
+    /**/
     width: 100%;
     background-color: #ffffff;
     box-sizing: border-box;
@@ -116,12 +120,13 @@ html{
         margin: 16px 0px 0px 16px;
     }#data_page{
         flex-direction: row;
+        flex-wrap: wrap;
     }
 }@media screen and (max-width:599px){
     /*スマホの時*/
     .log-chart{
-        width: calc(100% - 32px);
-        margin: 16px 16px 0px 16px;
+        width: calc(100% - 16px);
+        margin: 8px 8px 0px 8px;
     }#data_page{
         flex-direction: column;
     }
@@ -227,6 +232,14 @@ html{
     content: " ";
     margin-top: 100%;
 }
+#timeover_image{
+    background-image: url("images/timeover.jpg");
+    margin: 50px 20%;
+}#timeover_image::before {
+    display: block;
+    content: " ";
+    margin-top: 100%;
+}
 #nocount_image{
     background-image: url("images/nanikaerror.jpg");
 }#nocount_image::before {
@@ -234,6 +247,7 @@ html{
     content: " ";
     margin-top: 100%;
 }
+
 
 
 #chart_one::before {
@@ -269,6 +283,9 @@ html{
     }#thread_container{
         flex-direction: row;
     }
+    #hitokoto_count_card{
+        margin: 16px;
+    }
 }@media screen and (max-width:599px){
     /*スマホの時*/
     .diary-card{
@@ -276,6 +293,9 @@ html{
         margin: 8px 8px 0px 8px;
     }#thread_container{
         flex-direction: column;
+    }
+    #hitokoto_count_card{
+        margin: 8px;
     }
 }
 .diary-card{
@@ -317,6 +337,33 @@ html{
 }.content_diary{
     font-size: 16px;
     margin: 0px 8px 8px 48px;
+}.footer_area {
+    width: 100%;
+    position: relative;
+    text-align: right;
+    height: 48px;
+}.graph_area{
+    position: absolute;
+    bottom: 48px;
+    right: 0px;
+    width: 96px;
+    height: auto;
+}.gift_bar{
+    position: absolute;
+    left: 12px;
+    bottom: 0px;
+    width: 24px;
+    height: 0px;
+    border-radius: 4px 4px 0px 0px;
+    background-color: #ca8f73;
+}.good_bar{
+    position: absolute;
+    left: 60px;
+    bottom: 0px;
+    width: 24px;
+    height: 0px;
+    border-radius: 4px 4px 0px 0px;
+    background-color: #ffbfa2;
 }
 
 
@@ -452,10 +499,108 @@ html{
 #div_for_subscription{
     display: none;
     width: 100%;
-    height: ;
+    /*height: ; 20210210 なんか未指定のheightがある*/
 }
 
 #list_page_fab{
     background-color: #fff2d3;
     color: #001a33;
+}
+
+.diary_gift.active{
+    color: #ca8f73;
+}
+.diary_good.active{
+    color: #ffbfa2;
+}
+
+
+/* 広告用のカード */
+.adv-card{
+    box-sizing: border-box;
+    background-size: cover;
+}.adv-card::before {
+    display: block;
+    content: " ";
+    /*1/1.618*/
+    margin-top: 61.8%;
+}.adv_icon{
+    top: 6px;
+    position: relative;
+}.adv_link{
+    top: 4px;
+    left: 8px;
+    position: absolute;
+}@media screen and (min-width:600px){
+    /*スマホ以外の時*/
+    .adv-card{
+        width: calc(100% - 32px);
+        margin: 16px 16px 0px 16px;
+        max-height: 250px;
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+}@media screen and (max-width:599px){
+    /*スマホの時*/
+    .adv-card{
+        width: calc(100% - 16px);    
+        margin: 8px 8px 0px 8px;
+    }
+}
+
+/*広告作成ページに関する記述*/
+#adv_img_pre{
+    background-image: url(images/insert_image.jpg);
+}
+
+/*広告投票ページに関する記述*/
+@media screen and (min-width:600px){
+    /*スマホ以外の時*/
+    .vote_card{
+        width: calc(100% - 32px);
+        margin: 16px 16px 0px 16px;
+    }
+}@media screen and (max-width:599px){
+    /*スマホの時*/
+    .vote_card{
+        width: calc(100% - 16px);    
+        margin: 8px 8px 0px 8px;
+    }
+}.vote_madia{
+    background-image: url("images/insert_image.jpg");
+    box-sizing: border-box;
+    background-size: cover;
+}.vote_madia::before {
+    display: block;
+    content: " ";
+    /*1/1.618*/
+    margin-top: 61.8%;
+}.vote_footer{
+    height: 48px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}.vote_button{
+    color: #777777;
+}.good.active{
+    color: #00405d;
+}.bad.active{
+    color: #871212;
+}
+
+.mission{
+    display: block;
+    z-index: 4;
+    position: fixed;
+    top: 56px;
+    width: 100%;
+    background-color: #00405d;
+}.mission_sub{
+    font-size: 0.8em;
+    color: #eeeeee;
+    margin: 8px 8px 0px 8px;
+}.mission_main{
+    font-size: 2em;
+    color: #eeeeee;
+    margin: 8px;
 }

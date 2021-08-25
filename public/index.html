@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html style="height: 100%; width: 100%">
     <head>
-        <title>つづッと</title>
+        <title>ヤルキーパー</title>
         <!-- スマホ用アイコン -->
         <link rel="apple-touch-icon" sizes="180x180" href="images/rogoann_game.jpg">
         <!-- ファビコン -->
@@ -10,10 +10,10 @@
         <!--すまほで表示を整える-->
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta name="description" content="継続のためのアプリ「つづッと」">
+        <meta name="description" content="一日一回「ヤルキーパー」">
         <meta property="og:url" content="https://tudutto.com/">
-        <meta property="og:title" content="つづッと">
-        <meta property="og:description" content="継続のためのアプリ「つづッと」">
+        <meta property="og:title" content="ヤルキーパー">
+        <meta property="og:description" content="一日一回「ヤルキーパー」">
         <meta property="og:image" content="images/rogoann_game.jpg">
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:site" content="@tomra_manabu">
@@ -24,6 +24,7 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <!--fonts-->
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
         <!--css-->
         <link href="main.css" rel="stylesheet">
         <link href="loading.css" rel="stylesheet">
@@ -152,17 +153,123 @@
         <div id="div_for_subscription" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff; overflow-y: scroll">
             <!--戻るボタン-->
             <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" onclick="subscription_detail_back()">clear</button>
-            <p style="position: absolute; left: 48px; top: 12px; margin: 0px; color: #333333;">プランの詳細</p>
+            <p style="position: absolute; left: 48px; top: 12px; margin: 0px; color: #333333;">プランとは？</p>
             <div style="position: relative; padding: 16px">
-                <p style="font-size: 0.8em; color: #777777; margin: 0px;">コンティニュープラン</p>
-                <p style="margin: 0px;">コンティニュープランに変更することで、日記の保存がされるようになります。</p>
-                <button class="mdc-button mdc-button--touch" onclick="subscribe()">
+                <p style="font-size: 2em; margin: 20px 0px 0px 0px; font-weight: bold;">２つのプラン</p>
+                <p style="font-size: 0.8em; color: #777777; margin: 0px;">ノーマルプラン</p>
+                <p style="margin: 0px;">デフォルトのプラン。<br>標準的にヤルキーパーを利用できます。</p>
+                <p style="font-size: 0.8em; color: #777777; margin: 0px;">メンバープラン</p>
+                <p style="margin: 0px;">月額1000円のプラン。<br>より参加的にヤルキーパーを利用できます。</p>
+                <p style="font-size: 2em; margin: 50px 0px 0px 0px; font-weight: bold;">メンバー機能</p>
+                <p style="font-size: 0.8em; color: #777777; margin: 0px;">実装済み</p>
+                <p style="margin: 0px;">何もできません</p>
+                <p style="font-size: 0.8em; color: #777777; margin: 0px;">実装予定</p>
+                <p style="margin: 0px;">広告が出せる。ユーザの報告ができる。広告表示の切替ができる。</p>
+                <button id="subscsubmit" class="mdc-button mdc-button--touch" style="margin: 30px 0px 0px -6px; display: none;" onclick="subscribe()">
                     <div class="mdc-button__ripple"></div>
-                    <span class="mdc-button__label">プランを変更する</span>
+                    <span class="mdc-button__label">メンバープランに変更する</span>
+                    <div class="mdc-button__touch"></div>
+                </button>
+                <button id="notsubscsubmit" class="mdc-button mdc-button--touch" style="margin: 30px 0px 0px -6px; display: none;" onclick="">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">ノーマルプランに変更する</span>
+                    <div class="mdc-button__touch"></div>
+                </button>
+                <button id="notloggedin" class="mdc-button mdc-button--touch" style="margin: 30px 0px 0px -6px; display: none;" onclick="login_card_display()">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">プランを変えるにはログインする</span>
                     <div class="mdc-button__touch"></div>
                 </button>
             </div>
         </div>
+        <!--プラン変更を進めたのちに実際に変更できるようなUXをさせるためのdiv-->
+
+        <!--広告を管理するためのdiv-->
+        <div id="div_for_adv" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff; overflow-y: scroll">
+            <!--戻るボタン-->
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" onclick="adv_detail_back()">clear</button>
+            <p style="position: absolute; left: 48px; top: 12px; margin: 0px; color: #333333;">広告を作成する</p>
+            <!--画像入力及び、プレビューエリア-->
+            <label id="adv_img_label" for="adv_img_inp">
+                <p style="font-size: 0.8em; color: #777777; margin: 0px; margin-left: 16px;">広告イメージ</p>
+                <div id="adv_img_pre" class="mdc-card adv-card">
+                    <a id="adv_crea_link" class="adv_link">
+                        <p style="margin: 0px;">
+                            <span class="material-icons adv_icon">
+                                open_in_new
+                            </span>
+                            広告を開く
+                        </p>
+                    </a>
+                </div>
+            </label>
+            <input id="adv_img_inp" type="file" required accept="image/*" style="display: none;">
+
+            <p style="font-size: 0.8em; color: #777777; margin: 16px 0px 0px 16px;">文字色</p>
+            <input type="color" id="adv_col_input" style="border: none; margin: 0px 0px 0px 16px;" value="#000000" placeholder="#000000"
+            >
+            <p style="font-size: 0.8em; color: #777777; margin: 16px 0px 0px 16px;">リンク</p>
+            <input id="adv_lin_input" type="url" style="width: 80%;
+                font-size: 20px; border: none; margin: 0px 0px 0px 16px;" placeholder="https://yarukeeper.com"
+            >
+            <button id="adv_crea_button" class="mdc-button mdc-button--outlined" style="margin: 30px 0px 0px 16px;" disabled onclick="adv_crea_dia.open();">
+                <div class="mdc-button__ripple"></div>
+                <span class="mdc-button__label">申請</span>
+            </button>
+            
+        </div>
+        <!--広告を管理するためのdiv-->
+
+        <!--広告を一覧投票するためのdiv-->
+        <div id="div_for_othersadv" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff; overflow-y: scroll">
+            <!--戻るボタン-->
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" onclick="adv_others_back()">clear</button>
+            <p style="position: absolute; left: 48px; top: 12px; margin: 0px; color: #333333;">広告に投票する</p>
+            <!--他の人の投票を入れ込んでいくためのdiv-->
+            <div id="otheradv_lis" style="display: none;">
+                <!--div id="" class="mdc-card vote_card">
+                    <a id="" class="adv_link">
+                        <p style="margin: 0px;">
+                            <span class="material-icons adv_icon">
+                                open_in_new
+                            </span>
+                            広告を開く
+                        </p>
+                    </a>
+                    <div class="vote_madia"></div>
+                    <div class="vote_footer">
+                        <button class="material-icons mdc-icon-button vote_button" onclick="">thumb_up</button>
+                        <button class="material-icons mdc-icon-button vote_button" onclick="">thumb_down</button>
+                    </div>
+                </div-->
+            </div>
+            <!--placeholder-->
+            <div id="otheradv_pla" style="display: block;">
+                <b>読み込み中</b>
+            </div>
+            <!--取得できなかった時のdiv-->
+            <div id="otheradv_non" style="display: none;">
+                <b>取得できませんでした</b>
+            </div>
+        </div>
+        <!--広告を一覧投票するためのdiv-->
+        
+        <!--
+        <div id="div_for_stripe" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff; overflow-y: scroll">
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" onclick="stripe_detail_back()">clear</button>
+            <p style="position: absolute; left: 48px; top: 12px; margin: 0px; color: #333333;">Stripeとは？</p>
+            <div style="position: relative; padding: 16px">
+                <p style="font-size: 0.8em; color: #777777; margin: 0px;">Stripe</p>
+                <p style="margin: 0px;">ここにStripeの説明を入れます！</p>
+                <button id="stripe_standard" class="mdc-button mdc-button--touch" onclick="">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">登録する</span>
+                    <div class="mdc-button__touch"></div>
+                </button>
+            </div>
+        </div>
+        -->
+        
 
         <!--
         <div id="comment_card_div" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff;">
@@ -243,6 +350,19 @@
                     <div style="position: absolute; background-color: #ffffff; top: 44px; left: 0px; height: 20px; width: 100%;"></div>
                 </div>
             </div>
+
+            <!--広告用-->
+            <div id="adv_list" class="mdc-card adv-card" style="display: none;">
+                <a id="adv_list_link" class="adv_link">
+                    <p style="margin: 0px;">
+                        <span class="material-icons adv_icon">
+                            open_in_new
+                        </span>
+                        広告を開く
+                    </p>
+                </a>
+            </div>
+
             <div id="list_page_anonymous" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center;">
                 <div id="anonymous_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
                 <div>
@@ -257,14 +377,14 @@
                     <p class="text_down">すべてのタスクを完了しました。</p>
                 </div>
             </div>
-            <div id="create_task" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center;">
+            <div id="create_task" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center; margin-bottom: 150px;">
                 <div id="create_task_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
                 <div>
-                    <p class="text_up">タスクを作りましょう。</p>
-                    <p class="text_down">毎日続けるタスクを作りましょう！</p>
+                    <p class="text_up">タスクを作りましょう！</p>
+                    <p class="text_down">最初は10秒でできるものがおすすめ</p>
                 </div>
             </div>
-            <div id="to_do_items" style="width: 100%; display: none;">
+            <div id="to_do_items" style="width: 100%; display: none; padding-bottom: 200px;">
                 <!--<div style="width: 100%; display: flex">
                     <div style="padding: 8px; width: 64px; box-sizing: border-box;">
                         <button class="mdc-icon-button material-icons" onclick="task_check(this)">radio_button_unchecked</button>
@@ -297,9 +417,10 @@
             </div>
             <button id="list_page_fab" class="mdc-fab" style="display: none" aria-label="create_task" onclick="fab_task()">
                 <div class="mdc-fab__ripple"></div>
-                <span class="mdc-fab__icon material-icons">add</span>
+                <span class="mdc-fab__icon material-icons" style="color: #001a33;">add</span>
             </button>
         </div>
+        <!--
         <div id="count_page" class="top_level_page" style="display: none; flex-direction: column; position: relative;">
             <div id="count_container" style="display: none; width: 100%; height: 100%; position: relative; flex-direction: column;">
                 <p id="count_day"></p>
@@ -320,39 +441,41 @@
                 <span class="mdc-fab__icon material-icons">exposure_plus_1</span>
             </button>
         </div>
+        -->
         <!--ここは後でワールドチャットシステム導入で用いる可能性があるので、基本放置で行こう-->
-        <div id="talk_page" class="top_level_page" style="display: none">
-            <!--<ul id="thread_container" class="mdc-list mdc-list--two-line" style="width: 100%; display: none">
-                <li class="mdc-list-item" tabindex="0">
-                    <span class="mdc-list-item__text">
-                        <span class="mdc-list-item__primary-text">英語の先生って几帳面だよね (15)</span>
-                        <span class="mdc-list-item__secondary-text">あるあるくん 2020年5月17日 13:48</span>
-                    </span>
-                </li>
-                <li class="mdc-list-item">
-                    <span class="mdc-list-item__text">
-                        <span class="mdc-list-item__primary-text">有名ブラック企業の実態 (47)</span>
-                        <span class="mdc-list-item__secondary-text">人生つらリーマン 2020年5月14日 18:51</span>
-                    </span>
-                </li>
-                <li class="mdc-list-item">
-                    <span class="mdc-list-item__text">
-                        <span class="mdc-list-item__primary-text">最近暑い件について (4)</span>
-                        <span class="mdc-list-item__secondary-text">赤メダカ 2020年4月23日 09:26</span>
-                    </span>
-                </li>
-            </ul>-->
-            <div id="thread_container" style="display: none; width: 100%; height: fit-content; background-color: #eeeeee; flex-wrap: wrap; min-height: 100%; padding-bottom: 100%; box-sizing: border-box;" >
-                <!--<div id="" class="mdc-card diary-card" onclick="detail_of_diary(this)">
-                    <div class="header_erea">
-                        <img class="who_icon" src="images/sureddonaitoki.jpg">
-                        <p class="whos_diary"></p>
-                        <p class="what_time"></p>
+        <div id="talk_page" class="top_level_page" style="display: none; flex-direction: column;">
+
+            <!--広告用-->
+            <div id="adv_talk" class="mdc-card adv-card" style="display: none;">
+                <a id="adv_talk_link" class="adv_link">
+                    <p style="margin: 0px;">
+                        <span class="material-icons adv_icon">
+                            open_in_new
+                        </span>
+                        広告を開く
+                    </p>
+                </a>
+            </div>
+            
+            <div id="have_hitokoto" style="display: none; width: 100%; height: fit-content; background-color: #ffffff; flex-wrap: wrap; min-height: 100%; padding-bottom: 100%; box-sizing: border-box;" >
+                <div id="hitokoto_count_pla" style="display: flex; width: 100%; height: fit-content; background-color: #ffffff;">
+                    <div id="hitokoto_count_card" class="mdc-card" style="padding: 8px; width: 100%;">
+                        <p id="hitokoto_count_txt" style="color: #777777; font-size: 10px; margin: 0px;">本日ヒトコト</p>
+                        <p id="hitokoto_count_cont" style="margin: 0px; text-align: center;"><span id="hitokoto_count_num" style="font-size: 3em;">0</span>コト</p>
                     </div>
-                    <div class="content_erea">
-                        <p class="content_diary"></p>
-                    </div>
-                </div>-->
+                </div>
+                <div id="thread_container" style="display: flex; width: 100%; height: fit-content; background-color: #ffffff; flex-wrap: wrap; min-height: 100%; padding-bottom: 100%; box-sizing: border-box;" >
+                    <!--<div id="" class="mdc-card diary-card" onclick="detail_of_diary(this)">
+                        <div class="header_erea">
+                            <img class="who_icon" src="images/sureddonaitoki.jpg">
+                            <p class="whos_diary"></p>
+                            <p class="what_time"></p>
+                        </div>
+                        <div class="content_erea">
+                            <p class="content_diary"></p>
+                        </div>
+                    </div>-->
+                </div>
             </div>
             <div id="talk_page_placeholder" style="display:block; height: 100%; width: 100%; left: 0px;">
                 <div class="moving_holder" style="height: 64px; width: 100%;">
@@ -431,19 +554,46 @@
                 
                 
             </div>
-            <div id="talk_page_noresult" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center;">
+            <div id="talk_page_noresult" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center; padding-bottom: 200px;">
                 <div id="noresult_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
                 <div>
-                    <p class="text_up">結果が取得できませんでした。</p>
-                    <p class="text_down">取得した日記が<br>表示されます。</p>
+                    <p class="text_up">ヒトコトを取得できませんでした。</p>
+                    <p class="text_down">取得したヒトコトが<br>表示されます。</p>
                 </div>
             </div>
+            <!--20210812追加-->
+            <div id="talk_page_timeover" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center; padding-bottom: 200px; flex-direction: column;">
+                <div id="timeover_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
+                <div>
+                    <p class="text_up">アクセス時間外です。</p>
+                    <p class="text_down">
+                        朝の6:00から10:59<br>
+                        昼の12:00から15:59<br>
+                        夜の18:00から22:59<br>
+                        の間ヒトコトが利用できます。
+                    </p>
+                </div>
+            </div>
+            <!---->
             <button id="talk_page_fab" class="mdc-fab" aria-label="create thread" style="display: none; background-color: #3c6b8a; color: #fff2d3;" onclick="fab_diary()">
                 <div class="mdc-fab__ripple"></div>
                 <span class="mdc-fab__icon material-icons">chat</span>
             </button>
         </div>
         <div id="data_page" class="top_level_page" style="display: none; background-color: #ffffff; padding-bottom: 16px; box-sizing: border-box;">
+            
+            <!--広告用-->
+            <div id="adv_data" class="mdc-card adv-card">
+                <a id="adv_data_link" class="adv_link">
+                    <p style="margin: 0px;">
+                        <span class="material-icons adv_icon">
+                            open_in_new
+                        </span>
+                        広告を開く
+                    </p>
+                </a>
+            </div>
+
             <div id="chart_one" class="mdc-card log-chart">
                 <p style="position: absolute; margin: 0px; top: 32px; left: 32px;">カウント数</p>
                 <p style="position: absolute; color: #777777; font-size: 0.8em; margin: 0px; top: 52px; left: 32px;">目指せ100人</p>
@@ -474,11 +624,40 @@
                 <div class="mdc-touch-target-wrapper" style="text-align: right;">
                     <button class="mdc-button mdc-button--touch" onclick="subscription_detail()">
                         <div class="mdc-button__ripple"></div>
-                        <span class="mdc-button__label">開く</span>
+                        <span class="mdc-button__label">プランとは？</span>
                         <div class="mdc-button__touch"></div>
                     </button>
                 </div>
             </div>
+            <div id="chart_three" class="mdc-card log-chart" style="display: none;">
+                <p style="color: #777777; font-size: 0.8em; margin: 0px">広告の管理</p>
+                <p id="user_adv_display" style="text-align: center; margin: 30px 0px 20px 0px;">広告が出せます</p>
+                <div class="mdc-touch-target-wrapper" style="text-align: right;">
+                    <button class="mdc-button mdc-button--touch" onclick="adv_others()">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">投票する</span>
+                        <div class="mdc-button__touch"></div>
+                    </button>
+                    <button id="to_adv_detail" class="mdc-button mdc-button--touch" onclick="adv_detail()">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">作成する</span>
+                        <div class="mdc-button__touch"></div>
+                    </button>
+                </div>
+            </div>
+            <!--
+            <div id="chart_three" class="mdc-card log-chart" style="display: none;">
+                <p style="color: #777777; font-size: 0.8em; margin: 0px">Stripeアカウント</p>
+                <p style="text-align: center; margin: 30px 0px 0px 0px;">未登録</p>
+                <div class="mdc-touch-target-wrapper" style="text-align: right;" onclick="stripe_detail()">
+                    <button class="mdc-button mdc-button--touch">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">Stripeとは？</span>
+                        <div class="mdc-button__touch"></div>
+                    </button>
+                </div>
+            </div>
+            -->
             <!--
             <button class="mdc-fab" aria-label="Favorite">
                 <div class="mdc-fab__ripple"></div>
@@ -501,7 +680,7 @@
                             </span>
                             <span class="mdc-tab__ripple" hidden></span>
                         </button>
-                        <button class="mdc-tab" role="tab" aria-selected="false" tabindex="0">
+                        <!--<button class="mdc-tab" role="tab" aria-selected="false" tabindex="0">
                             <span class="mdc-tab__content">
                                 <span class="mdc-tab__icon material-icons bab_icon" aria-hidden="true">emoji_people</span>
                                 <span class="footer_parts mdc-tab__text-label bab_icon">カウント</span>
@@ -511,12 +690,12 @@
                                     class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
                             </span>
                             <span class="mdc-tab__ripple" hidden></span>
-                        </button>
+                        </button>-->
                         
                         <button class="mdc-tab" role="tab" aria-selected="false" tabindex="0">
                             <span class="mdc-tab__content">
                                 <span id="bab_icon_sirase" class="mdc-tab__icon material-icons bab_icon" aria-hidden="true">forum</span>
-                                <span id="bab_icon_sirase_text" class="footer_parts mdc-tab__text-label bab_icon">日記</span>
+                                <span id="bab_icon_sirase_text" class="footer_parts mdc-tab__text-label bab_icon">ヒトコト</span>
                             </span>
                             <span class="mdc-tab__ripple" hidden></span>
                             <span class="mdc-tab-indicator onfooter">
@@ -557,6 +736,124 @@
             </div>
         </div>
 
+        <div id="adv_crea_dia" class="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content">
+            <div class="mdc-dialog__container">
+                <div class="mdc-dialog__surface">
+                    <section class="mdc-dialog__content">
+                        広告を申請します。<br>よろしいですか？
+                    </section>
+                    <footer class="mdc-dialog__actions">
+                        <button type="button" class="mdc-button mdc-dialog__button mdc-ripple-upgraded" data-mdc-dialog-action="close" style="--mdc-ripple-fg-size:45px; --mdc-ripple-fg-scale:2.10168; --mdc-ripple-fg-translate-start:-2.32294px, 8px; --mdc-ripple-fg-translate-end:15.7656px, -4.5px;">キャンセル</button>
+                        <button type="button" class="mdc-button mdc-dialog__button mdc-ripple-upgraded" data-mdc-dialog-action="accept" onclick="saveAdv()" style="--mdc-ripple-fg-size:49px; --mdc-ripple-fg-scale:2.0438; --mdc-ripple-fg-translate-start:6.47913px, 6px; --mdc-ripple-fg-translate-end:16.8229px, -6.5px;">申請する</button>
+                    </footer>
+                </div>
+            </div>
+            <div class="mdc-dialog__scrim">
+            </div>
+        </div>
+
+        <div id="adv_del_dia" class="mdc-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content">
+            <div class="mdc-dialog__container">
+                <div class="mdc-dialog__surface">
+                    <section class="mdc-dialog__content">
+                        入力が破棄されます。<br>よろしいですか？
+                    </section>
+                    <footer class="mdc-dialog__actions">
+                        <button type="button" class="mdc-button mdc-dialog__button mdc-ripple-upgraded" data-mdc-dialog-action="close" style="--mdc-ripple-fg-size:45px; --mdc-ripple-fg-scale:2.10168; --mdc-ripple-fg-translate-start:-2.32294px, 8px; --mdc-ripple-fg-translate-end:15.7656px, -4.5px;">キャンセル</button>
+                        <button type="button" class="mdc-button mdc-dialog__button mdc-ripple-upgraded" data-mdc-dialog-action="accept" onclick="del_adv_inp()" style="--mdc-ripple-fg-size:49px; --mdc-ripple-fg-scale:2.0438; --mdc-ripple-fg-translate-start:6.47913px, 6px; --mdc-ripple-fg-translate-end:16.8229px, -6.5px;">破棄する</button>
+                    </footer>
+                </div>
+            </div>
+            <div class="mdc-dialog__scrim">
+            </div>
+        </div>
+
+        <!-- 広告を申請した時の途中処理にて表示 -->
+        <div id="sinsei_ok" class="mdc-snackbar">
+            <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+                <div class="mdc-snackbar__label" aria-atomic="false">
+                    申請を受け付けました
+                </div>
+                <!--div class="mdc-snackbar__actions" aria-atomic="true">
+                    <button type="button" class="mdc-button mdc-snackbar__action">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">Retry</span>
+                    </button>
+                </div-->
+            </div>
+        </div>
+
+        <!--gift dialog-->
+        <!--div id="gift_dialog" class="mdc-dialog">
+            <div class="mdc-dialog__container">
+                <div class="mdc-dialog__surface"
+                    role="alertdialog"
+                    aria-modal="true"
+                    aria-labelledby="my-dialog-title"
+                    aria-describedby="my-dialog-content">
+                    <div class="mdc-dialog__content" id="my-dialog-content">
+                        チア―を購入しますか？
+                        <div class="product" style="display: flex; position: relative; top: 16px;">
+                            <img style="width: 50px; height: 50px; margin: 0px; border-radius: 5px;"
+                            src="https://yarukeeper.com/images/rogoann_game.jpg"
+                            alt="チア―のイメージ画像がここに"
+                            />
+                            <div class="description" style="position: relative; left: 16px;">
+                            <h3 style="top: 10px; left: 60px; margin: 0px;">チア―</h3>
+                            <h5 style="top: 30px; left: 60px; margin: 0px;">500円</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mdc-dialog__actions">
+                        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
+                            <div class="mdc-button__ripple"></div>
+                            <span class="mdc-button__label">キャンセル</span>
+                        </button>
+                        <button
+                        class="mdc-button mdc-dialog__button"
+                        id="checkout-button"
+                        role="link"
+                        type="button"
+                        >
+                        購入
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mdc-dialog__scrim"></div>
+        </div-->
+
+        <!--div id="gift_already_dialog" class="mdc-dialog">
+            <div class="mdc-dialog__container">
+                <div class="mdc-dialog__surface">
+                    <div class="mdc-dialog__content" id="my-dialog-content-second">
+                        このチア―は既に贈っています。
+                    </div>
+                    <div class="mdc-dialog__actions">
+                        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel" onclick="">
+                            <div class="mdc-button__ripple"></div>
+                            <span class="mdc-button__label">了解</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mdc-dialog__scrim"></div>
+        </div-->
+
+        <!--tutorial-->
+        <div id="mission_one" class="mission" style="display: none;">
+            <p class="mission_sub">チュートリアル１/３</p>
+            <p class="mission_main">タスクを作ろう</p>
+        </div>
+        <div id="mission_two" class="mission" style="display: none;">
+            <p class="mission_sub">チュートリアル２/３</p>
+            <p class="mission_main">タスクを完了しよう</p>
+        </div>
+        <div id="mission_three" class="mission" style="display: none;">
+            <p class="mission_sub">チュートリアル３/３</p>
+            <p class="mission_main">ヒトコトを共有しよう</p>
+        </div>
+
         <!--利用規約に同意するためのdiv-->
         <!--ここに本文を書いてしまう形でひとまず進む-->
         <div id="use_terms_dialog" class="mdc-dialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content">
@@ -567,7 +864,7 @@
                     </h2>
                     <section class="mdc-dialog__content">
                         <p style="white-space: pre-line;"> 
-                            この利用規約（以下，「本規約」といいます。）は，つづッと（以下，「当社」といいます。）がこのウェブサイト上で提供するサービス（以下，「本サービス」といいます。）の利用条件を定めるものです。登録ユーザーの皆さま（以下，「ユーザー」といいます。）には，本規約に従って，本サービスをご利用いただきます。
+                            この利用規約（以下，「本規約」といいます。）は，ヤルキーパー（以下，「当社」といいます。）がこのウェブサイト上で提供するサービス（以下，「本サービス」といいます。）の利用条件を定めるものです。登録ユーザーの皆さま（以下，「ユーザー」といいます。）には，本規約に従って，本サービスをご利用いただきます。
                 
                             第1条（適用）
                             本規約は，ユーザーと当社との間の本サービスの利用に関わる一切の関係に適用されるものとします。
@@ -674,7 +971,7 @@
                         </p>
                     </section>
                     <footer class="mdc-dialog__actions">
-                        <button type="button" class="mdc-button mdc-dialog__button mdc-ripple-upgraded" data-mdc-dialog-action="accept" onclick="use_terms_dialog.close()" style="--mdc-ripple-fg-size:49px; --mdc-ripple-fg-scale:2.0438; --mdc-ripple-fg-translate-start:6.47913px, 6px; --mdc-ripple-fg-translate-end:16.8229px, -6.5px;">同意</button>
+                        <button type="button" class="mdc-button mdc-dialog__button mdc-ripple-upgraded" data-mdc-dialog-action="accept" onclick="close_userterm()" style="--mdc-ripple-fg-size:49px; --mdc-ripple-fg-scale:2.0438; --mdc-ripple-fg-translate-start:6.47913px, 6px; --mdc-ripple-fg-translate-end:16.8229px, -6.5px;">同意</button>
                     </footer>
                 </div>
             </div>
@@ -691,28 +988,18 @@
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js"></script>
     -->
-    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+
+    <!--20210730 version 8.7.0 に揃えたら動いた。firestore where query の != のために記述変更-->
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
     <!-- Add Firebase products that you want to use -->
-    <script src="/__/firebase/7.2.3/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-functions.js"></script>
-    <!-- TODO: Add SDKs for Firebase products that you want to use
-        https://firebase.google.com/docs/web/setup#available-libraries -->
-    <script>
-        // Your web app's Firebase configuration
-        var firebaseConfig = {
-            apiKey: "AIzaSyAh8ECDXJr3M3PIWtLYSIwKAJll4jFNO3c",
-            authDomain: "levup-5017a.firebaseapp.com",
-            databaseURL: "https://levup-5017a.firebaseio.com",
-            projectId: "levup-5017a",
-            storageBucket: "levup-5017a.appspot.com",
-            messagingSenderId: "280494366709",
-            appId: "1:280494366709:web:2de4a430ad2e81bc7e4abc"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-    </script>
-    <!--<script src="/__/firebase/init.js"></script>-->
+    <script src="/__/firebase/8.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-functions.js"></script>
+    <!-- 広告画像のためにconfig 追加 -->
+    <!--script src="/__/firebase/8.6.7/firebase-storage.js"></script-->
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-storage.js"></script>
+    
+    <script src="/__/firebase/init.js"></script>
 
     <!--stripeに関しての記述-->
     <script src="https://js.stripe.com/v3/"></script>
@@ -724,4 +1011,8 @@
     <script src="js/task.js"></script>
     <script src="js/diary.js"></script>
     <script src="js/subscription.js"></script>
+    <script src="js/adv.js"></script>
+
+     
+        
 </html>
