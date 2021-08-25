@@ -998,22 +998,7 @@
     <!-- 広告画像のためにconfig 追加 -->
     <!--script src="/__/firebase/8.6.7/firebase-storage.js"></script-->
     <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-storage.js"></script>
-    <!-- TODO: Add SDKs for Firebase products that you want to use
-        https://firebase.google.com/docs/web/setup#available-libraries -->
-    <!--script>
-        // Your web app's Firebase configuration
-        var firebaseConfig = {
-            apiKey: "apikey",
-            authDomain: "levup-5017a.firebaseapp.com",
-            databaseURL: "https://levup-5017a.firebaseio.com",
-            projectId: "levup-5017a",
-            storageBucket: "levup-5017a.appspot.com",
-            messagingSenderId: "280494366709",
-            appId: "1:280494366709:web:2de4a430ad2e81bc7e4abc"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-    </script-->
+    
     <script src="/__/firebase/init.js"></script>
 
     <!--stripeに関しての記述-->
@@ -1028,64 +1013,6 @@
     <script src="js/subscription.js"></script>
     <script src="js/adv.js"></script>
 
-    <!--stripe checkout のためのコピー-->
-    <!--20210312 stripe の ID 登録のためにも追加で使用-->
-    <!--script type="text/javascript">
-        // Create an instance of the Stripe object with your publishable API key
-        var stripe = Stripe("pk_test_51HJd7bK4amKkUSI0v1KwlONpt66eSdYQp054Goeveigjshls9m0zU63pLVnmXFR7cYZZvKqFxFW9E8APQFLTr2Ci005Wzw2ajd");
-        var checkoutButton = document.getElementById("checkout-button");
-        checkoutButton.addEventListener("click", function () {
-            var data = {
-                userFrom: global_user.uid,
-                diaryTo: PostGiftId,
-                userTo: PostUserId
-            };
-
-            fetch("https://asia-northeast1-levup-5017a.cloudfunctions.net/widgets/create-checkout-session", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json; charset=utf-8"
-                },
-                body: JSON.stringify(data)
-            }).then(function (response) {
-                return response.json();
-            }).then(function (session) {
-                return stripe.redirectToCheckout({ sessionId: session.id });
-            }).then(function (result) {
-                // If redirectToCheckout fails due to a browser or network
-                // error, you should display the localized error message to your
-                // customer using error.message.
-                if (result.error) {
-                    alert(result.error.message);
-                }
-            }).catch(function (error) {
-                console.error("Error:", error);
-            });
-        });
-
-        //20210312Gitのサンプルを参考にとりあえず完遂かなぁ
-        let elmButton = document.querySelector("#stripe_standard");
-        if (elmButton) {
-            elmButton.addEventListener("click", e => {
-                elmButton.setAttribute("disabled", "disabled");
-                elmButton.textContent = "Opening...";
-                fetch("https://asia-northeast1-levup-5017a.cloudfunctions.net/widgets/onboard-user", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                }).then(response => response.json()).then(data => {
-                    if (data.url) {
-                        window.location = data.url;
-                    } else {
-                        elmButton.removeAttribute("disabled");
-                        elmButton.textContent = "<Something went wrong>";
-                        console.log("data", data);
-                    }
-                });
-            },false);
-        }
-    </script-->
      
         
 </html>
