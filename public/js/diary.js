@@ -127,6 +127,8 @@ function diary_create(){
             //カード挿入
             insert_diary(new_diary, docRef.id)
             fab_count();//20210131カウントをしっかりと増やしていく➡croudfunctionで書くのもいいのかもね
+            //20210905メッセージ送信をここだと仮定して、チュートリアルチェックを配置
+            tutorial_check();
         }).catch(function(error){
             console.log("error", error);
         });

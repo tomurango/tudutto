@@ -604,3 +604,7 @@ html{
     color: #eeeeee;
     margin: 8px;
 }
+
+.tip_num{
+    font-size: 0.8em;
+}

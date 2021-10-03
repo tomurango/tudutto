@@ -10,6 +10,8 @@ var global_now_board;//要削除？
 var global_now_thread;//要削除？
 //20210707広告画像保存のために作成
 const storage = firebase.storage();
+//20211003自宅wifi環境でのスマホを使用した時の読み込みが長い点に関する読み込み対策
+firebase.firestore().settings({ experimentalForceLongPolling: true });
 
 /* tab navigation */
 var tabBar = new mdc.tabBar.MDCTabBar(document.querySelector('#bottom_app_bar'));
@@ -1124,5 +1126,84 @@ function check_talk_time(now_hour){
         return true
     }else{
         return false
+    }
+}
+
+//チュートリアルチップのダイアログの実装
+var tutorial_one = new mdc.dialog.MDCDialog(document.querySelector('#tutorial_one'));
+var tutorial_two = new mdc.dialog.MDCDialog(document.querySelector('#tutorial_two'));
+var tutorial_three = new mdc.dialog.MDCDialog(document.querySelector('#tutorial_three'));
+var tutorial_four = new mdc.dialog.MDCDialog(document.querySelector('#tutorial_four'));
+var tutorial_five = new mdc.dialog.MDCDialog(document.querySelector('#tutorial_five'));
+
+
+//ヒトコトコメントを送信した後にデータベースを検証して、チュートリアルチップを表示するための関数
+function tutorial_check(){
+    if(global_user.tutorial[0]){
+        //一度目は完了
+        if(global_user.tutorial[1]){
+            //二度目は完了
+            if(global_user.tutorial[2]){
+                //三度目は完了
+                if(global_user.tutorial[3]){
+                    //四度目は完了
+                    if(global_user.tutorial[4]){
+                        //五度目も完了
+                        //何もしない
+                        return
+                    }else{
+                        //データベースに登録
+                        db.collection("users").doc(global_user.uid).update({
+                            tutorial:firebase.firestore.FieldValue.arrayUnion(true)
+                        }).then(function(){
+                            //5度目のチップを表示
+                            tutorial_five.open();
+                        }).catch(function(error){
+                            console.log("error",error);
+                        });
+                    }
+                }else{
+                    //データベースに登録
+                    db.collection("users").doc(global_user.uid).update({
+                        tutorial:firebase.firestore.FieldValue.arrayUnion(true)
+                    }).then(function(){
+                        //4度目のチップを表示
+                        tutorial_four.open();
+                    }).catch(function(error){
+                        console.log("error",error);
+                    });
+                }
+            }else{
+                //データベースに登録
+                db.collection("users").doc(global_user.uid).update({
+                    tutorial:firebase.firestore.FieldValue.arrayUnion(true)
+                }).then(function(){
+                    //3度目のチップを表示
+                    tutorial_three.open();
+                }).catch(function(error){
+                    console.log("error",error);
+                });
+            }
+        }else{
+            //データベースに登録
+            db.collection("users").doc(global_user.uid).update({
+                tutorial:firebase.firestore.FieldValue.arrayUnion(true)
+            }).then(function(){
+                //2度目のチップを表示
+                tutorial_two.open();
+            }).catch(function(error){
+                console.log("error",error);
+            });
+        }
+    }else{
+        //データベースに登録
+        db.collection("users").doc(global_user.uid).update({
+            tutorial:[true]
+        }).then(function(){
+            //一度目のチップを表示
+            tutorial_one.open();
+        }).catch(function(error){
+            console.log("error",error);
+        });
     }
 }
