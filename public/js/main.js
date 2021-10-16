@@ -512,13 +512,13 @@ function finish_task_check(){
             document.getElementById("to_do_items").style.display = "none";
             document.getElementById("task_complate").style.display = "block";
             //ということはこれかつその日スタンプを押したかどうかを診断する
+            /*これは自動で画面遷移する処理だったはず。なので、差し止め
             if(global_user_database.AlreadyPushed == false){
-                //まだ押してないので画面遷移する
                 if(task_total == task_finish){
-                    //予測しない挙動があるから、数を比較したif分を設置20201109
                     tabBar.activateTab(1);
                 }
             }
+            */
         }
         document.getElementById("list_page_placeholder").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "none";
@@ -1124,11 +1124,15 @@ function close_userterm(){
 }
 
 function check_talk_time(now_hour){
+    //auto_hitokotoですべてオッケーにしたよ
+    return true
+    /*
     if(now_hour==6||now_hour==7||now_hour==8||now_hour==9||now_hour==10||now_hour==12||now_hour==13||now_hour==14||now_hour==15||now_hour==18||now_hour==19||now_hour==20||now_hour==21||now_hour==22){
         return true
     }else{
         return false
     }
+    */
 }
 
 //チュートリアルチップのダイアログの実装
