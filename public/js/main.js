@@ -1,4 +1,6 @@
-﻿var global_user;
+﻿//git branch test 
+
+var global_user;
 var global_user_database;
 var global_tasks = {};
 var global_threads = {};
