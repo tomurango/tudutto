@@ -1,6 +1,4 @@
-﻿//git branch test 
-
-var global_user;
+﻿var global_user;
 var global_user_database;
 var global_tasks = {};
 var global_threads = {};
@@ -637,19 +635,20 @@ function count_page_check(){
     if(global_user == null){
         //console.log("null なのでボタンを使えません");
         //ボタン消す
-        document.getElementById("talk_page_fab").style.display = "none";
-        document.getElementById("talk_page_fab").disabled = true;
-    }else{
-        if(can_user_count()){
-            //ボタン出す
-            document.getElementById("talk_page_fab").style.display = "flex";
-            document.getElementById("talk_page_fab").disabled = false;
-        }else{
-            //ボタン消す
-            document.getElementById("talk_page_fab").style.display = "none";
-            document.getElementById("talk_page_fab").disabled = true;
-        }
+        //document.getElementById("talk_page_fab").style.display = "none";
+        //document.getElementById("talk_page_fab").disabled = true;
     }
+    //else{
+    //    if(can_user_count()){
+    //        //ボタン出す
+    //        document.getElementById("talk_page_fab").style.display = "flex";
+    //        document.getElementById("talk_page_fab").disabled = false;
+    //    }else{
+    //        //ボタン消す
+    //        document.getElementById("talk_page_fab").style.display = "none";
+    //        document.getElementById("talk_page_fab").disabled = true;
+    //    }
+    //}
     //今の処理だとタブ切り替えで毎回やってるから、見直しが必要かもしれない
     var server_time =  new firebase.firestore.Timestamp.now();
     var date_text = getDate(server_time.toDate());
@@ -738,10 +737,11 @@ function talk_page_check(){
     //user がログインしてたらボタンを表示する
     if(global_user == null){
         //console.log("null なのでボタンを使えません");
-    }else{
-        document.getElementById("talk_page_fab").style.display = "flex";
-        document.getElementById("talk_page_fab").disabled = false;
     }
+    //else{
+    //    document.getElementById("talk_page_fab").style.display = "flex";
+    //    document.getElementById("talk_page_fab").disabled = false;
+    //}
     //取得のタイムスタンプの流れとかあった気がする→重複取得に関して制限を考える感じで
     //それに関する対応を考えてから実装しようか
     //get_threads();

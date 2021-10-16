@@ -376,3 +376,52 @@ exports.DiaryToCount = functions.firestore.document('users/{userId}/diaries/{dia
     });
     return promisetotal;
 });
+
+
+//20211016auto_hitokotoのための関数
+exports.updatetask = functions.firestore
+    .document('users/{userId}/tasks/{taskId}')
+    .onUpdate((change, context) => {
+        // Get an object representing the document
+        // e.g. {'name': 'Marie', 'age': 66}
+        const newValue = change.after.data();
+        if(newValue.finish){
+            //taskを完了した時の処理なので、とりあえず報告を入れる方針で実装
+            //userの情報を取ってくる
+            
+            await admin.auth().getUser(context.userId)
+            .then((userRecord) => {
+                diary.displayName = userRecord.displayName;
+                diary.photoURL = userRecord.photoURL;
+                diary.conTent = newValue.text + "を完了！";
+                diary.userId = context.userId;
+                diary.createdAt = admin.firestore.FieldValue.serverTimestamp(),
+                diary.countGood = 0
+                return db.collection("users").doc(global_user.uid).collection("diaries").add(diary);
+            }).catch((e) => console.log(e));
+
+            /*var new_diary = {
+                conTent: newValue.text,
+                userId: context.userId,
+                userName: global_user.displayName,
+                userIcon: global_user.photoURL,
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                countGood: 0
+            }*/
+            //記入する
+            /*db.collection("users").doc(global_user.uid).collection("diaries").add(new_diary).then(function(docRef){
+    
+            }).catch(function(error){
+                console.log("error", error);
+            });
+            */
+        }
+
+      // ...or the previous value before this update
+      const previousValue = change.before.data();
+
+      // access a particular field as you would any JS property
+      const name = newValue.name;
+
+      // perform desired operations ...
+    });
