@@ -49,7 +49,7 @@ tabBar.listen('MDCTabBar:activated',function(event){
             document.getElementById("have_hitokoto").style.display = "none";
             document.getElementById("talk_page_timeover").style.display = "block";
             //広告の表示
-            document.getElementById("adv_talk").style.display = "block";
+            //document.getElementById("adv_talk").style.display = "block";
         }
     }else if(index==2){
         //あとでデータのページを表示するための場所に切り替わるかな？
@@ -256,7 +256,7 @@ function list_page_check(user){
         document.getElementById("create_task").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "block";
         //広告の表示を追加20210502
-        document.getElementById("adv_list").style.display = "block";
+        //document.getElementById("adv_list").style.display = "block";
         //20210603広告をあえて非表示にしてから表示にしているのかは不明。ただ、list_pageのみこのようになっている
     }
 }
@@ -268,7 +268,7 @@ function get_all_tasks(user){
     db.collection("users").doc(user.uid).collection("tasks").limit(10).get().then(function(tasks){
         //console.log(tasks);
         //広告の表示を追加20210502
-        document.getElementById("adv_list").style.display = "block";
+        //document.getElementById("adv_list").style.display = "block";
         if (tasks.size > 0) {
             //console.log("tasks =>", tasks);
             var task_remain = 0;
@@ -387,7 +387,7 @@ function task_check(radio_button){
         //tutorial
         if(tutorial_flag){
             document.getElementById("mission_two").style.display = "none";
-            document.getElementById("mission_three").style.display = "block";
+            //document.getElementById("mission_three").style.display = "block";
         }
     }).catch(function(error){
         console.log("error =>", error);
@@ -502,7 +502,6 @@ function finish_task_check(){
             document.getElementById("expand_button").textContent = "expand_less";
         }
         if(task_remain > 0){
-            
             //まだタスクはある
             document.getElementById("task_complate").style.display = "none";
             document.getElementById("to_do_items").style.display = "block";
@@ -512,11 +511,17 @@ function finish_task_check(){
             document.getElementById("to_do_items").style.display = "none";
             document.getElementById("task_complate").style.display = "block";
             //ということはこれかつその日スタンプを押したかどうかを診断する
+            //これは自動で画面遷移する処理だったはず。なので、差し止め
+            //だったが、これを利用して知識の表示に活用したい
             if(global_user_database.AlreadyPushed == false){
-                //まだ押してないので画面遷移する
                 if(task_total == task_finish){
-                    //予測しない挙動があるから、数を比較したif分を設置20201109
-                    tabBar.activateTab(1);
+                    tutorial_check();
+                    db.collection("users").doc(global_user.uid).update({
+                        AlreadyPushed: true
+                    }).then(function(){
+                        //globalを変数を書き換える
+                        global_user_database.AlreadyPushed = true;
+                    });
                 }
             }
         }
@@ -532,6 +537,7 @@ function finish_task_check(){
         document.getElementById("task_complate").style.display = "none";
         document.getElementById("create_task").style.display = "block";
     }
+    console.log("task_finish",task_finish);
     document.getElementById("task_finished_count").textContent = task_finish;
 }
 
@@ -635,19 +641,20 @@ function count_page_check(){
     if(global_user == null){
         //console.log("null なのでボタンを使えません");
         //ボタン消す
-        document.getElementById("talk_page_fab").style.display = "none";
-        document.getElementById("talk_page_fab").disabled = true;
-    }else{
-        if(can_user_count()){
-            //ボタン出す
-            document.getElementById("talk_page_fab").style.display = "flex";
-            document.getElementById("talk_page_fab").disabled = false;
-        }else{
-            //ボタン消す
-            document.getElementById("talk_page_fab").style.display = "none";
-            document.getElementById("talk_page_fab").disabled = true;
-        }
+        //document.getElementById("talk_page_fab").style.display = "none";
+        //document.getElementById("talk_page_fab").disabled = true;
     }
+    //else{
+    //    if(can_user_count()){
+    //        //ボタン出す
+    //        document.getElementById("talk_page_fab").style.display = "flex";
+    //        document.getElementById("talk_page_fab").disabled = false;
+    //    }else{
+    //        //ボタン消す
+    //        document.getElementById("talk_page_fab").style.display = "none";
+    //        document.getElementById("talk_page_fab").disabled = true;
+    //    }
+    //}
     //今の処理だとタブ切り替えで毎回やってるから、見直しが必要かもしれない
     var server_time =  new firebase.firestore.Timestamp.now();
     var date_text = getDate(server_time.toDate());
@@ -736,10 +743,11 @@ function talk_page_check(){
     //user がログインしてたらボタンを表示する
     if(global_user == null){
         //console.log("null なのでボタンを使えません");
-    }else{
-        document.getElementById("talk_page_fab").style.display = "flex";
-        document.getElementById("talk_page_fab").disabled = false;
     }
+    //else{
+    //    document.getElementById("talk_page_fab").style.display = "flex";
+    //    document.getElementById("talk_page_fab").disabled = false;
+    //}
     //取得のタイムスタンプの流れとかあった気がする→重複取得に関して制限を考える感じで
     //それに関する対応を考えてから実装しようか
     //get_threads();
@@ -1122,11 +1130,15 @@ function close_userterm(){
 }
 
 function check_talk_time(now_hour){
+    //auto_hitokotoですべてオッケーにしたよ
+    return true
+    /*
     if(now_hour==6||now_hour==7||now_hour==8||now_hour==9||now_hour==10||now_hour==12||now_hour==13||now_hour==14||now_hour==15||now_hour==18||now_hour==19||now_hour==20||now_hour==21||now_hour==22){
         return true
     }else{
         return false
     }
+    */
 }
 
 //チュートリアルチップのダイアログの実装
@@ -1139,15 +1151,15 @@ var tutorial_five = new mdc.dialog.MDCDialog(document.querySelector('#tutorial_f
 
 //ヒトコトコメントを送信した後にデータベースを検証して、チュートリアルチップを表示するための関数
 function tutorial_check(){
-    if(global_user.tutorial[0]){
+    if(global_user_database.tutorial){
         //一度目は完了
-        if(global_user.tutorial[1]){
+        if(global_user_database.tutorial[1]){
             //二度目は完了
-            if(global_user.tutorial[2]){
+            if(global_user_database.tutorial[2]){
                 //三度目は完了
-                if(global_user.tutorial[3]){
+                if(global_user_database.tutorial[3]){
                     //四度目は完了
-                    if(global_user.tutorial[4]){
+                    if(global_user_database.tutorial[4]){
                         //五度目も完了
                         //何もしない
                         return

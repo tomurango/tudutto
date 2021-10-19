@@ -55,18 +55,12 @@ function insert_adv_use(index){
             $("#adv_list").css({
                 backgroundImage: 'url("'+ global_adv_dis[index].imageUrl +'")' // "" で括っていないとIEでは表示されない
             });
-            //document.getElementById("adv_list").style.backgroundImage= "url(images/adv1.jpg)";
-            //document.getElementById("adv_list_link").style.color= "#fff2d3";
-            //document.getElementById('adv_list_link').setAttribute('href',"javascript:subscription_detail();");
         }else if(index==1){
             $("#adv_talk_link").css('color',global_adv_dis[index].colorCode);
             $("#adv_talk_link").attr("href", global_adv_dis[index].advUrl);
             $("#adv_talk").css({
                 backgroundImage: 'url("'+ global_adv_dis[index].imageUrl +'")' // "" で括っていないとIEでは表示されない
             });
-            //document.getElementById("adv_talk").style.backgroundImage= "url(images/adv2.jpg)";
-            //document.getElementById("adv_talk_link").style.color= "#fff2d3";
-            //document.getElementById('adv_talk_link').setAttribute('href',"javascript:subscription_detail();");
         }else if(index==2){
             $("#adv_data_link").css('color',global_adv_dis[index].colorCode);
             $("#adv_data_link").attr("href", global_adv_dis[index].advUrl);

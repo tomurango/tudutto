@@ -21,7 +21,7 @@ function get_diary(){
         //timestampの書き換え
         diary_timestamp = new firebase.firestore.Timestamp.now();
         //広告の表示
-        document.getElementById("adv_talk").style.display = "block";
+        //document.getElementById("adv_talk").style.display = "block";
         if(threads.size == 0){
             //連想配列の長さ取得サンプル
             if(Object.keys(global_diary).length == 0){
@@ -93,9 +93,11 @@ function fab_diary_back(){
 
 function diary_create(){
     //tutorial
+    /*
     if(tutorial_flag){
         document.getElementById("mission_three").style.display = "none";
     }
+    */
     var the_diary = document.getElementById("diary_input").value;
     //入力条件を管理する
     if(diary_rule(the_diary)){
@@ -128,7 +130,7 @@ function diary_create(){
             insert_diary(new_diary, docRef.id)
             fab_count();//20210131カウントをしっかりと増やしていく➡croudfunctionで書くのもいいのかもね
             //20210905メッセージ送信をここだと仮定して、チュートリアルチェックを配置
-            tutorial_check();
+            //tutorial_check();
         }).catch(function(error){
             console.log("error", error);
         });

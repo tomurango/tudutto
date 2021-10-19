@@ -376,3 +376,44 @@ exports.DiaryToCount = functions.firestore.document('users/{userId}/diaries/{dia
     });
     return promisetotal;
 });
+
+
+//20211016auto_hitokotoのための関数
+exports.updatetask = functions.firestore
+    .document('users/{userId}/tasks/{taskId}')
+    .onUpdate(async (change, context) => {
+        // Get an object representing the document
+        // e.g. {'name': 'Marie', 'age': 66}
+        const newValue = change.after.data();
+        if(newValue.finish){
+            //taskを完了した時の処理なので、とりあえず報告を入れる方針で実装
+            //userの情報を取ってくる
+            console.log("new_value =>", newValue);
+            var user_id = context.params.userId;
+            console.log("user id =>", user_id);
+
+            await admin.auth().getUser(user_id)
+            .then((userRecord) => {
+                var new_diary = {
+                    conTent: newValue.text,
+                    userId: context.params.userId,
+                    userName: userRecord.displayName,
+                    userIcon: userRecord.photoURL,
+                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                    countGood: 0
+                }
+
+                console.log("user id =>", user_id);
+
+                return db.collection("users").doc(user_id).collection("diaries").add(new_diary);
+            }).catch((e) => console.log(e));
+        }
+
+      // ...or the previous value before this update
+      const previousValue = change.before.data();
+
+      // access a particular field as you would any JS property
+      const name = newValue.name;
+
+      // perform desired operations ...
+    });
