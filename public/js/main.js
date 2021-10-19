@@ -256,7 +256,7 @@ function list_page_check(user){
         document.getElementById("create_task").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "block";
         //広告の表示を追加20210502
-        //document.getElementById("adv_list").style.display = "block";
+        document.getElementById("adv_list").style.display = "block";
         //20210603広告をあえて非表示にしてから表示にしているのかは不明。ただ、list_pageのみこのようになっている
     }
 }
@@ -268,7 +268,7 @@ function get_all_tasks(user){
     db.collection("users").doc(user.uid).collection("tasks").limit(10).get().then(function(tasks){
         //console.log(tasks);
         //広告の表示を追加20210502
-        //document.getElementById("adv_list").style.display = "block";
+        document.getElementById("adv_list").style.display = "block";
         if (tasks.size > 0) {
             //console.log("tasks =>", tasks);
             var task_remain = 0;
@@ -387,7 +387,7 @@ function task_check(radio_button){
         //tutorial
         if(tutorial_flag){
             document.getElementById("mission_two").style.display = "none";
-            document.getElementById("mission_three").style.display = "block";
+            //document.getElementById("mission_three").style.display = "block";
         }
     }).catch(function(error){
         console.log("error =>", error);
