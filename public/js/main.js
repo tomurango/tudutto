@@ -387,7 +387,7 @@ function task_check(radio_button){
         //tutorial
         if(tutorial_flag){
             document.getElementById("mission_two").style.display = "none";
-            document.getElementById("mission_three").style.display = "block";
+            //document.getElementById("mission_three").style.display = "block";
         }
     }).catch(function(error){
         console.log("error =>", error);
@@ -502,7 +502,6 @@ function finish_task_check(){
             document.getElementById("expand_button").textContent = "expand_less";
         }
         if(task_remain > 0){
-            
             //まだタスクはある
             document.getElementById("task_complate").style.display = "none";
             document.getElementById("to_do_items").style.display = "block";
@@ -512,13 +511,19 @@ function finish_task_check(){
             document.getElementById("to_do_items").style.display = "none";
             document.getElementById("task_complate").style.display = "block";
             //ということはこれかつその日スタンプを押したかどうかを診断する
-            /*これは自動で画面遷移する処理だったはず。なので、差し止め
+            //これは自動で画面遷移する処理だったはず。なので、差し止め
+            //だったが、これを利用して知識の表示に活用したい
             if(global_user_database.AlreadyPushed == false){
                 if(task_total == task_finish){
-                    tabBar.activateTab(1);
+                    tutorial_check();
+                    db.collection("users").doc(global_user.uid).update({
+                        AlreadyPushed: true
+                    }).then(function(){
+                        //globalを変数を書き換える
+                        global_user_database.AlreadyPushed = true;
+                    });
                 }
             }
-            */
         }
         document.getElementById("list_page_placeholder").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "none";
@@ -532,6 +537,7 @@ function finish_task_check(){
         document.getElementById("task_complate").style.display = "none";
         document.getElementById("create_task").style.display = "block";
     }
+    console.log("task_finish",task_finish);
     document.getElementById("task_finished_count").textContent = task_finish;
 }
 
@@ -1145,15 +1151,15 @@ var tutorial_five = new mdc.dialog.MDCDialog(document.querySelector('#tutorial_f
 
 //ヒトコトコメントを送信した後にデータベースを検証して、チュートリアルチップを表示するための関数
 function tutorial_check(){
-    if(global_user.tutorial[0]){
+    if(global_user_database.tutorial){
         //一度目は完了
-        if(global_user.tutorial[1]){
+        if(global_user_database.tutorial[1]){
             //二度目は完了
-            if(global_user.tutorial[2]){
+            if(global_user_database.tutorial[2]){
                 //三度目は完了
-                if(global_user.tutorial[3]){
+                if(global_user_database.tutorial[3]){
                     //四度目は完了
-                    if(global_user.tutorial[4]){
+                    if(global_user_database.tutorial[4]){
                         //五度目も完了
                         //何もしない
                         return

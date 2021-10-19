@@ -93,9 +93,11 @@ function fab_diary_back(){
 
 function diary_create(){
     //tutorial
+    /*
     if(tutorial_flag){
         document.getElementById("mission_three").style.display = "none";
     }
+    */
     var the_diary = document.getElementById("diary_input").value;
     //入力条件を管理する
     if(diary_rule(the_diary)){

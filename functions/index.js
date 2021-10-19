@@ -407,22 +407,6 @@ exports.updatetask = functions.firestore
 
                 return db.collection("users").doc(user_id).collection("diaries").add(new_diary);
             }).catch((e) => console.log(e));
-
-            /*var new_diary = {
-                conTent: newValue.text,
-                userId: context.userId,
-                userName: global_user.displayName,
-                userIcon: global_user.photoURL,
-                createdAt: admin.firestore.FieldValue.serverTimestamp(),
-                countGood: 0
-            }*/
-            //記入する
-            /*db.collection("users").doc(global_user.uid).collection("diaries").add(new_diary).then(function(docRef){
-    
-            }).catch(function(error){
-                console.log("error", error);
-            });
-            */
         }
 
       // ...or the previous value before this update
