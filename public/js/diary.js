@@ -21,7 +21,7 @@ function get_diary(){
         //timestampの書き換え
         diary_timestamp = new firebase.firestore.Timestamp.now();
         //広告の表示
-        document.getElementById("adv_talk").style.display = "block";
+        //document.getElementById("adv_talk").style.display = "block";
         if(threads.size == 0){
             //連想配列の長さ取得サンプル
             if(Object.keys(global_diary).length == 0){
@@ -128,7 +128,7 @@ function diary_create(){
             insert_diary(new_diary, docRef.id)
             fab_count();//20210131カウントをしっかりと増やしていく➡croudfunctionで書くのもいいのかもね
             //20210905メッセージ送信をここだと仮定して、チュートリアルチェックを配置
-            tutorial_check();
+            //tutorial_check();
         }).catch(function(error){
             console.log("error", error);
         });
