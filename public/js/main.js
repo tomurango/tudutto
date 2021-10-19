@@ -387,7 +387,7 @@ function task_check(radio_button){
         //tutorial
         if(tutorial_flag){
             document.getElementById("mission_two").style.display = "none";
-            document.getElementById("mission_three").style.display = "block";
+            //document.getElementById("mission_three").style.display = "block";
         }
     }).catch(function(error){
         console.log("error =>", error);
