@@ -50,21 +50,6 @@ exports.uncheckTask = functions.region('asia-northeast1').pubsub.schedule('0 0 *
         console.log(values);
     });
     return result;
-    /*Parsing error: Can not use keyword 'await' outside an async function
-    const querySnapshot = await db.collectionGroup('tasks').where('finish', '==', true).get();
-    querySnapshot.docs.forEach(snapshot => {
-        snapshot.ref.update({
-            finish: false
-        });
-    });*/
-    /*
-    const querySnapshot = await db.collectionGroup('tasks').where('finish', '==', true).get();
-    querySnapshot.docs.forEach(snapshot => {
-        snapshot.ref.update({
-            finish: false
-        });
-    });
-    */
 });
 
 //only blaze 定期処理 23時0分 に実行します
@@ -107,6 +92,7 @@ function getDatethirty(date) {
 
 //3日前の日記を削除する挙動
 //exports.deletenormaldiaryFunction = functions.pubsub.schedule('23 0 * * *').timeZone('Asia/Tokyo').onRun((context) => {
+/*なんか動いてないし、意味ない気がするので止める20211024
 exports.deleteDiary = functions.region('asia-northeast1').pubsub.schedule('23 0 * * *').timeZone('Asia/Tokyo').onRun((context) => {
     var controll_date = new Date();
     controll_date.setDate(controll_date.getDate() - 3);
@@ -129,234 +115,8 @@ exports.deleteDiary = functions.region('asia-northeast1').pubsub.schedule('23 0 
     });
     return delete_promise;
 });
+*/
 
-
-//20210214 こっからはGiftのための記述を設ける
-//20210327 こっからのGiftのための記述は除外したい
-/*
-const stripe = require('stripe')('sk_test_aidaihdioa');ここ書き換えてどうぞ
-const express = require('express');
-const app = express();
-
-//20210217ここからhttp request を受け取るための追加記述
-// Automatically allow cross-origin requests
-const cors = require('cors');
-app.use(cors({ origin: true }));
-
-
-app.use(express.static('.'));
-const YOUR_DOMAIN = 'http://yarukeeper.com';
-app.post('/create-checkout-session', async (req, res) => {
-    //console.log("とだい", req.body["diaryTo"]);
-    //console.log("ゆざふろ", req.body["userFrom"]);
-    //console.log("ゆざと", req.body["userTo"]);
-    const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items: [
-            {
-                price_data: {
-                currency: 'jpy',
-                product_data: {
-                    name: 'チア―',
-                    images: ['https://yarukeeper.com/images/rogoann_game.jpg'],
-                },
-                unit_amount: 500
-                },
-                quantity: 1
-            },
-        ],*/
-        /*line_items: [
-            {price: 'price_1IKH71K4amKkUSI0W0l7TI78', quantity: 1},
-        ],*/
-        /*payment_intent_data:{
-            metadata: { fromUser : req.body["userFrom"], toDiary: req.body["diaryTo"], toUser: req.body["userTo"]}
-        },
-        mode: 'payment',
-        success_url: `${YOUR_DOMAIN}/success.html`,
-        cancel_url: `${YOUR_DOMAIN}/cancel.html`,
-    });
-    res.json({ id: session.id });
-});
-//実行例を確認するためのapp.listenと認識書かなくてもいい感じ？
-//app.listen(4242, () => console.log('Running on port 4242'));
-
-
-//成功後の処理は以下と認識
-// Set your secret key. Remember to switch to your live secret key in production.
-// See your keys here: https://dashboard.stripe.com/account/apikeys
-//const stripe = require('stripe')('sk_test_51HJd7bK4amKkUSI0gd1p6xtB6vVoOeuaV8Ek8gvoPHUvl5vICWTbdXnR1lQySaBxymTWEUOqm3HMteZqbgJ3F71n00n3SyqMYc');
-// This example uses Express to receive webhooks
-//const app = require('express')();
-// Use body-parser to retrieve the raw body as a buffer
-const bodyParser = require('body-parser');
-
-// Match the raw body to content type application/json
-app.post('/webhook', bodyParser.raw({type: 'application/json'}), (request, response) => {
-    let event;
-    //console.log("リクエスト", request);
-    //console.log("レスポンス", response);
-    //console.log("ボディ", request.body);
-    try {
-        //event = JSON.parse(request.body);
-        event=request.body;
-        //console.log("event", event);
-    } catch (err) {
-        console.log("error message", err.message);
-        response.status(400).send(`Webhook Error: ${err.message}`);
-    }
-    //console.log("イベント", event);
-    // Handle the event
-    switch (event.type) {
-        case 'payment_intent.succeeded':
-            const paymentIntent = event.data.object;
-            console.log('PaymentIntent was successful!');
-            //console.log("ペイメントインテント", paymentIntent);
-            //ここにGiftのグラフを増やす処理を書く
-            //console.log("めたでた１", paymentIntent.charges.data[0].metadata);
-            //console.log("めたでた２", paymentIntent.metadata);
-            var toDiaryId = paymentIntent.metadata.toDiary;
-            //console.log("トダイアリ", toDiaryId);
-            var toUserId = paymentIntent.metadata.toUser;
-            //console.log("とゆざあいで", toUserId);
-            var fromUserId = paymentIntent.metadata.fromUser;
-            //console.log("ふろゆざ", fromUserId);
-            //diaryのGIFTのカウントを増やす処理
-            var promiseDiary = db.collection('users').doc(toUserId).collection("diaries").doc(toDiaryId).update({
-                countGift: admin.firestore.FieldValue.increment(1)
-            }).then(function(data){
-                console.log("Gift完了",data);
-            }).catch(function(error){
-                console.log("Error =>", error);
-            });
-            //ユーザ側で何にGiftを送ったのか記す処理
-            var promiseUser = db.collection('users').doc(fromUserId).update({
-                Gift: admin.firestore.FieldValue.arrayUnion(toDiaryId)
-            }).then(function(data){
-                console.log("Gift完了",data);
-            }).catch(function(error){
-                console.log("Error =>", error);
-            });
-            //20210305支払いのフラグをユーザのデータベースに書き込む
-            //promiseGiftじゃなくてmoney_dataをプロミスに代入してその下の階層でpromiseGiftを動かすとかのがいいかも
-            var promiseGift = db.collection("users").doc(toUserId).get().then(function(firedata){
-                //ユーザがstripeのIdを持ってるかどうかで分岐
-                //ユーザの継続数などに応じて分岐
-                var result_amount = GiftMoneyF(firedata.data());
-                var result = {
-                    Date: admin.firestore.FieldValue.serverTimestamp(),
-                    From: fromUserId,
-                    IdStripe: firedata.data().IdStripe,
-                    Amount: result_amount
-                }
-                db.collection('users').doc(toUserId).collection("money").add(result).then((docRef) => {
-                    console.log("Document written with ID: ", docRef.id);
-                }).catch((error) => {
-                    console.error("Error adding document: ", error);
-                });
-            }).catach(function(error){
-                console.log("Error", error);
-            });
-            //非同期化の検証のためプロミスallを戻り値にしています➡問題なさそう
-            Promise.all([promiseDiary, promiseUser,promiseGift]).then((values) => {
-                console.log(values);
-            });
-            break;
-        case 'payment_method.attached':
-            const paymentMethod = event.data.object;
-            console.log('PaymentMethod was attached to a Customer!');
-            break;
-        // ... handle other event types
-        default:
-            console.log(`Unhandled event type ${event.type}`);
-    }
-    // Return a 200 response to acknowledge receipt of the event
-    response.json({received: true});
-});
-
-//20210312 とりあえず追加しましたが、StripeConnectStandard登録のGitにはもうちょい書かれてるのでこれで完遂なのかはちょっと不明
-app.post("/onboard-user", async (req, res) => {
-    try {*/
-        /*
-        const account = await stripe.accounts.create({type: "standard"});
-        req.session.accountID = account.id;
-    
-        const origin = `${req.headers.origin}`;
-        const accountLinkURL = await generateAccountLink(account.id, origin);
-        res.send({ url: accountLinkURL });
-        */
-
-        /*上Git 下Doc*/
-        /*
-        const account = await stripe.accounts.create({
-            type: 'standard',
-        });
-        //refreshとかで使いそうだからsessionなんちゃらに代入だね
-        //req.session.accountID = account.id;20210312ここの時点でなぜかエラーはいたから除外する
-        //20210312アカウントのID的なやつ、Documentで書かれてるやつを基本的に参考にしたよおそらくこれで動いてくれるはずなんだがどうだわからん
-        //sample ? acct_1032D82eZvKYlo2C このアカウントらしきものの正体がわからん
-
-        //本当はこの辺りで、IDをfirestore側に登録する喜寿を書くのが順当なんだろうが、standardアカウントは
-        //ユーザにやさしくない（手続きがめんどい）のでcustomに変更する一応git commit しておく
-        //データベース統合ができてないのでユーザはアカウント作っても何もできないナウ
-
-        //202210313上で作ったアカウントに関するIDを使う必要があるっぽいね
-        const accountLinks = await stripe.accountLinks.create({
-            account: account.id,
-            refresh_url: 'https://asia-northeast1-levup-5017a.cloudfunctions.net/widgets/onboard-user',
-            return_url: 'https://yarukeeper.com/stripe-success.html',
-            type: 'account_onboarding',
-        }).then((link) => link.url);
-        res.send({ url: accountLinks });
-    } catch (err) {
-        res.status(500).send({
-            error: err.message,
-        });
-    }
-});
-
-//20210312なんかrefreshも指定した方がベストプラクティスらしいので。
-app.get("/onboard-user/refresh", async (req, res) => {
-    if (!req.session.accountID) {
-        res.redirect("/");
-        return;
-    }
-    try {
-        const { accountID } = req.session;
-        //20210312refreshじゃない上でのエラーに基づいて対応しました
-        */
-        /*
-        const origin = `${req.secure ? "https://" : "https://"}${req.headers.host}`;
-        const accountLinkURL = await generateAccountLink(accountID, origin);
-        res.redirect(accountLinkURL);
-        */
-        /*
-        const accountLinks = await stripe.accountLinks.create({
-            account: accountID,
-            refresh_url: 'https://asia-northeast1-levup-5017a.cloudfunctions.net/widgets/onboard-user',
-            return_url: 'https://yarukeeper.com/stripe-success.html',
-            type: 'account_onboarding',
-        }).then((link) => link.url);
-        res.redirect(accountLinks);
-    } catch (err) {
-        res.status(500).send({
-            error: err.message,
-        });
-    }
-});
-
-app.listen(4242, () => console.log('Running on port 4242'));//これ上でも書いてるから消した
-
-//202210217 ここもhttp request を受け取るための記述
-// Expose Express API as a single Cloud Function:
-exports.widgets = functions.region('asia-northeast1').https.onRequest(app);
-
-function GiftMoneyF(userdata){
-    var result = userdata.total + 299;
-    if(result > 400){
-        result = 400;
-    }
-    return result;
-};*/
 
 //20210309 diary と user の total のカウントの紐づけを行いたいので、oncreate で増加させる
 //exports.DiaryToCount = functions.firestore.document('users/{userId}').onCreate((snap, context) => {
@@ -380,40 +140,89 @@ exports.DiaryToCount = functions.firestore.document('users/{userId}/diaries/{dia
 
 //20211016auto_hitokotoのための関数
 exports.updatetask = functions.firestore
-    .document('users/{userId}/tasks/{taskId}')
-    .onUpdate(async (change, context) => {
-        // Get an object representing the document
-        // e.g. {'name': 'Marie', 'age': 66}
-        const newValue = change.after.data();
-        if(newValue.finish){
-            //taskを完了した時の処理なので、とりあえず報告を入れる方針で実装
-            //userの情報を取ってくる
-            console.log("new_value =>", newValue);
-            var user_id = context.params.userId;
-            console.log("user id =>", user_id);
+.document('users/{userId}/tasks/{taskId}')
+.onUpdate(async (change, context) => {
+    // Get an object representing the document
+    // e.g. {'name': 'Marie', 'age': 66}
+    // ...or the previous value before this update
+    //const previousValue = change.before.data();
+    // access a particular field as you would any JS property
+    //const name = newValue.name;
+    // perform desired operations ...
 
-            await admin.auth().getUser(user_id)
-            .then((userRecord) => {
+
+    const newValue = change.after.data();
+    if(newValue.finish){
+        //taskを完了した時の処理なので、とりあえず報告を入れる方針で実装
+        //userの情報を取ってくる
+        var user_id = context.params.userId;
+        var task_id = context.params.taskId;
+        var timestamp = newValue.timestamp;
+
+        //ここでtimestampを参照して、存在しない及び未完了の時にdiary作成その他は、何もしないreturn
+        if(timestamp==undefined){
+            //t=task
+            var promise_t = db.collection('users').doc(user_id).collection('tasks').doc(task_id).update({
+                total: 1,
+                combo: 1,
+                good: 0,
+                timestamp: admin.firestore.FieldValue.serverTimestamp()
+            }).catch(function(error){
+                console.log("Error =>", error);
+            });
+
+            //d=diary
+            var promise_d = admin.auth().getUser(user_id).then((userRecord) => {
                 var new_diary = {
                     conTent: newValue.text,
-                    userId: context.params.userId,
+                    userId: user_id,
                     userName: userRecord.displayName,
                     userIcon: userRecord.photoURL,
                     createdAt: admin.firestore.FieldValue.serverTimestamp(),
-                    countGood: 0
+                    countGood: 0,
+                    taskId: task_id
                 }
-
                 console.log("user id =>", user_id);
-
                 return db.collection("users").doc(user_id).collection("diaries").add(new_diary);
             }).catch((e) => console.log(e));
+
+            //非同期化の検証のためプロミスallを戻り値にしています
+            var result = Promise.all([promise_t, promise_d]).then((values) => {
+                console.log("Promise all ", values);
+            });
+            return result;
+        }else if(istoday(timestamp)){
+            //return 0
+            return 0
+        }else{
+            //diary作成//d=diary
+            var promise_d = admin.auth().getUser(user_id).then((userRecord) => {
+                var new_diary = {
+                    conTent: newValue.text,
+                    userId: user_id,
+                    userName: userRecord.displayName,
+                    userIcon: userRecord.photoURL,
+                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                    countGood: 0,
+                    taskId: task_id
+                }
+                console.log("user id =>", user_id);
+                return db.collection("users").doc(user_id).collection("diaries").add(new_diary);
+            }).catch((e) => console.log(e));
+            return promise_d;
         }
+    }
+});
 
-      // ...or the previous value before this update
-      const previousValue = change.before.data();
-
-      // access a particular field as you would any JS property
-      const name = newValue.name;
-
-      // perform desired operations ...
-    });
+//引数の日時を参考にそれが本日であるかどうかを参考にする。
+function istoday(timestamp){
+    //引数からの日時を取得
+    var got_info = timestamp.toDate();
+    var fire_now = firebase.firestore.Timestamp.now();
+    var now_info = fire_now.toDate();
+    if(got_info.getFullYear()==now_info.getFullYear() && got_info.getMonth()==now_info.getMonth() && got_info.getDate()==now_info.getDate()){
+        return true
+    }else{
+        return false
+    }
+}
