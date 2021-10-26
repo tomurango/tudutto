@@ -1,4 +1,6 @@
-﻿var global_user;
+﻿//const { result } = require("lodash");//これ自動で挿入されるの何？
+
+var global_user;
 var global_user_database;
 var global_tasks = {};
 var global_threads = {};
@@ -321,8 +323,10 @@ function insert_task(task_data, task_id){
         /*var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px">' + task_data.text + '</p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666">' + task_data.memo + '</p></div></div>';
         var tasks_container = document.getElementById("to_do_items_finished");
         tasks_container.insertAdjacentHTML("afterbegin", task_div);*/
+        //追加実装のため、task_thirdは別記述であり、意図的変更が難しいので、insertAdjacentHTMLにて挿入
+        var third_div = '<p class="todo_third" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666">'+ cre_todothird(task_data) +'</p>';
 
-        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px"></p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666"></p></div></div>';
+        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px"></p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666"></p>'+ third_div +'</div></div>';
         var tasks_container = document.getElementById("to_do_items_finished");
         var todo_promise = new Promise(function(resolve, reject){
             tasks_container.insertAdjacentHTML("afterbegin", task_div);
@@ -342,8 +346,9 @@ function insert_task(task_data, task_id){
         var tasks_container = document.getElementById("to_do_items");
         tasks_container.insertAdjacentHTML("afterbegin", task_div);
         */
+        var third_div = '<p class="todo_third" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666">'+ cre_todothird(task_data) +'</p>';
         
-        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check(this)">radio_button_unchecked</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px"></p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666"></p></div></div>';
+        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check(this)">radio_button_unchecked</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px"></p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666"></p>'+ third_div +'</div></div>';
         var tasks_container = document.getElementById("to_do_items");
         var todo_promise = new Promise(function(resolve, reject){
             tasks_container.insertAdjacentHTML("afterbegin", task_div);
@@ -1212,4 +1217,13 @@ function tutorial_check(){
             console.log("error",error);
         });
     }
+}
+
+//insert_task内で、連続、合計、goodの表示する文字を生成するための関数
+function cre_todothird(db_task){
+    if(db_task.combo==undefined){var combo = 0}else{var combo = db_task.combo}
+    if(db_task.count==undefined){var count = 0}else{var count = db_task.count}
+    if(db_task.good==undefined){var good = 0}else{var good = db_task.good}
+    var result = '連続' + combo +'  合計'+ count +'  いいね'+ good ;
+    return result
 }
