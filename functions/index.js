@@ -145,19 +145,19 @@ exports.updatetask = functions.firestore
     // Get an object representing the document
     // e.g. {'name': 'Marie', 'age': 66}
     // ...or the previous value before this update
-    //const previousValue = change.before.data();
     // access a particular field as you would any JS property
     //const name = newValue.name;
     // perform desired operations ...
-
-
+    
+    
+    const previousValue = change.before.data();
     const newValue = change.after.data();
     if(newValue.finish){
         //taskを完了した時の処理なので、とりあえず報告を入れる方針で実装
         //userの情報を取ってくる
         var user_id = context.params.userId;
         var task_id = context.params.taskId;
-        var timestamp = newValue.timestamp;
+        var timestamp = previousValue.timestamp;
 
         //ここでtimestampを参照して、存在しない及び未完了の時にdiary作成その他は、何もしないreturn
         if(timestamp==undefined){
@@ -183,7 +183,11 @@ exports.updatetask = functions.firestore
                     taskId: task_id
                 }
                 console.log("user id =>", user_id);
-                return db.collection("users").doc(user_id).collection("diaries").add(new_diary);
+                return db.collection("users").doc(user_id).collection("diaries").add(new_diary).then(function(){
+                    countdbtask(user_id,task_id,timestamp)
+                }).catch(function(error){
+                    console.log("error", error);
+                });
             }).catch((e) => console.log(e));
 
             //非同期化の検証のためプロミスallを戻り値にしています
@@ -207,7 +211,11 @@ exports.updatetask = functions.firestore
                     taskId: task_id
                 }
                 console.log("user id =>", user_id);
-                return db.collection("users").doc(user_id).collection("diaries").add(new_diary);
+                return db.collection("users").doc(user_id).collection("diaries").add(new_diary).then(function(){
+                    countdbtask(user_id,task_id,timestamp)
+                }).catch(function(error){
+                    console.log("error", error);
+                });
             }).catch((e) => console.log(e));
             return promise_d;
         }
@@ -218,11 +226,34 @@ exports.updatetask = functions.firestore
 function istoday(timestamp){
     //引数からの日時を取得
     var got_info = timestamp.toDate();
-    var fire_now = firebase.firestore.Timestamp.now();
+    var fire_now = admin.firestore.FieldValue.serverTimestamp();
     var now_info = fire_now.toDate();
     if(got_info.getFullYear()==now_info.getFullYear() && got_info.getMonth()==now_info.getMonth() && got_info.getDate()==now_info.getDate()){
         return true
     }else{
         return false
     }
+}
+
+//Diaryを作成した後に、taskのcombo,total,timestampの更新を行うための関数
+function countdbtask(user_id,task_id,beforetime){
+    //達成が前日かどうかでコンボの判断を行う。
+    var beforedate = beforetime.toDate();
+    //一日送らせて、日付比較を行う
+    beforedate.setDate(beforedate.getDate() + 1);
+    var nowstamp = admin.firestore.FieldValue.serverTimestamp();
+    var nowdate = nowstamp.toDate();
+    if(beforedate.getFullYear()==nowdate.getFullYear() && beforedate.getMonth()==nowdate.getMonth() && beforedate.getDate()==nowdate.getDate()){
+        var comboresult = admin.firestore.FieldValue.increment(1);
+    }else{
+        var comboresult = 0;
+    }
+    var promise_tc = db.collection('users').doc(user_id).collection('tasks').doc(task_id).update({
+        count: admin.firestore.FieldValue.increment(1),
+        combo: comboresult,
+        timestamp: admin.firestore.FieldValue.serverTimestamp()
+    }).catch(function(error){
+        console.log("error", error);
+    });
+    return promise_tc
 }
