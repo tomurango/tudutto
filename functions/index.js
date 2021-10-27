@@ -148,112 +148,135 @@ exports.updatetask = functions.firestore
     // access a particular field as you would any JS property
     //const name = newValue.name;
     // perform desired operations ...
-    
+    //console.log("1");
     
     const previousValue = change.before.data();
     const newValue = change.after.data();
     if(newValue.finish){
+        //console.log("2");
         //taskを完了した時の処理なので、とりあえず報告を入れる方針で実装
         //userの情報を取ってくる
         var user_id = context.params.userId;
         var task_id = context.params.taskId;
         var timestamp = previousValue.timestamp;
-
-        //ここでtimestampを参照して、存在しない及び未完了の時にdiary作成その他は、何もしないreturn
-        if(timestamp==undefined){
-            //t=task
-            var promise_t = db.collection('users').doc(user_id).collection('tasks').doc(task_id).update({
-                total: 1,
-                combo: 1,
-                good: 0,
-                timestamp: admin.firestore.FieldValue.serverTimestamp()
-            }).catch(function(error){
-                console.log("Error =>", error);
-            });
-
-            //d=diary
-            var promise_d = admin.auth().getUser(user_id).then((userRecord) => {
-                var new_diary = {
-                    conTent: newValue.text,
-                    userId: user_id,
-                    userName: userRecord.displayName,
-                    userIcon: userRecord.photoURL,
-                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-                    countGood: 0,
-                    taskId: task_id
-                }
-                console.log("user id =>", user_id);
-                return db.collection("users").doc(user_id).collection("diaries").add(new_diary).then(function(){
-                    countdbtask(user_id,task_id,timestamp)
-                }).catch(function(error){
-                    console.log("error", error);
-                });
-            }).catch((e) => console.log(e));
-
-            //非同期化の検証のためプロミスallを戻り値にしています
-            var result = Promise.all([promise_t, promise_d]).then((values) => {
-                console.log("Promise all ", values);
-            });
-            return result;
-        }else if(istoday(timestamp)){
-            //return 0
+        if(newValue.finish==previousValue.finish){
+            //taskの手動変更ではなく、自動でcomboとtotalを書き込む処理を除外するための記載
+            //これをしないと、二度、comboとtotalを生成する
+            //console.log("14");
             return 0
         }else{
-            //diary作成//d=diary
-            var promise_d = admin.auth().getUser(user_id).then((userRecord) => {
-                var new_diary = {
-                    conTent: newValue.text,
-                    userId: user_id,
-                    userName: userRecord.displayName,
-                    userIcon: userRecord.photoURL,
-                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-                    countGood: 0,
-                    taskId: task_id
-                }
-                console.log("user id =>", user_id);
-                return db.collection("users").doc(user_id).collection("diaries").add(new_diary).then(function(){
-                    countdbtask(user_id,task_id,timestamp)
+            //ここでtimestampを参照して、存在しない及び未完了の時にdiary作成その他は、何もしないreturn
+            if(timestamp==undefined){
+                //console.log("3");
+                //t=task
+                var promise_t = db.collection('users').doc(user_id).collection('tasks').doc(task_id).update({
+                    total: 1,
+                    combo: 1,
+                    good: 0,
+                    timestamp: admin.firestore.FieldValue.serverTimestamp()
                 }).catch(function(error){
-                    console.log("error", error);
+                    console.log("Error =>", error);
                 });
-            }).catch((e) => console.log(e));
-            return promise_d;
+    
+                //d=diary
+                var promise_d = admin.auth().getUser(user_id).then((userRecord) => {
+                    var new_diary = {
+                        conTent: newValue.text,
+                        userId: user_id,
+                        userName: userRecord.displayName,
+                        userIcon: userRecord.photoURL,
+                        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                        countGood: 0,
+                        taskId: task_id
+                    }
+                    console.log("user id =>", user_id);
+                    return db.collection("users").doc(user_id).collection("diaries").add(new_diary).then(function(){
+                        countdbtask(user_id,task_id,timestamp)
+                    }).catch(function(error){
+                        console.log("error", error);
+                    });
+                }).catch((e) => console.log(e));
+    
+                //非同期化の検証のためプロミスallを戻り値にしています
+                var result = Promise.all([promise_t, promise_d]).then((values) => {
+                    console.log("Promise all ", values);
+                });
+                //console.log("4");
+                return result;
+            }else if(istoday(timestamp)){
+                //return 0
+                //console.log("5");
+                console.log("return 0");
+                return 0
+            }else{
+                //diary作成//d=diary
+                //console.log("6");
+                var promise_d = admin.auth().getUser(user_id).then((userRecord) => {
+                    var new_diary = {
+                        conTent: newValue.text,
+                        userId: user_id,
+                        userName: userRecord.displayName,
+                        userIcon: userRecord.photoURL,
+                        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                        countGood: 0,
+                        taskId: task_id
+                    }
+                    console.log("user id =>", user_id);
+                    return db.collection("users").doc(user_id).collection("diaries").add(new_diary).then(function(){
+                        countdbtask(user_id,task_id,timestamp);
+                    }).catch(function(error){
+                        console.log("error", error);
+                    });
+                }).catch((e) => console.log(e));
+                //console.log("7");
+                return promise_d;
+            }
         }
+
     }
 });
 
 //引数の日時を参考にそれが本日であるかどうかを参考にする。
 function istoday(timestamp){
+    //console.log("8");
     //引数からの日時を取得
     var got_info = timestamp.toDate();
-    var fire_now = admin.firestore.FieldValue.serverTimestamp();
-    var now_info = fire_now.toDate();
+    //var fire_now = admin.firestore.FieldValue.serverTimestamp();
+    var now_info = new Date();
     if(got_info.getFullYear()==now_info.getFullYear() && got_info.getMonth()==now_info.getMonth() && got_info.getDate()==now_info.getDate()){
+        //console.log("9");
+        //console.log("以前と今日は同じ true");
         return true
     }else{
+        //console.log("10");
+        //console.log("以前と今日は違う false");
         return false
     }
 }
 
 //Diaryを作成した後に、taskのcombo,total,timestampの更新を行うための関数
 function countdbtask(user_id,task_id,beforetime){
+    //console.log("11");
     //達成が前日かどうかでコンボの判断を行う。
     var beforedate = beforetime.toDate();
     //一日送らせて、日付比較を行う
     beforedate.setDate(beforedate.getDate() + 1);
-    var nowstamp = admin.firestore.FieldValue.serverTimestamp();
-    var nowdate = nowstamp.toDate();
+    //var nowstamp = admin.firestore.FieldValue.serverTimestamp();
+    var nowdate = new Date();
     if(beforedate.getFullYear()==nowdate.getFullYear() && beforedate.getMonth()==nowdate.getMonth() && beforedate.getDate()==nowdate.getDate()){
         var comboresult = admin.firestore.FieldValue.increment(1);
+        //console.log("12");
     }else{
+        //console.log("13");
         var comboresult = 0;
     }
     var promise_tc = db.collection('users').doc(user_id).collection('tasks').doc(task_id).update({
-        count: admin.firestore.FieldValue.increment(1),
+        total: admin.firestore.FieldValue.increment(1),
         combo: comboresult,
         timestamp: admin.firestore.FieldValue.serverTimestamp()
     }).catch(function(error){
         console.log("error", error);
     });
+    console.log("14");
     return promise_tc
 }
