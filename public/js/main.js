@@ -1222,8 +1222,8 @@ function tutorial_check(){
 //insert_task内で、連続、合計、goodの表示する文字を生成するための関数
 function cre_todothird(db_task){
     if(db_task.combo==undefined){var combo = 0}else{var combo = db_task.combo}
-    if(db_task.count==undefined){var count = 0}else{var count = db_task.count}
+    if(db_task.total==undefined){var total = 0}else{var total = db_task.total}
     if(db_task.good==undefined){var good = 0}else{var good = db_task.good}
-    var result = '連続' + combo +'  合計'+ count +'  いいね'+ good ;
+    var result = '連続' + combo +'  合計'+ total +'  いいね'+ good ;
     return result
 }
