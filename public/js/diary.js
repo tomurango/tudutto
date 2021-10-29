@@ -21,7 +21,7 @@ function get_diary(){
         //timestampの書き換え
         diary_timestamp = new firebase.firestore.Timestamp.now();
         //広告の表示
-        document.getElementById("adv_talk").style.display = "block";
+        //document.getElementById("adv_talk").style.display = "block";
         if(threads.size == 0){
             //連想配列の長さ取得サンプル
             if(Object.keys(global_diary).length == 0){
@@ -93,9 +93,9 @@ function fab_diary_back(){
 
 function diary_create(){
     //tutorial
-    if(tutorial_flag){
+    /*if(tutorial_flag){
         document.getElementById("mission_three").style.display = "none";
-    }
+    }*/
     var the_diary = document.getElementById("diary_input").value;
     //入力条件を管理する
     if(diary_rule(the_diary)){
@@ -128,7 +128,7 @@ function diary_create(){
             insert_diary(new_diary, docRef.id)
             fab_count();//20210131カウントをしっかりと増やしていく➡croudfunctionで書くのもいいのかもね
             //20210905メッセージ送信をここだと仮定して、チュートリアルチェックを配置
-            tutorial_check();
+            //tutorial_check();
         }).catch(function(error){
             console.log("error", error);
         });
@@ -474,9 +474,21 @@ function diary_good(good){
         good.classList.add("active");
     }
     //とりあえず以下何もしない形でエラーの反応を見る
-    db.collection("users").doc(global_diary[diary_id].userId).collection("diaries").doc(diary_id).update({
+    //t=task
+    var promise_t = db.collection('users').doc(global_diary[diary_id].userId).collection('tasks').doc(global_diary[diary_id].taskId).update({
+        good: firebase.firestore.FieldValue.increment(number)
+    }).catch(function(error){
+        console.log("Error =>", error);
+    });
+
+    //d=diary
+    var promise_d = db.collection("users").doc(global_diary[diary_id].userId).collection("diaries").doc(diary_id).update({
         countGood: firebase.firestore.FieldValue.increment(number)
-    }).then(function(){
+    }).catch((e) => console.log(e));
+
+    //非同期化の検証のためプロミスallを戻り値にしています
+    var result = Promise.all([promise_t, promise_d]).then(function(values){
+        console.log("promise =>", values);
         //global変数の中身を書き換える
         global_diary[diary_id]["countGood"] += number;
         //userのgoodも書き換える
@@ -484,6 +496,7 @@ function diary_good(good){
     }).catch(function(error){
         console.log("error", error);
     });
+    return result;
 }
 
 //すでにグッドしたものかどうかの確認
