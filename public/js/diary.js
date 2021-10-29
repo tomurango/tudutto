@@ -93,9 +93,9 @@ function fab_diary_back(){
 
 function diary_create(){
     //tutorial
-    /*if(tutorial_flag){
+    if(tutorial_flag){
         document.getElementById("mission_three").style.display = "none";
-    }*/
+    }
     var the_diary = document.getElementById("diary_input").value;
     //入力条件を管理する
     if(diary_rule(the_diary)){
@@ -474,21 +474,9 @@ function diary_good(good){
         good.classList.add("active");
     }
     //とりあえず以下何もしない形でエラーの反応を見る
-    //t=task
-    var promise_t = db.collection('users').doc(global_diary[diary_id].userId).collection('tasks').doc(global_diary[diary_id].taskId).update({
-        good: firebase.firestore.FieldValue.increment(number)
-    }).catch(function(error){
-        console.log("Error =>", error);
-    });
-
-    //d=diary
-    var promise_d = db.collection("users").doc(global_diary[diary_id].userId).collection("diaries").doc(diary_id).update({
+    db.collection("users").doc(global_diary[diary_id].userId).collection("diaries").doc(diary_id).update({
         countGood: firebase.firestore.FieldValue.increment(number)
-    }).catch((e) => console.log(e));
-
-    //非同期化の検証のためプロミスallを戻り値にしています
-    var result = Promise.all([promise_t, promise_d]).then(function(values){
-        console.log("promise =>", values);
+    }).then(function(){
         //global変数の中身を書き換える
         global_diary[diary_id]["countGood"] += number;
         //userのgoodも書き換える
@@ -496,7 +484,6 @@ function diary_good(good){
     }).catch(function(error){
         console.log("error", error);
     });
-    return result;
 }
 
 //すでにグッドしたものかどうかの確認
