@@ -40,9 +40,7 @@ service cloud.firestore {
       allow update: if request.auth.uid == userId;
 
       match /tasks/{taskId} {
-        allow read: if request.auth.uid == userId;
-        allow create, delete: if request.auth.uid == userId;
-        allow update: if request.auth.uid == userId || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['good']);
+        allow read, write: if request.auth.uid == userId;
       }
 
       match /diaries/{diaryId} {
