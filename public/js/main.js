@@ -390,10 +390,10 @@ function task_check(radio_button){
         insert_task(global_tasks[task_id], task_id);
         finish_task_check();
         //tutorial
-        if(tutorial_flag){
-            document.getElementById("mission_two").style.display = "none";
+        //if(tutorial_flag){
+        //    document.getElementById("mission_two").style.display = "none";
             //document.getElementById("mission_three").style.display = "block";
-        }
+        //}
     }).catch(function(error){
         console.log("error =>", error);
     });
@@ -444,10 +444,10 @@ function task_create(){
         return
     }
     //tutorial
-    if(tutorial_flag){
-        document.getElementById("mission_one").style.display = "none";
-        document.getElementById("mission_two").style.display = "block";
-    }
+    //if(tutorial_flag){
+    //    document.getElementById("mission_one").style.display = "none";
+    //    document.getElementById("mission_two").style.display = "block";
+    //}
     //作成
     var new_task = {
         finish: false,
@@ -1126,10 +1126,10 @@ function define(name, value){
 
 function close_userterm(){
     use_terms_dialog.close();
-    if(tutorial_flag){
+    //if(tutorial_flag){
         //ミッション１を開く
-        document.getElementById("mission_one").style.display = "block";
-    }
+    //    document.getElementById("mission_one").style.display = "block";
+    //}
 }
 
 function check_talk_time(now_hour){
