@@ -117,38 +117,7 @@
                 <span class="mdc-button__label">作成</span>
             </button>
         </div>
-        <!--日記にコメントするためのdiv-->
-        <div id="diary_detail_div" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff; overflow-y: scroll">
-            <!--戻るボタン-->
-            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" onclick="detail_of_diary_back()">clear</button>
-            <p style="position: absolute; left: 48px; top: 12px; margin: 0px; color: #333333;">とある日記</p>
-            <!--<p style="position: absolute; left: 12px; top: 48px; font-size: 9px; color: #777777">日記</p>-->
-            <div id="diary_mimic_wrapper">
-                <div id="diary_content_mimic">
-                </div>    
-            </div>
-            <hr>
-            <div id="diary_comment_input">
-                <img id="diary_comeinput_icon" width="32" height="32" alt="Your Icon" onerror="this.src='/images/nanikaerror.jpg' "/>
-                <input id="diary_comeinput_text" placeholder="コメントを入力">
-                <button id="diary_comeinput_send" class="material-icons mdc-icon-button" disabled onclick="sendcomment_todiary()">send</button>
-            </div>
-            <!--<p style="margin: 16px 0px 0px 16px; font-size: 9px; color: #777777">コメント</p>-->
-            <div id="diary_comment_thread">
-                <div id="diary_comment_thread_placeholder" class="loader-wrap">
-                    <div class="loader">Loading...</div>
-                </div>
-                <div id="diary_comment_thread_nocomment" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center;">
-                    <div id="norecomment_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
-                    <div>
-                        <p class="text_up" style="margin: 0px">コメントはありませんでした。</p>
-                        <p class="text_down" style="margin: 0px 0px 200px 0px">取得したコメントが<br>表示されます。</p>
-                    </div>
-                </div>
-                <div id="diary_comment_thread_commentarea" style="display: none"></div>
-            </div>
-        </div>
-
+        
         <!--プラン変更を進めたのちに実際に変更できるようなUXをさせるためのdiv-->
         <div id="div_for_subscription" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff; overflow-y: scroll">
             <!--戻るボタン-->
@@ -192,7 +161,7 @@
             <!--画像入力及び、プレビューエリア-->
             <label id="adv_img_label" for="adv_img_inp">
                 <p style="font-size: 0.8em; color: #777777; margin: 0px; margin-left: 16px;">広告イメージ</p>
-                <div id="adv_img_pre" class="mdc-card adv-card">
+                <div id="adv_img_pre" class="mdc-card adv-card" >
                     <a id="adv_crea_link" class="adv_link">
                         <p style="margin: 0px;">
                             <span class="material-icons adv_icon">
@@ -458,23 +427,16 @@
             </div>
             
             <div id="have_hitokoto" style="display: none; width: 100%; height: fit-content; background-color: #ffffff; flex-wrap: wrap; min-height: 100%; padding-bottom: 100%; box-sizing: border-box;" >
-                <div id="hitokoto_count_pla" style="display: flex; width: 100%; height: fit-content; background-color: #ffffff;">
+                <!--20211016をもって非表示カウントも関数は存在するが、起動しない。-->
+                <div id="hitokoto_count_pla" style="display: none; width: 100%; height: fit-content; background-color: #ffffff;">
                     <div id="hitokoto_count_card" class="mdc-card" style="padding: 8px; width: 100%;">
                         <p id="hitokoto_count_txt" style="color: #777777; font-size: 10px; margin: 0px;">本日ヒトコト</p>
                         <p id="hitokoto_count_cont" style="margin: 0px; text-align: center;"><span id="hitokoto_count_num" style="font-size: 3em;">0</span>コト</p>
                     </div>
                 </div>
                 <div id="thread_container" style="display: flex; width: 100%; height: fit-content; background-color: #ffffff; flex-wrap: wrap; min-height: 100%; padding-bottom: 100%; box-sizing: border-box;" >
-                    <!--<div id="" class="mdc-card diary-card" onclick="detail_of_diary(this)">
-                        <div class="header_erea">
-                            <img class="who_icon" src="images/sureddonaitoki.jpg">
-                            <p class="whos_diary"></p>
-                            <p class="what_time"></p>
-                        </div>
-                        <div class="content_erea">
-                            <p class="content_diary"></p>
-                        </div>
-                    </div>-->
+                    <p>ここに投稿欄と、登校される情報を入れ込んでいく</p>
+                    
                 </div>
             </div>
             <div id="talk_page_placeholder" style="display:block; height: 100%; width: 100%; left: 0px;">
@@ -583,7 +545,7 @@
         <div id="data_page" class="top_level_page" style="display: none; background-color: #ffffff; padding-bottom: 16px; box-sizing: border-box;">
             
             <!--広告用-->
-            <div id="adv_data" class="mdc-card adv-card">
+            <div id="adv_data" class="mdc-card adv-card" style="display: none;">
                 <a id="adv_data_link" class="adv_link">
                     <p style="margin: 0px;">
                         <span class="material-icons adv_icon">
@@ -594,7 +556,7 @@
                 </a>
             </div>
 
-            <div id="chart_one" class="mdc-card log-chart">
+            <div id="chart_one" class="mdc-card log-chart" style="display: none;">
                 <p style="position: absolute; margin: 0px; top: 32px; left: 32px;">カウント数</p>
                 <p style="position: absolute; color: #777777; font-size: 0.8em; margin: 0px; top: 52px; left: 32px;">目指せ100人</p>
                 <div id="count_chart_space" style="position: absolute; height: calc(100% - 128px); width: calc(100% - 64px); bottom: 48px;">
@@ -692,10 +654,10 @@
                             <span class="mdc-tab__ripple" hidden></span>
                         </button>-->
                         
-                        <button class="mdc-tab" role="tab" aria-selected="false" tabindex="0">
+                        <button class="mdc-tab" role="tab" aria-selected="false" tabindex="1">
                             <span class="mdc-tab__content">
                                 <span id="bab_icon_sirase" class="mdc-tab__icon material-icons bab_icon" aria-hidden="true">forum</span>
-                                <span id="bab_icon_sirase_text" class="footer_parts mdc-tab__text-label bab_icon">ヒトコト</span>
+                                <span id="bab_icon_sirase_text" class="footer_parts mdc-tab__text-label bab_icon">グループ</span>
                             </span>
                             <span class="mdc-tab__ripple" hidden></span>
                             <span class="mdc-tab-indicator onfooter">
@@ -704,7 +666,8 @@
                             </span>
                         </button>
                         
-                        <button class="mdc-tab" role="tab" aria-selected="false" tabindex="0">
+                        
+                        <button class="mdc-tab" role="tab" aria-selected="false" tabindex="2">
                             <span class="mdc-tab__content">
                                 <span id="bab_icon_wadai" class="mdc-tab__icon material-icons bab_icon" aria-hidden="true">poll</span>
                                 <span id="bab_icon_wadai_text" class="footer_parts mdc-tab__text-label bab_icon">データ</span>
@@ -715,6 +678,7 @@
                                     class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
                             </span>
                         </button>
+                        
                     </div>
                 </div>
             </div>
@@ -963,18 +927,16 @@
         </div-->
 
         <!--tutorial-->
-        <div id="mission_one" class="mission" style="display: none;">
-            <p class="mission_sub">チュートリアル１/３</p>
-            <p class="mission_main">タスクを作ろう</p>
-        </div>
-        <div id="mission_two" class="mission" style="display: none;">
-            <p class="mission_sub">チュートリアル２/３</p>
-            <p class="mission_main">タスクを完了しよう</p>
-        </div>
-        <div id="mission_three" class="mission" style="display: none;">
-            <p class="mission_sub">チュートリアル３/３</p>
-            <p class="mission_main">ヒトコトを共有しよう</p>
-        </div>
+        <!--とりあえずじゃま20211113
+            <div id="mission_one" class="mission" style="display: none;">
+                <p class="mission_sub">チュートリアル１/２</p>
+                <p class="mission_main">タスクを作ろう</p>
+            </div>
+            <div id="mission_two" class="mission" style="display: none;">
+                <p class="mission_sub">チュートリアル２/２</p>
+                <p class="mission_main">タスクを完了しよう</p>
+            </div>
+        -->
 
         <!--利用規約に同意するためのdiv-->
         <!--ここに本文を書いてしまう形でひとまず進む-->
