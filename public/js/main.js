@@ -1,6 +1,4 @@
-﻿//const { result } = require("lodash");//これ自動で挿入されるの何？
-
-var global_user;
+﻿var global_user;
 var global_user_database;
 var global_tasks = {};
 var global_threads = {};
@@ -27,7 +25,7 @@ tabBar.listen('MDCTabBar:activated',function(event){
         top_level_pages[i].style.display = "none";
     }
     //広告を読みこんでindexに該当する箇所に挿入する
-    //insert_adv(index);
+    insert_adv(index);
     //indexによって処理を分岐して記述する
     if(index==0){
         document.getElementById("list_page").style.display = "flex";
@@ -51,8 +49,7 @@ tabBar.listen('MDCTabBar:activated',function(event){
             document.getElementById("have_hitokoto").style.display = "none";
             document.getElementById("talk_page_timeover").style.display = "block";
             //広告の表示
-            //20211113広告の形態を変えようというかシステムの全体の形もある程度変更したいので、
-            //document.getElementById("adv_talk").style.display = "block";
+            document.getElementById("adv_talk").style.display = "block";
         }
     }else if(index==2){
         //あとでデータのページを表示するための場所に切り替わるかな？
@@ -218,14 +215,14 @@ function fab_task_back(){
 //userの種類によってページの表示を切り替えるための関数
 function list_page_check(user){
     //20210603list_pageのみ、check関数内で広告を実行する。理由としてタブの切り替えで実行されないから
-    //insert_adv(0);
+    insert_adv(0);
     if (user) {
         // User is signed in.
         //console.log("user => ", user);
         //ログインしてたらボタンの表示を差し替える
         document.getElementById("usericon").src = user.photoURL;
         //コメント投稿のページの分も挿入しておく
-        //document.getElementById("diary_comeinput_icon").src = user.photoURL;
+        document.getElementById("diary_comeinput_icon").src = user.photoURL;
         document.getElementById("login_icon").style.display = "flex";
         document.getElementById("login_button").style.display = "none";
         //fab を表示する
@@ -258,8 +255,8 @@ function list_page_check(user){
         document.getElementById("finished_container").style.display = "none";
         document.getElementById("create_task").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "block";
-        //広告の表示を追加20210502→20211113取り除く
-        //document.getElementById("adv_list").style.display = "block";
+        //広告の表示を追加20210502
+        document.getElementById("adv_list").style.display = "block";
         //20210603広告をあえて非表示にしてから表示にしているのかは不明。ただ、list_pageのみこのようになっている
     }
 }
@@ -271,7 +268,7 @@ function get_all_tasks(user){
     db.collection("users").doc(user.uid).collection("tasks").limit(10).get().then(function(tasks){
         //console.log(tasks);
         //広告の表示を追加20210502
-        //document.getElementById("adv_list").style.display = "block";
+        document.getElementById("adv_list").style.display = "block";
         if (tasks.size > 0) {
             //console.log("tasks =>", tasks);
             var task_remain = 0;
@@ -324,10 +321,8 @@ function insert_task(task_data, task_id){
         /*var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px">' + task_data.text + '</p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666">' + task_data.memo + '</p></div></div>';
         var tasks_container = document.getElementById("to_do_items_finished");
         tasks_container.insertAdjacentHTML("afterbegin", task_div);*/
-        //追加実装のため、task_thirdは別記述であり、意図的変更が難しいので、insertAdjacentHTMLにて挿入
-        var third_div = '<p class="todo_third" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666">'+ cre_todothird(task_data) +'</p>';
 
-        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px"></p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666"></p>'+ third_div +'</div></div>';
+        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check_back(this)">check</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px"></p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666"></p></div></div>';
         var tasks_container = document.getElementById("to_do_items_finished");
         var todo_promise = new Promise(function(resolve, reject){
             tasks_container.insertAdjacentHTML("afterbegin", task_div);
@@ -347,9 +342,8 @@ function insert_task(task_data, task_id){
         var tasks_container = document.getElementById("to_do_items");
         tasks_container.insertAdjacentHTML("afterbegin", task_div);
         */
-        var third_div = '<p class="todo_third" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666">'+ cre_todothird(task_data) +'</p>';
         
-        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check(this)">radio_button_unchecked</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px"></p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666"></p>'+ third_div +'</div></div>';
+        var task_div ='<div id="' + task_id + '" style="width: 100%; display: flex" onclick="task_onclick(this)"><div style="padding: 8px; width: 64px; box-sizing: border-box;"><button class="mdc-icon-button material-icons" onclick="window.event.cancelBubble = true;task_check(this)">radio_button_unchecked</button></div><div style="width: calc(100% - 54px)"><p class="todo_first" style="margin:18px 10% 0px 0px"></p><p class="todo_second" style="margin:0px 10% 0px 0px; font-size:0.8em; color:#666666"></p></div></div>';
         var tasks_container = document.getElementById("to_do_items");
         var todo_promise = new Promise(function(resolve, reject){
             tasks_container.insertAdjacentHTML("afterbegin", task_div);
@@ -391,10 +385,10 @@ function task_check(radio_button){
         insert_task(global_tasks[task_id], task_id);
         finish_task_check();
         //tutorial
-        //if(tutorial_flag){
-        //    document.getElementById("mission_two").style.display = "none";
-        //    document.getElementById("mission_three").style.display = "block";
-        //}
+        if(tutorial_flag){
+            document.getElementById("mission_two").style.display = "none";
+            document.getElementById("mission_three").style.display = "block";
+        }
     }).catch(function(error){
         console.log("error =>", error);
     });
@@ -445,10 +439,10 @@ function task_create(){
         return
     }
     //tutorial
-    //if(tutorial_flag){
-    //    document.getElementById("mission_one").style.display = "none";
-    //    document.getElementById("mission_two").style.display = "block";
-    //}
+    if(tutorial_flag){
+        document.getElementById("mission_one").style.display = "none";
+        document.getElementById("mission_two").style.display = "block";
+    }
     //作成
     var new_task = {
         finish: false,
@@ -518,13 +512,13 @@ function finish_task_check(){
             document.getElementById("to_do_items").style.display = "none";
             document.getElementById("task_complate").style.display = "block";
             //ということはこれかつその日スタンプを押したかどうかを診断する
-            /*これは自動で画面遷移する処理だったはず。なので、差し止め
             if(global_user_database.AlreadyPushed == false){
+                //まだ押してないので画面遷移する
                 if(task_total == task_finish){
+                    //予測しない挙動があるから、数を比較したif分を設置20201109
                     tabBar.activateTab(1);
                 }
             }
-            */
         }
         document.getElementById("list_page_placeholder").style.display = "none";
         document.getElementById("list_page_anonymous").style.display = "none";
@@ -641,20 +635,19 @@ function count_page_check(){
     if(global_user == null){
         //console.log("null なのでボタンを使えません");
         //ボタン消す
-        //document.getElementById("talk_page_fab").style.display = "none";
-        //document.getElementById("talk_page_fab").disabled = true;
+        document.getElementById("talk_page_fab").style.display = "none";
+        document.getElementById("talk_page_fab").disabled = true;
+    }else{
+        if(can_user_count()){
+            //ボタン出す
+            document.getElementById("talk_page_fab").style.display = "flex";
+            document.getElementById("talk_page_fab").disabled = false;
+        }else{
+            //ボタン消す
+            document.getElementById("talk_page_fab").style.display = "none";
+            document.getElementById("talk_page_fab").disabled = true;
+        }
     }
-    //else{
-    //    if(can_user_count()){
-    //        //ボタン出す
-    //        document.getElementById("talk_page_fab").style.display = "flex";
-    //        document.getElementById("talk_page_fab").disabled = false;
-    //    }else{
-    //        //ボタン消す
-    //        document.getElementById("talk_page_fab").style.display = "none";
-    //        document.getElementById("talk_page_fab").disabled = true;
-    //    }
-    //}
     //今の処理だとタブ切り替えで毎回やってるから、見直しが必要かもしれない
     var server_time =  new firebase.firestore.Timestamp.now();
     var date_text = getDate(server_time.toDate());
@@ -743,16 +736,15 @@ function talk_page_check(){
     //user がログインしてたらボタンを表示する
     if(global_user == null){
         //console.log("null なのでボタンを使えません");
+    }else{
+        document.getElementById("talk_page_fab").style.display = "flex";
+        document.getElementById("talk_page_fab").disabled = false;
     }
-    //else{
-    //    document.getElementById("talk_page_fab").style.display = "flex";
-    //    document.getElementById("talk_page_fab").disabled = false;
-    //}
     //取得のタイムスタンプの流れとかあった気がする→重複取得に関して制限を考える感じで
     //それに関する対応を考えてから実装しようか
     //get_threads();
     //get threads 関数の再利用はちょっと挙動怖いんで、get diary 作る
-    //get_diary();
+    get_diary();
 }
 
 //これもdiaryの置換によりあまり使用しないことになるであろう
@@ -1123,22 +1115,18 @@ function define(name, value){
 
 function close_userterm(){
     use_terms_dialog.close();
-    //if(tutorial_flag){
+    if(tutorial_flag){
         //ミッション１を開く
-    //    document.getElementById("mission_one").style.display = "block";
-    //}
+        document.getElementById("mission_one").style.display = "block";
+    }
 }
 
 function check_talk_time(now_hour){
-    //auto_hitokotoですべてオッケーにしたよ
-    return true
-    /*
     if(now_hour==6||now_hour==7||now_hour==8||now_hour==9||now_hour==10||now_hour==12||now_hour==13||now_hour==14||now_hour==15||now_hour==18||now_hour==19||now_hour==20||now_hour==21||now_hour==22){
         return true
     }else{
         return false
     }
-    */
 }
 
 //チュートリアルチップのダイアログの実装
@@ -1218,13 +1206,4 @@ function tutorial_check(){
             console.log("error",error);
         });
     }
-}
-
-//insert_task内で、連続、合計、goodの表示する文字を生成するための関数
-function cre_todothird(db_task){
-    if(db_task.combo==undefined){var combo = 0}else{var combo = db_task.combo}
-    if(db_task.total==undefined){var total = 0}else{var total = db_task.total}
-    if(db_task.good==undefined){var good = 0}else{var good = db_task.good}
-    var result = '連続' + combo +'  合計'+ total +'  いいね'+ good ;
-    return result
 }

@@ -13,7 +13,7 @@ async function getCustomClaimRole() {
     //document.getElementById("subscsubmit").disabled = true;
     //と思ってたけど、表示するボタンをこれによって変更するのがいいと思うので
     //非課金にするためのボタンを表示
-    //document.getElementById("notsubscsubmit").style.display = "flex";実験のために除外
+    document.getElementById("notsubscsubmit").style.display = "flex";
     //20210603課金ユーザなので、広告管理のdiv(カード)を表示
     document.getElementById("chart_three").style.display = "flex";
   }else{
@@ -21,7 +21,7 @@ async function getCustomClaimRole() {
     define('userplan','normal');
     document.getElementById("user_role_display").textContent = "ノーマルプラン";
     //課金をするためのボタンを表示
-    //document.getElementById("subscsubmit").style.display = "flex";実験のために除外
+    document.getElementById("subscsubmit").style.display = "flex";
   }
   return decodedToken.claims.stripeRole;
 }
