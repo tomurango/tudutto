@@ -55,9 +55,8 @@ exports.uncheckTask = functions.region('asia-northeast1').pubsub.schedule('0 0 *
 //only blaze 定期処理 23時0分 に実行します
 //countを今日の一か月後に作成します
 //exports.scheduledcountFunction = functions.pubsub.schedule('23 0 * * *').timeZone('Asia/Tokyo').onRun((context) => {
+/*
 exports.createCount = functions.region('asia-northeast1').pubsub.schedule('23 0 * * *').timeZone('Asia/Tokyo').onRun((context) => {
-    //console.log('This will be run every day');
-    //var today = admin.firestore.FieldValue.serverTimestamp().toDate();
     var today = new Date();
     var month_after_text = getDatethirty(today);
     var count_promise = db.collection('counts').doc(month_after_text).set({
@@ -69,6 +68,7 @@ exports.createCount = functions.region('asia-northeast1').pubsub.schedule('23 0 
     });
     return count_promise;
 });
+*/
 
 //日付の文字列を js の date Object から 作成するための関数
 //一か月後を返します
@@ -179,26 +179,26 @@ exports.updatetask = functions.firestore
                 });
     
                 //d=diary
-                var promise_d = admin.auth().getUser(user_id).then((userRecord) => {
-                    var new_diary = {
-                        conTent: newValue.text,
-                        userId: user_id,
-                        userName: userRecord.displayName,
-                        userIcon: userRecord.photoURL,
-                        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-                        countGood: 0,
-                        taskId: task_id
-                    }
-                    console.log("user id =>", user_id);
-                    return db.collection("users").doc(user_id).collection("diaries").add(new_diary).then(function(){
-                        countdbtask(user_id,task_id,timestamp)
-                    }).catch(function(error){
-                        console.log("error", error);
-                    });
-                }).catch((e) => console.log(e));
+                //var promise_d = admin.auth().getUser(user_id).then((userRecord) => {
+                //    var new_diary = {
+                //        conTent: newValue.text,
+                //        userId: user_id,
+                //        userName: userRecord.displayName,
+                //        userIcon: userRecord.photoURL,
+                //        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                //        countGood: 0,
+                //        taskId: task_id
+                //    }
+                //    console.log("user id =>", user_id);
+                //    return db.collection("users").doc(user_id).collection("diaries").add(new_diary).then(function(){
+                //        countdbtask(user_id,task_id,timestamp)
+                //    }).catch(function(error){
+                //        console.log("error", error);
+                //    });
+                //}).catch((e) => console.log(e));
     
                 //非同期化の検証のためプロミスallを戻り値にしています
-                var result = Promise.all([promise_t, promise_d]).then((values) => {
+                var result = Promise.all([promise_t]).then((values) => {
                     console.log("Promise all ", values);
                 });
                 //console.log("4");
@@ -209,8 +209,10 @@ exports.updatetask = functions.firestore
                 console.log("return 0");
                 return 0
             }else{
+                return 0;
                 //diary作成//d=diary
                 //console.log("6");
+                /*
                 var promise_d = admin.auth().getUser(user_id).then((userRecord) => {
                     var new_diary = {
                         conTent: newValue.text,
@@ -228,8 +230,9 @@ exports.updatetask = functions.firestore
                         console.log("error", error);
                     });
                 }).catch((e) => console.log(e));
+                */
                 //console.log("7");
-                return promise_d;
+                //return promise_d;
             }
         }
 

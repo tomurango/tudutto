@@ -31,19 +31,16 @@ tabBar.listen('MDCTabBar:activated',function(event){
         document.getElementById("list_page").style.display = "flex";
         //list_page_check は繰り返し発生することを想定していません
     }else if(index==1){
-        //20210812 7:00 からと 19:00 からの一時間の範囲外なら、表示できないようにする
-        var now_fire = new firebase.firestore.Timestamp.now();
-        var now_date = now_fire.toDate();
-        var now_hour = now_date.getHours();
-        //console.log(now_hour);
+        //ユーザがタスクをこなしたかどうかで表示を切り替える
         document.getElementById("talk_page").style.display = "flex";
-        if(check_talk_time(now_hour)){
-            //20200815 復活
-            talk_page_check();
-            count_page_check();//countを日記のカウントに変更して再利用する
-        }else{//20210812追加
-            //時間外なので、
-            //console.log("koti")
+        //if(check_talk_time(now_hour)){
+        if(can_user_count()){
+            //taskは完了しているので、コミュ二ティの機能を利用できるようにする
+            
+
+
+        }else{
+            //taskが未完了なのでコミュニティはまだ駄目
             document.getElementById("talk_page_placeholder").style.display = "none";
             document.getElementById("talk_page_noresult").style.display = "none";
             document.getElementById("have_hitokoto").style.display = "none";
@@ -558,6 +555,7 @@ function getDate(date) {
 }
 
 //count を増やす関数
+/*
 function fab_count(){
     var server_time =  new firebase.firestore.Timestamp.now();
     var date_text = getDate(server_time.toDate());
@@ -569,10 +567,8 @@ function fab_count(){
         var pre_count = document.getElementById("hitokoto_count_num").textContent;
         document.getElementById("hitokoto_count_num").textContent = Number(pre_count) + 1;
         //ボタン消す
-        /*
-        document.getElementById("count_page_fab").style.display = "none";
-        document.getElementById("count_page_fab").disabled = true;
-        */
+        //document.getElementById("count_page_fab").style.display = "none";
+        //document.getElementById("count_page_fab").disabled = true;
         //ここで一日一回だけの記述をしましょうか → データべースを書き換える
         db.collection("users").doc(global_user.uid).update({
             AlreadyPushed: true
@@ -586,6 +582,7 @@ function fab_count(){
         console.log("error =>", error);
     })
 }
+*/
 
 //データベースの日付を書き換えると同時にログインして記録を確認する
 /*はずだったのだが、エラーで固まった（悲）
@@ -633,14 +630,14 @@ function login_and_check(user){
 }*/
 
 //countを取得する関数
-function count_page_check(){
+//function count_page_check(){
     //user がログインしてたらボタンを表示する
-    if(global_user == null){
+    //if(global_user == null){
         //console.log("null なのでボタンを使えません");
         //ボタン消す
         //document.getElementById("talk_page_fab").style.display = "none";
         //document.getElementById("talk_page_fab").disabled = true;
-    }
+    //}
     //else{
     //    if(can_user_count()){
     //        //ボタン出す
@@ -653,12 +650,12 @@ function count_page_check(){
     //    }
     //}
     //今の処理だとタブ切り替えで毎回やってるから、見直しが必要かもしれない
-    var server_time =  new firebase.firestore.Timestamp.now();
-    var date_text = getDate(server_time.toDate());
+    //var server_time =  new firebase.firestore.Timestamp.now();
+    //var date_text = getDate(server_time.toDate());
     //console.log(date_text);
-    db.collection("counts").doc(date_text).get().then(function(doc){
-        var today_count = doc.data().count;
-        document.getElementById("hitokoto_count_num").textContent = today_count;
+    //db.collection("counts").doc(date_text).get().then(function(doc){
+        //var today_count = doc.data().count;
+        //document.getElementById("hitokoto_count_num").textContent = today_count;
         /*20210131countの取得ナシはdiaryと同期するので非表示だと思われる。
         document.getElementById("count_day").textContent = date_text;
         //表示を切り替える
@@ -666,16 +663,16 @@ function count_page_check(){
         document.getElementById("loading_container").style.display = "none";
         document.getElementById("count_container").style.display = "flex";
         */
-    }).catch(function(error){
-        console.log("error =>", error);
+    //}).catch(function(error){
+        //console.log("error =>", error);
         //firestoreの作成し忘れなどでもエラーは発生するその時の表示切替はここで行う感じかな
         /*
         document.getElementById("count_container").style.display = "none";
         document.getElementById("loading_container").style.display = "none";
         document.getElementById("count_page_noresult").style.display = "block";
         */
-    });
-}
+    //});
+//}
 
 //fab diary 作ったよーこれたぶん使わない
 function fab_talk(){
@@ -736,11 +733,11 @@ function fab_talk_back(){
 
 
 //この関数でthreadの同線になるけど、それを取り除いていかないとワールドチャット形式では対応できないよね
-function talk_page_check(){
+//function talk_page_check(){
     //user がログインしてたらボタンを表示する
-    if(global_user == null){
+    //if(global_user == null){
         //console.log("null なのでボタンを使えません");
-    }
+    //}
     //else{
     //    document.getElementById("talk_page_fab").style.display = "flex";
     //    document.getElementById("talk_page_fab").disabled = false;
@@ -750,7 +747,7 @@ function talk_page_check(){
     //get_threads();
     //get threads 関数の再利用はちょっと挙動怖いんで、get diary 作る
     //get_diary();
-}
+//}
 
 //これもdiaryの置換によりあまり使用しないことになるであろう
 /*
@@ -1148,7 +1145,7 @@ var tutorial_five = new mdc.dialog.MDCDialog(document.querySelector('#tutorial_f
 
 //ヒトコトコメントを送信した後にデータベースを検証して、チュートリアルチップを表示するための関数
 function tutorial_check(){
-    if(global_user.tutorial[0]){
+    if(global_user.tutorial){
         //一度目は完了
         if(global_user.tutorial[1]){
             //二度目は完了

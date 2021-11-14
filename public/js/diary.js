@@ -40,11 +40,9 @@ function fab_diary_back(){
     document.getElementById("diary_input").value ="";
 }
 
+/*
 function diary_create(){
     //tutorial
-    /*if(tutorial_flag){
-        document.getElementById("mission_three").style.display = "none";
-    }*/
     var the_diary = document.getElementById("diary_input").value;
     //入力条件を管理する
     if(diary_rule(the_diary)){
@@ -74,7 +72,7 @@ function diary_create(){
             //理想はgetDiaryで毎回取得してみるとかだろうけど速度遅いしなぁって感じか
             diary_timestamp = the_time;
             //カード挿入
-            fab_count();//20210131カウントをしっかりと増やしていく➡croudfunctionで書くのもいいのかもね
+            //fab_count();//20210131カウントをしっかりと増やしていく➡croudfunctionで書くのもいいのかもね
             //20210905メッセージ送信をここだと仮定して、チュートリアルチェックを配置
             tutorial_check();
         }).catch(function(error){
@@ -84,6 +82,7 @@ function diary_create(){
         alert("条件を満たしていません");
     }
 }
+*/
 
 function diary_rule(diary){
     if(diary==""){
