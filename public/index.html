@@ -415,6 +415,7 @@
         <div id="talk_page" class="top_level_page" style="display: none; flex-direction: column;">
 
             <!--広告用-->
+            <!--
             <div id="adv_talk" class="mdc-card adv-card" style="display: none;">
                 <a id="adv_talk_link" class="adv_link">
                     <p style="margin: 0px;">
@@ -425,20 +426,30 @@
                     </p>
                 </a>
             </div>
+            -->
             
-            <div id="have_hitokoto" style="display: none; width: 100%; height: fit-content; background-color: #ffffff; flex-wrap: wrap; min-height: 100%; padding-bottom: 100%; box-sizing: border-box;" >
-                <!--20211016をもって非表示カウントも関数は存在するが、起動しない。-->
-                <div id="hitokoto_count_pla" style="display: none; width: 100%; height: fit-content; background-color: #ffffff;">
-                    <div id="hitokoto_count_card" class="mdc-card" style="padding: 8px; width: 100%;">
-                        <p id="hitokoto_count_txt" style="color: #777777; font-size: 10px; margin: 0px;">本日ヒトコト</p>
-                        <p id="hitokoto_count_cont" style="margin: 0px; text-align: center;"><span id="hitokoto_count_num" style="font-size: 3em;">0</span>コト</p>
+            <div id="have_cominfo" style="display: none; width: 100%; height: fit-content; background-color: #ffffff; flex-wrap: wrap; min-height: 100%; padding-bottom: 100%; box-sizing: border-box;" >
+                <div id="com_buttons" style="display: flex; margin: 8px;">
+                    <div id="lookforcom" class="com_area">
+                        <button class="mdc-button mdc-button--outlined com_button" onclick="com_others()">
+                            <span class="mdc-button__ripple"></span>
+                            <i class="material-icons mdc-button__icon" aria-hidden="true" style="font-size: 30px; margin-left: -4px; margin-top: -10px;">search</i>
+                        </button>
+                        <p class="com_text">探す</p>
+                    </div>
+                    <!--ここにジョブのボタンが入っていく-->
+                </div>
+                <div id="com_board">
+                    <div id="com_no_choice" style="display: block; height: 100%; width: 100%; left: 0px; text-align: center;">
+                        <div id="com_no_board_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
+                        <div>
+                          <p class="text_up">コミュニティ未参加</p>
+                          <p class="text_down">コミュニティに参加すると<br>情報が表示されます。</p>
+                        </div>
                     </div>
                 </div>
-                <div id="thread_container" style="display: flex; width: 100%; height: fit-content; background-color: #ffffff; flex-wrap: wrap; min-height: 100%; padding-bottom: 100%; box-sizing: border-box;" >
-                    <p>ここに投稿欄と、登校される情報を入れ込んでいく</p>
-                    
-                </div>
             </div>
+
             <div id="talk_page_placeholder" style="display:block; height: 100%; width: 100%; left: 0px;">
                 <div class="moving_holder" style="height: 64px; width: 100%;">
                     <div style="position: absolute; background-color: #ffffff; top: 0px; left: 0px; height: 14px; width: 100%;"></div>
@@ -524,7 +535,7 @@
                 </div>
             </div>
             <!--20210812追加-->
-            <div id="talk_page_timeover" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center; padding-bottom: 200px; flex-direction: column;">
+            <div id="task_remain_dis" style="display: none; height: 100%; width: 100%; left: 0px; text-align: center; padding-bottom: 200px; flex-direction: column;">
                 <div id="timeover_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
                 <div>
                     <p class="text_up">タスクが未完了です。</p>

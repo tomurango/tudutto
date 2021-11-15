@@ -36,6 +36,10 @@ tabBar.listen('MDCTabBar:activated',function(event){
         //if(check_talk_time(now_hour)){
         if(can_user_count()){
             //taskは完了しているので、コミュ二ティの機能を利用できるようにする
+            document.getElementById("talk_page_placeholder").style.display = "none";
+            document.getElementById("talk_page_noresult").style.display = "none";
+            document.getElementById("have_cominfo").style.display = "block";
+            document.getElementById("task_remain_dis").style.display = "none";
             
 
 
@@ -43,8 +47,8 @@ tabBar.listen('MDCTabBar:activated',function(event){
             //taskが未完了なのでコミュニティはまだ駄目
             document.getElementById("talk_page_placeholder").style.display = "none";
             document.getElementById("talk_page_noresult").style.display = "none";
-            document.getElementById("have_hitokoto").style.display = "none";
-            document.getElementById("talk_page_timeover").style.display = "block";
+            document.getElementById("have_cominfo").style.display = "none";
+            document.getElementById("task_remain_dis").style.display = "block";
             //広告の表示
             //20211113広告の形態を変えようというかシステムの全体の形もある程度変更したいので、
             //document.getElementById("adv_talk").style.display = "block";
@@ -810,6 +814,7 @@ function talk_create(){
 }*/
 
 //ここもdirayに置き換えだねー
+/*
 function insert_thread(thread_doc_data, thread_id){
     //console.log("insert_thread", thread_doc_data);
     //global_threadsに代入
@@ -822,6 +827,7 @@ function insert_thread(thread_doc_data, thread_id){
     var threads_container = document.getElementById("thread_container");
     threads_container.insertAdjacentHTML("afterbegin", thread_li);
 }
+*/
 
 //firebaseのタイムスタンプをthreadに表示できる形で返す関数
 function date_nor_display(fire_date){

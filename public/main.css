@@ -283,9 +283,11 @@ html{
     }#thread_container{
         flex-direction: row;
     }
+    /*
     #hitokoto_count_card{
         margin: 16px;
     }
+    */
 }@media screen and (max-width:599px){
     /*スマホの時*/
     .diary-card{
@@ -294,9 +296,11 @@ html{
     }#thread_container{
         flex-direction: column;
     }
+    /*
     #hitokoto_count_card{
         margin: 8px;
     }
+    */
 }
 .diary-card{
     border-radius: 5px;
@@ -607,4 +611,35 @@ html{
 
 .tip_num{
     font-size: 0.8em;
+}
+
+.com_area{
+    width: fit-content;
+    margin-right: 8px;
+}
+.com_button{
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+}
+.com_text{
+    overflow: hidden;
+    max-width: 64px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0px;
+    font-size: 0.8em;
+    color: #999999;
+    text-align: center;
+}.com_icon{
+    font-size: 2em;
+}
+
+
+#com_no_board_image{
+    background-image: url("images/comboard.jpg");
+}#com_no_board_image::before {
+    display: block;
+    content: " ";
+    margin-top: 100%;
 }
