@@ -1058,6 +1058,9 @@ function can_user_count(){
             return false
         }else if(task_finish > 0 && task_remain == 0){
             //タスクの数の条件に関してはオッケー
+            return true;
+            //以降はalready pushedが存在したときの記述
+            /*
             if(global_user_database.AlreadyPushed == false){
                 //まだクリックしてないのでカウントしてどうぞ
                 return true
@@ -1065,6 +1068,11 @@ function can_user_count(){
                 //もう今日はクリックしたと思われるのでカウントできません
                 return false
             }
+            */
+        }else{
+            /*ここは謎挙動*/
+            console.log("謎挙動してるよ");
+            return true;
         }
     }
 }

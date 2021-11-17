@@ -261,10 +261,27 @@
         </div>
         -->
 
-        <!--コミュニティの参加若しくは作成を行うためのdiv-->
-        <div id="com_list_div" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff; overflow-y: scroll">
+        <!--グループの参加若しくは作成を行うためのdiv-->
+        <div id="gr_list_div">
             <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" style="position: absolute; top: 0px;left: 0px" onclick="com_others_back()">navigate_before</button>
-            この辺にコミュニティの情報を一覧
+            <p id="gr_litext">グループ一覧</p>
+            <div id="gr_wrapper">
+                <div class="a_gr">
+                    <div class="image_gr"></div>
+                    <p class="text_gr">ランニンググループ</p>
+                    <p class="text_gr_sub">ランニングを習慣で楽しむグループです♪気軽に参加して下さい！</p>
+                </div>
+                <div class="a_gr">
+                    <div class="image_gr"></div>
+                    <p class="text_gr">英会話グループ</p>
+                    <p class="text_gr_sub">英会話したい！そんなやる気のある方を歓迎します。</p>
+                </div>
+                <div class="a_gr">
+                    <div class="image_gr"></div>
+                    <p class="text_gr">グループ自炊</p>
+                    <p class="text_gr_sub">自炊したご飯の共有などをしてみんなで料理を楽しめる型歓迎します。</p>
+                </div>
+            </div>
         </div>
 
         <!--コミュニティの参加若しくは作成を行うためのdiv-->
@@ -453,8 +470,8 @@
                     <div id="com_no_choice" style="display: block; height: 100%; width: 100%; left: 0px; text-align: center;">
                         <div id="com_no_board_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
                         <div>
-                          <p class="text_up">コミュニティ未参加</p>
-                          <p class="text_down">コミュニティに参加すると<br>情報が表示されます。</p>
+                          <p class="text_up">グループ未参加</p>
+                          <p class="text_down">グループに参加すると<br>情報が表示されます。</p>
                         </div>
                     </div>
                 </div>
@@ -551,7 +568,7 @@
                     <p class="text_up">タスクが未完了です。</p>
                     <p class="text_down">
                         タスクが完了すると<br>
-                        コミュニティが利用できます。
+                        グループが利用できます。
                     </p>
                 </div>
             </div>
