@@ -1158,20 +1158,20 @@ var tutorial_five = new mdc.dialog.MDCDialog(document.querySelector('#tutorial_f
 function tutorial_check(){
     if(global_user_database.tutorial){
         //一度目は完了
-        if(global_user_database.tutorial[1]){
+        if(global_user_database.tutorial[1]==1){
             //二度目は完了
-            if(global_user_database.tutorial[2]){
+            if(global_user_database.tutorial[2]==2){
                 //三度目は完了
-                if(global_user_database.tutorial[3]){
+                if(global_user_database.tutorial[3]==3){
                     //四度目は完了
-                    if(global_user_database.tutorial[4]){
+                    if(global_user_database.tutorial[4]==4){
                         //五度目も完了
                         //何もしない
                         return
                     }else{
                         //データベースに登録
                         db.collection("users").doc(global_user.uid).update({
-                            tutorial:firebase.firestore.FieldValue.arrayUnion(true)
+                            tutorial:firebase.firestore.FieldValue.arrayUnion(4)
                         }).then(function(){
                             //5度目のチップを表示
                             tutorial_five.open();
@@ -1182,7 +1182,7 @@ function tutorial_check(){
                 }else{
                     //データベースに登録
                     db.collection("users").doc(global_user.uid).update({
-                        tutorial:firebase.firestore.FieldValue.arrayUnion(true)
+                        tutorial:firebase.firestore.FieldValue.arrayUnion(3)
                     }).then(function(){
                         //4度目のチップを表示
                         tutorial_four.open();
@@ -1193,7 +1193,7 @@ function tutorial_check(){
             }else{
                 //データベースに登録
                 db.collection("users").doc(global_user.uid).update({
-                    tutorial:firebase.firestore.FieldValue.arrayUnion(true)
+                    tutorial:firebase.firestore.FieldValue.arrayUnion(2)
                 }).then(function(){
                     //3度目のチップを表示
                     tutorial_three.open();
@@ -1204,7 +1204,7 @@ function tutorial_check(){
         }else{
             //データベースに登録
             db.collection("users").doc(global_user.uid).update({
-                tutorial:firebase.firestore.FieldValue.arrayUnion(true)
+                tutorial:firebase.firestore.FieldValue.arrayUnion(1)
             }).then(function(){
                 //2度目のチップを表示
                 tutorial_two.open();
@@ -1233,3 +1233,25 @@ function cre_todothird(db_task){
     var result = '連続' + combo +'  合計'+ total +'  いいね'+ good ;
     return result
 }
+
+/*
+function test_update(){
+    db.collection("users").doc(global_user.uid).update({
+        tutorial:firebase.firestore.FieldValue.arrayUnion(true)
+    }).then(function(){
+        //2度目のチップを表示
+        tutorial_two.open();
+    }).catch(function(error){
+        console.log("error",error);
+    });
+}
+
+function test_undefined(){
+    if(undefined){
+        return "if";
+    }else{
+        return "else";
+    }
+    return 0
+}
+*/
