@@ -80,25 +80,13 @@ function login_card_display_back(){
 
 //google
 function google_click(){
-    //ログインの動き
-    //console.log("google ログインします");
-    //セッションの永続性を指定から、ログインしてる感じ
+    //セッションの永続性を指定から、ログイン
     firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function() {
         var provider = new firebase.auth.GoogleAuthProvider();
-        // Existing and future Auth states are now persisted in the current
-        // session only. Closing the window would clear any existing state even
-        // if a user forgets to sign out.
-        // ...
         // New sign-in will be persisted with session persistence.
         return firebase.auth().signInWithRedirect(provider).then(user =>{
             // Get the user's ID token as it is needed to exchange for a session cookie.
-            return user.getIdToken();/*.then(idToken => {
-                // Session login endpoint is queried and the session cookie is set.
-                // CSRF protection should be taken into account.
-                // ...
-                const csrfToken = getCookie('csrfToken')
-                return postIdTokenToSessionLogin('/sessionLogin', idToken, csrfToken);
-            });*/
+            return user.getIdToken();
         });
     }).catch(function(error) {
         // Handle Errors here.
@@ -111,9 +99,6 @@ function google_click(){
 //ログアウト
 function log_out(){
     firebase.auth().signOut().then(()=>{
-        //console.log("ログアウトしました");
-        //ログアウトしよーぜ
-        //リダイレクトしてんね
         location.reload();
     })
     .catch( (error)=>{
@@ -122,8 +107,6 @@ function log_out(){
 }
 
 $(document).ready(function(){
-    //chart js のグラフが表示されない問題の解決のための検証
-    //document.getElementById("chart_contain").textContent = window.devicePixelRatio;
     firebase.auth().getRedirectResult().then(function(result) {
         //console.log(result);
         if (result.credential) {
@@ -443,11 +426,6 @@ function task_create(){
         //入力しないと送信できないようにしたい
         return
     }
-    //tutorial
-    //if(tutorial_flag){
-    //    document.getElementById("mission_one").style.display = "none";
-    //    document.getElementById("mission_two").style.display = "block";
-    //}
     //作成
     var new_task = {
         finish: false,
