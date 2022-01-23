@@ -194,7 +194,7 @@ function insert_diary(diary_doc_data, diary_id){
     //var graph_area = '<div class="graph_area"><div class="gift_bar" style="height:' + giftheight + 'px"></div><div class="good_bar" style="height:' + goodheight + 'px"></div></div>'
     //20210321giftを取り除いた
     var graph_area = '<div class="graph_area"><div class="good_bar" style="height:' + goodheight + 'px"></div></div>';
-    var footer_area = '<div class="footer_area"><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_good ' +goodclass+ '" style="top:6px" onclick="diary_good(this)" title="Good">thumb_up</button></div>'
+    var footer_area = '<div class="footer_area"><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_good ' +goodclass+ '" style="top:6px" onclick="diary_good(this)" title="Good">thumb_up</button></div>';
     //20210204 footerareaの追加
     //var footer_area = '<div class="footer_area"><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_gift ' + giftclass + '" onclick="diary_gift(this)" style="top: 6px;" title="Cheer">card_giftcard</button><button class="material-icons mdc-icon-button mdc-card__action mdc-card__action--icon diary_good ' +goodclass+ '" style="top:6px" onclick="diary_good(this)" title="Good">thumb_up</button></div>'
     //20210202 onclick="detail_of_diary(this)" 今のところは左の記述を消してコメントをできなくしときました。コメントの可能性を残して変な気を使わせないためです（まだスタンプとかのがまし）
