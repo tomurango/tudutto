@@ -455,24 +455,26 @@
                 </a>
             </div>
             -->
-            
+            <div class="tag_wrapper" style="display: flex;">
+                <button id="anke_look" class="mdc-button tag-button disactive" onclick="tag_anke(this)">
+                  <span class="mdc-button__ripple"></span>
+                  <i class="material-icons mdc-button__icon tag_content" aria-hidden="true">explore</i>
+                  <span class="mdc-button__label tag_content">探索</span>
+                </button>
+                <button id="anke_follow" class="mdc-button tag-button active" onclick="tag_anke(this)">
+                  <span class="mdc-button__ripple"></span>
+                  <span class="mdc-button__label tag_content">フォロー</span>
+                </button>
+    
+              </div>
             <div id="have_cominfo" style="display: none; width: 100%; height: fit-content; background-color: #ffffff; flex-wrap: wrap; min-height: 100%; padding-bottom: 100%; box-sizing: border-box;" >
-                <div id="com_buttons" style="display: flex; margin: 8px;">
-                    <div id="lookforcom" class="com_area">
-                        <button class="mdc-button mdc-button--outlined com_button" onclick="com_others()">
-                            <span class="mdc-button__ripple"></span>
-                            <i class="material-icons mdc-button__icon" aria-hidden="true" style="font-size: 30px; margin-left: -4px; margin-top: -10px;">search</i>
-                        </button>
-                        <p class="com_text">探す</p>
-                    </div>
-                    <!--ここにジョブのボタンが入っていく-->
-                </div>
+                
                 <div id="com_board">
                     <div id="com_no_choice" style="display: block; height: 100%; width: 100%; left: 0px; text-align: center;">
                         <div id="com_no_board_image" style="display: inline-block; background-size: contain;background-repeat: no-repeat;background-position: center center; width: 60%; max-width: 300px; margin-top: 50px;"></div>
                         <div>
-                          <p class="text_up">グループ未参加</p>
-                          <p class="text_down">グループに参加すると<br>情報が表示されます。</p>
+                          <p class="text_up">アンケートが取得できませんでした</p>
+                          <p class="text_down">アンケートを取得すると<br>情報が表示されます。</p>
                         </div>
                     </div>
                 </div>
@@ -1134,6 +1136,7 @@
     <script src="js/subscription.js"></script>
     <script src="js/adv.js"></script>
     <script src="js/community.js"></script>
+    <script src="js/anke.js"></script>
 
      
         
