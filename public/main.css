@@ -725,3 +725,14 @@ html{
 }.tag-button.disactive > .tag_content{
     color: #000000;
 }
+
+#listforanke{
+    flex-direction: column;
+}.theanketag{
+    margin: 16px;
+}.tag_title{
+    font-size: 2em;
+}.tag_info{
+    color: #777777;
+}
+
