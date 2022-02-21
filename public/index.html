@@ -391,7 +391,7 @@
                     </div>
                 </div>-->
             </div>
-            <div id="finished_container" style="display: none; padding-bottom: 100px;">
+            <div id="finished_container" style="display: none; padding-top: 100px; padding-bottom: 100px;">
                 <hr>
                 <div style="width: 100%; display: flex" onclick="display_finished_tasks()">
                     <div style="width: calc(100% - 64px)">
@@ -412,9 +412,14 @@
                     </div>-->
                 </div>
             </div>
-            <button id="list_page_fab" class="mdc-fab" style="display: none" aria-label="create_task" onclick="fab_task()">
+            <!--<button id="list_page_fab" class="mdc-fab" style="display: none" aria-label="create_task" onclick="fab_task()">
                 <div class="mdc-fab__ripple"></div>
                 <span class="mdc-fab__icon material-icons" style="color: #001a33;">add</span>
+            </button>-->
+            <button id="list_page_fab" class="mdc-fab mdc-fab--extended" style="display: none" aria-label="create_task" onclick="fab_task()">
+                <div class="mdc-fab__ripple"></div>
+                <span class="material-icons mdc-fab__icon" style="color: #001a33;">add</span>
+                <span class="mdc-fab__label" style="color: #001a33;">タスク作成</span>
             </button>
         </div>
         <!--
@@ -611,9 +616,17 @@
                     </div>
                 </div>
     
-                <button id="talk_page_fab" class="mdc-fab" aria-label="create thread" style="display: none; background-color: #3c6b8a; color: #fff2d3;" onclick="fab_diary()">
+                <!--
+                <button id="ankecreate_fab" class="mdc-fab" aria-label="create thread" style="display: none; background-color: #3c6b8a; color: #fff2d3;" onclick="">
                     <div class="mdc-fab__ripple"></div>
-                    <span class="mdc-fab__icon material-icons">chat</span>
+                    <span class="mdc-fab__icon material-icons">create</span>
+                </button>
+                -->
+
+                <button id="ankecreate_fab" class="mdc-fab mdc-fab--extended" onclick="" style="display: none; background-color: #3c6b8a; color: #fff2d3;">
+                    <div class="mdc-fab__ripple"></div>
+                    <span class="material-icons mdc-fab__icon">create</span>
+                    <span class="mdc-fab__label">アンケ投稿</span>
                 </button>
             </div>
         </div>

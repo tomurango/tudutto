@@ -79,7 +79,7 @@ html{
 .mdc-fab{
     position: fixed;
     bottom: 100px;
-    left: calc(50% - 24px);
+    left: calc(50% - 71px);
 }
 
 #center_count{

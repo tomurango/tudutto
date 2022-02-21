@@ -39,6 +39,7 @@ tabBar.listen('MDCTabBar:activated',function(event){
             document.getElementById("talk_page_placeholder").style.display = "none";
             document.getElementById("talk_page_noresult").style.display = "none";
             document.getElementById("have_cominfo").style.display = "block";
+            document.getElementById("ankecreate_fab").style.display = "flex";
             document.getElementById("task_remain_dis").style.display = "none";
             
 
@@ -48,6 +49,7 @@ tabBar.listen('MDCTabBar:activated',function(event){
             document.getElementById("talk_page_placeholder").style.display = "none";
             document.getElementById("talk_page_noresult").style.display = "none";
             document.getElementById("have_cominfo").style.display = "none";
+            document.getElementById("ankecreate_fab").style.display = "none";
             document.getElementById("task_remain_dis").style.display = "block";
             //広告の表示
             //20211113広告の形態を変えようというかシステムの全体の形もある程度変更したいので、
