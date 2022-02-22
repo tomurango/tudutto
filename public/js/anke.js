@@ -20,3 +20,11 @@ function tag_anke(element){
         return ;
     }
 }
+
+function dis_cre_anke_div(){
+    document.getElementById("dis_cre_anke_div").style.display="block";
+}
+
+function dis_cre_anke_div_back(){
+    document.getElementById("dis_cre_anke_div").style.display="none";
+}

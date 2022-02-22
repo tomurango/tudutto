@@ -285,6 +285,13 @@
             </div>
         </div>
 
+        <!--アンケートを作成するためのdiv-->
+        <div id="dis_cre_anke_div" style="display: none; position: fixed; height: 100%; width: 100%; left: 0px; z-index: 5;top: 0px;background-color: #ffffff; overflow-y: scroll">
+            <!--戻るボタン-->
+            <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" onclick="dis_cre_anke_div_back()">clear</button>
+            <p style="position: absolute; left: 48px; top: 12px; margin: 0px; color: #333333;">アンケートを投稿する</p>
+        </div>
+
         <!--コミュニティの参加若しくは作成を行うためのdiv-->
 
 
@@ -623,7 +630,7 @@
                 </button>
                 -->
 
-                <button id="ankecreate_fab" class="mdc-fab mdc-fab--extended" onclick="" style="display: none; background-color: #3c6b8a; color: #fff2d3;">
+                <button id="ankecreate_fab" class="mdc-fab mdc-fab--extended" onclick="dis_cre_anke_div()" style="display: none; background-color: #3c6b8a; color: #fff2d3;">
                     <div class="mdc-fab__ripple"></div>
                     <span class="material-icons mdc-fab__icon">create</span>
                     <span class="mdc-fab__label">アンケ投稿</span>
