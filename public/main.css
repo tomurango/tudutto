@@ -736,3 +736,9 @@ html{
     color: #777777;
 }
 
+.anke_inner_div{
+    display: flex;
+    padding-left: 12px;
+}.anke_input_choise{
+    margin: 24px;
+}

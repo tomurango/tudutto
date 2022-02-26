@@ -291,12 +291,14 @@
             <button class="material-icons mdc-top-app-bar__navigation-icon mdc-icon-button" onclick="dis_cre_anke_div_back()">clear</button>
             <p style="position: absolute; left: 48px; top: 12px; margin: 0px; color: #333333;">アンケートを投稿する</p>
             <div class="anke_inner_div">
-                <input id="anke_input_title" style="font-size: 1.8em; margin: 16px; border: none;" placeholder="質問を入力">
+                <input id="anke_input_title" style="font-size: 1.8em; margin: 16px 16px 16px 0px; border: none;" placeholder="質問を入力">
             </div>
-            <div class="anke_inner_div">
-                <p class="material-icons">poll</p>
-                <input class="anke_input_choise">
-                <input class="anke_input_choise">
+            <div class="anke_inner_div" style="display: flex; flex-direction: row;">
+                <p class="material-icons" style="display: inline-block;">poll</p>
+                <div style="display: flex; flex-direction: column;">
+                    <input class="anke_input_choise">
+                    <input class="anke_input_choise">
+                </div>
             </div>
             <div class="anke_inner_div">
                 <button class="mdc-button mdc-button--icon-leading">
