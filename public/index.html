@@ -296,17 +296,22 @@
             <div class="anke_inner_div" style="display: flex; flex-direction: row;">
                 <p class="material-icons" style="display: inline-block;">poll</p>
                 <div style="display: flex; flex-direction: column;">
-                    <input class="anke_input_choise">
-                    <input class="anke_input_choise">
+                    <input class="anke_input_choise" placeholder="選択肢１を入力">
+                    <input class="anke_input_choise" placeholder="選択肢２を入力">
                 </div>
             </div>
-            <div class="anke_inner_div">
-                <button class="mdc-button mdc-button--icon-leading">
+            <div class="anke_inner_div" style="flex-direction: column;">
+                <button class="mdc-button mdc-button--icon-leading" style="justify-content: flex-start; width: fit-content;">
+                    <span class="mdc-button__ripple"></span>
+                    <i class="material-icons mdc-button__icon" aria-hidden="true">add</i>
+                    <span class="mdc-button__label">選択肢をを追加</span>
+                </button>
+                <button class="mdc-button mdc-button--icon-leading" style="justify-content: flex-start; width: fit-content;">
                     <span class="mdc-button__ripple"></span>
                     <i class="material-icons mdc-button__icon" aria-hidden="true">image</i>
                     <span class="mdc-button__label">メディアを追加</span>
                 </button>
-                <button class="mdc-button mdc-button--icon-leading">
+                <button class="mdc-button mdc-button--icon-leading" style="justify-content: flex-start; width: fit-content;">
                     <span class="mdc-button__ripple"></span>
                     <i class="material-icons mdc-button__icon" aria-hidden="true">person</i>
                     <span class="mdc-button__label">ユーザを追加</span>
