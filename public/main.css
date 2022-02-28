@@ -739,7 +739,8 @@ html{
 .anke_inner_div{
     display: flex;
     padding-left: 12px;
+    margin-bottom: 24px;
 }.anke_input_choise{
-    margin: 24px;
     border: none;
+    margin: 4px;
 }
