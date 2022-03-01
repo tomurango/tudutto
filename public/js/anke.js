@@ -28,3 +28,7 @@ function dis_cre_anke_div(){
 function dis_cre_anke_div_back(){
     document.getElementById("dis_cre_anke_div").style.display="none";
 }
+
+function anke_create(){
+    console.log("作成する");
+}
