@@ -56,6 +56,12 @@ function dis_cre_anke_div_back(){
 function anke_create(){
     console.log("作成する");
     //入力確認を出力したのちに送信する流れ
+    anke_alert_dia.open();
+    if(true){
+        //再入力が必要なとき
+    }else if(false){
+        //入力確認の時（基本不備がない時）
+    }
 }
 
-document.getElementById("anke_choise_1");
+var anke_alert_dia = new mdc.dialog.MDCDialog(document.querySelector('#anke_alert_dia'));
