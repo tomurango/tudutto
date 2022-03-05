@@ -64,4 +64,24 @@ function anke_create(){
     }
 }
 
+function send_anke(){
+    var title = document.getElementById("anke_input_title").value;
+    var choise1 = document.getElementById("anke_choise_1").value;
+    var choise2 = document.getElementById("anke_choise_1").value;
+    
+    var new_anke = {
+        title: title,
+        choises: [choise1, choise2]
+    };
+    db.collection("questionnaire").add(new_anke)
+    .then(function(docRef) {
+        console.log("Document written with ID: ", docRef.id);
+        //閉じる
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+    });
+}
+
+//ダイアログで質問内容の確認表示
 var anke_alert_dia = new mdc.dialog.MDCDialog(document.querySelector('#anke_alert_dia'));
