@@ -54,20 +54,23 @@ function dis_cre_anke_div_back(){
 
 //投稿する
 function anke_create(){
-    console.log("作成する");
+    var title = document.getElementById("anke_input_title").value;
+    var choise1 = document.getElementById("anke_choise_1").value;
+    var choise2 = document.getElementById("anke_choise_2").value;
+    //dialog に文字を挿入して表示する
+    document.getElementById("anke_title_con").textContent = title;
+    document.getElementById("anke_one_con").textContent = choise1;
+    document.getElementById("anke_two_con").textContent = choise2;
     //入力確認を出力したのちに送信する流れ
     anke_alert_dia.open();
-    if(true){
-        //再入力が必要なとき
-    }else if(false){
-        //入力確認の時（基本不備がない時）
-    }
 }
 
 function send_anke(){
+    //へっだーに入力内容に間違いはありませんか？のようなガイドも欲しいかな
+    //入力ナシなら入力ナシと表示する
     var title = document.getElementById("anke_input_title").value;
     var choise1 = document.getElementById("anke_choise_1").value;
-    var choise2 = document.getElementById("anke_choise_1").value;
+    var choise2 = document.getElementById("anke_choise_2").value;
     
     var new_anke = {
         title: title,
