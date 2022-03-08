@@ -57,6 +57,15 @@ function anke_create(){
     var title = document.getElementById("anke_input_title").value;
     var choise1 = document.getElementById("anke_choise_1").value;
     var choise2 = document.getElementById("anke_choise_2").value;
+    //console.log(choise1, choise2);
+    if(choise1 == ""){
+        //console.log("未入力");
+        choise1 = "入力されていません";
+    }
+    if(choise2 == ""){
+        //console.log("未入力");
+        choise2 = "入力されていません";
+    }
     //dialog に文字を挿入して表示する
     document.getElementById("anke_title_con").textContent = title;
     document.getElementById("anke_one_con").textContent = choise1;

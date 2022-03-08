@@ -741,6 +741,7 @@ html{
     padding-left: 12px;
     margin-bottom: 24px;
 }.anke_input_choise{
+    font-size: 20px;
     border: none;
     margin: 4px;
 }
@@ -750,4 +751,5 @@ html{
     font-size: 0.8em;
 }.anke_alert_maintext{
     margin-top: 0px;
+    font-size: 1.6em;
 }
