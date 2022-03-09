@@ -751,5 +751,6 @@ html{
     font-size: 0.8em;
 }.anke_alert_maintext{
     margin-top: 0px;
-    font-size: 1.6em;
+    font-size: 1.2em;
+    color: #333333;
 }
