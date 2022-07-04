@@ -29,8 +29,10 @@ service cloud.firestore {
     
 
 
-
-    
+    match /questionnaire/{userId} {
+      allow read: if true;
+      allow create: if request.auth.uid != null;
+    }
 
     match /users/{userId} {
       allow read, delete: if request.auth.uid == userId;
