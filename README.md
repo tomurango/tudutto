@@ -29,7 +29,7 @@
 ![スライド5](https://user-images.githubusercontent.com/48337372/130787986-ca9cf740-9d90-4e95-8b60-788b36b3aa2a.JPG)
 
 ## deployの仕方
-コマンドプロンプトを用いて firebase deploy と firebase を使用してdeployを行っています。github のコミットとは別でそれぞれコマンドを用いて行っています。
+firebase を使用してdeployしています。
 
 ## 工夫点
 ・デザインで学んだ知識を活用してUIを設計した点。<br>
